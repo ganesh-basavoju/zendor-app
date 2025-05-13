@@ -176,7 +176,8 @@ export default function Checkout() {
     }
   
     const options = {
-      key: "rzp_live_UPGjFs1QXCHtCV",
+      //key: "rzp_live_UPGjFs1QXCHtCV",
+      key:"rzp_test_qtfHIjOyxlQnr5",
       amount: Math.ceil(totalPrice + tax) * 100,
       currency: "INR",
       name: "Zendor",
