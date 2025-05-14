@@ -165,7 +165,7 @@ export default function WoodenFlooringProduct() {
   };
 
   const handleWallSelection = (wall) => {
-    if (wall === "A") return; // Wall A cannot be deselected
+    //if (wall === "A") return; // Wall A cannot be deselected
 
     setSelectedWalls((prev) => {
       if (prev.includes(wall)) {
@@ -235,10 +235,10 @@ export default function WoodenFlooringProduct() {
               {currentProduct?.description}
             </p>
             <p className="text-xl sm:text-2xl font-medium text-gray-900 mt-2 sm:mt-4">
-              ₹
+              ₹{' '}
               {selectedSize === "Sample"
-                ? currentProduct?.sampleCost
-                : price}
+                ? currentProduct?.sampleCost?.toLocaleString('en-IN')
+                : price?.toLocaleString('en-IN')}
             </p>
           </div>
 
@@ -449,7 +449,7 @@ export default function WoodenFlooringProduct() {
                     </span>
                     <span>({wallDimensions[wall].area} sq.ft)</span>
                     <span className="text-blue-600">
-                      ₹{wallDimensions[wall].price.toFixed(2)}
+                      ₹{wallDimensions[wall].price.toLocaleString('en-IN')}
                     </span>
                   </div>
                 ))}

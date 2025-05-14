@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 export default function WallpaperProduct() {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState("Custom Roll Size");
+  const [selectedSize, setSelectedSize] = useState("Sample");
   // Add the missing texture state
   const [selectedTexture, setSelectedTexture] = useState(0);
   const router = useRouter();
@@ -160,7 +160,7 @@ export default function WallpaperProduct() {
   };
 
   const handleWallSelection = (wall) => {
-    if (wall === "A") return; // Wall A cannot be deselected
+    //if (wall === "A") return; // Wall A cannot be deselected
 
     setSelectedWalls((prev) => {
       if (prev.includes(wall)) {
@@ -230,10 +230,10 @@ export default function WallpaperProduct() {
               {currentProduct?.description}
             </p>
             <p className="text-xl sm:text-2xl font-medium text-gray-900 mt-2 sm:mt-4">
-              ₹
+              ₹{' '}
               {selectedSize === "Sample"
-                ? currentProduct?.sampleCost
-                : `${price}`}
+                ? currentProduct?.sampleCost?.toLocaleString('en-IN')
+                : price?.toLocaleString('en-IN')}
             </p>
           </div>
 
@@ -476,7 +476,7 @@ export default function WallpaperProduct() {
                     </span>
                     <span>({wallDimensions[wall].area} sq.ft)</span>
                     <span className="text-blue-600">
-                      ₹{wallDimensions[wall].price}
+                      ₹{wallDimensions[wall].price?.toLocaleString('en-IN')}
                     </span>
                   </div>
                 ))}
@@ -524,6 +524,29 @@ export default function WallpaperProduct() {
                 { label: 'Fire resistance', value: currentProduct?.features?.join(', ') || 'N/A' },
 
               ] */}
+
+{[
+                { label: "Brand", value: currentProduct?.brand || "N/A" },
+                { label: "Size", value: `${currentProduct?.size || "N/A"}` },
+                { label: "Thickness", value: `${currentProduct?.thickness}` },
+                {
+                  label: "Sub Category",
+                  value: currentProduct?.subCategory || "N/A",
+                },
+              ].map((spec, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col sm:flex-row py-2.5 sm:py-3 border-b border-gray-100"
+                >
+                  <span className="text-sm sm:text-base text-gray-600 sm:w-1/2">
+                    {spec.label}
+                  </span>
+                  <span className="text-sm sm:text-base font-medium text-gray-900 sm:w-1/2">
+                    {spec.value}
+                  </span>
+                </div>
+              ))}
+
               {currentProduct?.features.map((spec, index) => (
                 <div
                   key={index}

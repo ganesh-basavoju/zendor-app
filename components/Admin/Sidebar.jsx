@@ -49,17 +49,28 @@ const Sidebar = () => {
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t z-50">
         <div className="flex justify-around items-center h-16">
           {menuItems.map((item) => (
-            <button
+            <div
               key={item.path}
               onClick={() => router.push(item.path)}
-              className={`p-2 rounded-lg ${
-                isActive(item.path)
-                  ? 'text-[#003f62]'
-                  : 'text-gray-500'
-              }`}
+              className="flex flex-col items-center justify-center py-2 px-3 w-full"
             >
-              <item.icon size={24} />
-            </button>
+              <div 
+                className={`p-1.5 rounded-lg transition-colors ${
+                  isActive(item.path)
+                    ? 'text-[#003f62] bg-[#003f62]/10'
+                    : 'text-gray-500 hover:text-[#003f62]/80'
+                }`}
+              >
+                <item.icon size={20} />
+              </div>
+              <span 
+                className={`text-xs mt-1 font-medium ${
+                  isActive(item.path) ? 'text-[#003f62]' : 'text-gray-500'
+                }`}
+              >
+                {item.name}
+              </span>
+            </div>
           ))}
         </div>
       </div>

@@ -6,14 +6,15 @@ const LocationModal = ({ onClose, onSelectLocation }) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Updated cities with React icons instead of image paths
   const cities = [
-    { name: "Mumbai", icon: "/images/mumbai.png", pincode: "400017" },
-    { name: "Pune", icon: "/images/pune.png", pincode: "411001" },
-    { name: "Hyderabad", icon: "/images/hyderabad.png", pincode: "500001" },
-    { name: "Bengaluru", icon: "/images/bengaluru.png", pincode: "560001" },
-    { name: "Chennai", icon: "/images/chennai.png", pincode: "600001" },
-    { name: "Delhi", icon: "/images/delhi.png", pincode: "110001" },
-    { name: "Ahmedabad", icon: "/images/ahmedabad.png", pincode: "380001" },
+    { name: "Mumbai", pincode: "400017" },
+    { name: "Pune", pincode: "411001" },
+    { name: "Hyderabad", pincode: "500001" },
+    { name: "Bengaluru", pincode: "560001" },
+    { name: "Chennai", pincode: "600001" },
+    { name: "Delhi", pincode: "110001" },
+    { name: "Ahmedabad", pincode: "380001" },
   ];
 
   const handlePincodeSubmit = (e) => {
@@ -161,14 +162,10 @@ const LocationModal = ({ onClose, onSelectLocation }) => {
               }}
               className="flex flex-col items-center justify-center p-3 hover:bg-gray-50 rounded transition-colors"
             >
-              <div className="h-8 w-8 mb-1">
-                <img 
-                  src={city.icon} 
-                  alt={city.name}
-                  className="w-full h-full object-contain"
-                />
+              <div className="h-8 w-8 mb-1 flex items-center justify-center">
+                <FaMapMarkerAlt className="text-gray-600" size={20} />
               </div>
-              <div className="text-xs text-gray-900">
+              <div className="text-s text-gray-900">
                 {city.name}
               </div>
             </button>
