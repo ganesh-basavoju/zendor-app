@@ -55,6 +55,21 @@ export default function WallpaperProduct() {
   useEffect(() => {
     fetchProduct();
   }, []);
+
+  // Add new useEffect to set initial texture and color after product is loaded
+  useEffect(() => {
+    if (currentProduct && currentProduct.texture.length > 0 && currentProduct.images.length > 0) {
+      setWallDimensions((prev) => ({
+        ...prev,
+        A: {
+          ...prev.A,
+          texture: currentProduct.texture[0].name,
+          color: currentProduct.images[0].color
+        }
+      }));
+    }
+  }, [currentProduct]);
+
   // Update useEffect for price calculations
   useEffect(() => {
     if (dimensions.width > 0 || dimensions.height > 0) {
@@ -467,7 +482,6 @@ export default function WallpaperProduct() {
                   </button>
                 ))}
               </div>
-              {/* Wall Dimensions Display */}
               <div className="mt-4 space-y-2 bg-gray-50 p-4 rounded-lg">
                 {selectedWalls.map((wall) => (
                   <div
@@ -476,8 +490,7 @@ export default function WallpaperProduct() {
                   >
                     <span className="font-medium">Wall {wall}:</span>
                     <span>
-                      {wallDimensions[wall].width}x{wallDimensions[wall].height}{" "}
-                      {unit}
+                      {wallDimensions[wall].width}x{wallDimensions[wall].height} {unit}
                     </span>
                     <span>texture:{wallDimensions[wall].texture}</span>
                     <span> color:&nbsp;</span>

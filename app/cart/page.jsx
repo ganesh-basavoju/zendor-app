@@ -7,8 +7,6 @@ import axiosInstance from "@/utils/AxiosInstance";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function CartPage() {
-
- 
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -25,23 +23,23 @@ export default function CartPage() {
     fetchCartItems();
   }, []);
 
-
-  const updateQuantity=async(flag,item)=>{
-    try{
+  console.log("items", cartItems);
+  const updateQuantity = async (flag, item) => {
+    try {
       const res = await axiosInstance.put("/cart/update-quantity", {
         productId: item?._id,
-        action:flag?"increment":"decrement",
+        action: flag ? "increment" : "decrement",
       });
-      if(res.status===200){
+      if (res.status === 200) {
         toast.success("Quantity updated");
         setCartItems(res.data.cart.items);
         setTotalPrice(res.data.cart.totalAmount);
       }
-    }catch(error){
+    } catch (error) {
       toast.error(error.response?.data?.message || "Failed to update quantity");
       console.log(error);
     }
-  }
+  };
   const removeItem = async (itemId, isSample) => {
     try {
       const res = await axiosInstance.post(`/cart/remove-from-cart`, {
@@ -80,7 +78,7 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen mt-10 bg-gray-50 py-12">
-      <Toaster/>  
+      <Toaster />
       <div className="container max-w-6xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
           Material Cart
@@ -108,7 +106,11 @@ export default function CartPage() {
                       <div className="relative w-24 h-24 rounded-md overflow-hidden">
                         <Image
                           // src={item.productId?.images ||item.productId?.images[0].pic}
-                          src={item.productType=="Wallpaper"?item.productId?.images[0].pic:item.productId?.images}
+                          src={
+                            item.productType == "Wallpaper"
+                              ? item.productId?.images[0].pic
+                              : item.productId?.images
+                          }
                           alt={item.productId?.name}
                           fill
                           className="object-cover"
@@ -125,7 +127,9 @@ export default function CartPage() {
                             {item.isSample ? "Sample" : "Full Product"}
                           </p>
                           <button
-                            onClick={() => removeItem(item.productId,item.isSample)}
+                            onClick={() =>
+                              removeItem(item.productId, item.isSample)
+                            }
                             className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
                           >
                             Remove
@@ -140,7 +144,7 @@ export default function CartPage() {
                             <div className="flex items-center border rounded-lg overflow-hidden bg-white mt-2">
                               <button
                                 onClick={() =>
-                                  updateQuantity(false,item.productId)
+                                  updateQuantity(false, item.productId)
                                 }
                                 className="px-3 py-1 hover:bg-gray-100 transition-colors"
                               >
@@ -151,7 +155,7 @@ export default function CartPage() {
                               </span>
                               <button
                                 onClick={() =>
-                                  updateQuantity(true,item.productId)
+                                  updateQuantity(true, item.productId)
                                 }
                                 className="px-3 py-1 hover:bg-gray-100 transition-colors"
                               >
@@ -194,6 +198,18 @@ export default function CartPage() {
                                     {(item.floorArea[wall].price || 0).toFixed(
                                       2
                                     )}
+                                  </p>
+                                  <p>
+                                    texture:{item.floorArea[wall].texture || ""}
+                                  </p>
+                                  <p className="flex">
+                                    {" "}
+                                    color:&nbsp;
+                                    <input
+                                      type="color"
+                                      value={item.floorArea[wall].color}
+                                      disabled
+                                    />
                                   </p>
                                 </div>
                               )
