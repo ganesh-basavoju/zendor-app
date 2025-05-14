@@ -3,13 +3,15 @@ import Sidebar from './Sidebar';
 
 const AdminLayout = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <AdminNavbar />
-      <div className="flex -mt-7">
+      <div className="flex flex-col lg:flex-row">
         <Sidebar />
-        <div className="flex-1  lg:ml-64 p-6 pb-20 lg:pb-6"> {/* Added padding bottom for mobile */}
-          {children}
-        </div>
+        <main className="flex-1 lg:ml-64 p-4 md:p-6 pb-24 lg:pb-6 transition-all">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
