@@ -27,8 +27,8 @@ export const Dashboard = ({ userData, setCurrent }) => {
       state: 2 
     },
     { 
-      title: "Wishlist Items", 
-      count: userData?.wishlist?.length || 0, 
+      title: "MoodBoard Items", 
+      count: userData?.MoodBoard?.length || 0, 
       icon: Heart, 
       color: "bg-pink-500",
       state: 3 

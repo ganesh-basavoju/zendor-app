@@ -29,8 +29,25 @@ const featuredSolutions = [
 ];
 
 export const FeaturedAcousticSection = () => {
+  const handleExplore = () => {
+    // Scroll to JourneySection
+    document.getElementById('journey').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleContact = () => {
+    // WhatsApp API URL with your phone number
+    const phoneNumber = "918433900692"; // Replace with your WhatsApp number (include country code without +)
+    const message = "Hello, I'm interested in Zendorr's acoustic solutions."; // Pre-filled message
+    
+    // Create WhatsApp URL with encoded message
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-gray-50 relative">
+    <section id="featuredSection" className="py-24 bg-gradient-to-b from-white to-gray-50 relative">
       <div className="absolute inset-0">
         <div className="h-full w-full bg-[url('/diagonal-lines.svg')] opacity-10"></div>
       </div>
@@ -112,6 +129,25 @@ export const FeaturedAcousticSection = () => {
             </SwiperSlide>
           ))}
         </Swiper>
+        
+        <div className="flex justify-center mt-12 gap-6">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleExplore}
+            className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition duration-300"
+          >
+            Explore All Solutions
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleContact}
+            className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-medium hover:border-blue-600 hover:text-blue-600 transition duration-300"
+          >
+            Contact Us
+          </motion.button>
+        </div>
       </div>
     </section>
   );
