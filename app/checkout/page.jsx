@@ -145,39 +145,43 @@ export default function Checkout() {
       "State",
       "City",
       "PinCode",
-      "Street"
+      "Street",
     ];
-  
+
     const selectedAddress = addresses[selectedAddressIndex];
-    
+
     for (const field of requiredFields) {
       if (!selectedAddress[field] || selectedAddress[field].trim() === "") {
         toast.error(`Please fill the ${field} field in shipping address`);
         return;
       }
     }
-  
+
     // Validate email format
-    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(selectedAddress.email)) {
+    if (
+      !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+        selectedAddress.email
+      )
+    ) {
       toast.error("Please enter a valid email address");
       return;
     }
-  
+
     // Validate phone number
     if (!/^[0-9]{10}$/.test(selectedAddress.phone)) {
       toast.error("Please enter a valid 10-digit phone number");
       return;
     }
-  
+
     // Validate PIN code
     if (!/^[1-9][0-9]{5}$/.test(selectedAddress.PinCode)) {
       toast.error("Please enter a valid 6-digit PIN code");
       return;
     }
-  
+
     const options = {
       //key: "rzp_live_UPGjFs1QXCHtCV",
-      key:"rzp_test_qtfHIjOyxlQnr5",
+      key: "rzp_test_qtfHIjOyxlQnr5",
       amount: Math.ceil(totalPrice + tax) * 100,
       currency: "INR",
       name: "Zendor",
@@ -188,29 +192,29 @@ export default function Checkout() {
           // Verify payment first
           const verificationResponse = await axiosInstance.post(
             "/payments/verify-payment",
-            { 
+            {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature
+              razorpay_signature: response.razorpay_signature,
             }
           );
-          
-          if (verificationResponse.data.success) {
+
+          if (verificationResponse.status === 200) {
             // Prepare complete order data
             const orderData = {
               shippingAddress: {
                 firstName: selectedAddress.firstName,
                 lastName: selectedAddress.lastName,
-                companyName: selectedAddress.companyName || '',
+                companyName: selectedAddress.companyName || "",
                 email: selectedAddress.email,
                 phone: selectedAddress.phone,
                 Street: selectedAddress.Street,
-                Landmark: selectedAddress.Landmark || '',
+                Landmark: selectedAddress.Landmark || "",
                 City: selectedAddress.City,
                 State: selectedAddress.State,
                 PinCode: selectedAddress.PinCode,
-                country: selectedAddress.country || 'India',
-                isHome: selectedAddress.isHome !== false
+                country: selectedAddress.country || "India",
+                isHome: selectedAddress.isHome !== false,
               },
               paymentMode: "Prepaid",
               razorpayPaymentId: response.razorpay_payment_id,
@@ -220,7 +224,7 @@ export default function Checkout() {
               taxPrice: tax,
               shippingPrice: 0, // Or calculate if needed
               totalPrice: Math.ceil(totalPrice + tax),
-              items: cartItems.map(item => ({
+              items: cartItems.map((item) => ({
                 productId: item.productId,
                 productType: item.productType,
                 productName: item.name,
@@ -230,13 +234,16 @@ export default function Checkout() {
                 size: item.size,
                 floorArea: item.floorArea,
                 pricePerUnit: item.price,
-                totalPrice: item.totalPrice
-              }))
+                totalPrice: item.totalPrice,
+              })),
             };
-  
+
             // Create order with all required data
-            const orderRes = await axiosInstance.post("/orders/create-order", orderData);
-            
+            const orderRes = await axiosInstance.post(
+              "/orders/create-order",
+              orderData
+            );
+
             if (orderRes.data.success) {
               toast.success("Order placed successfully");
               // Clear cart or perform other success actions
@@ -245,11 +252,16 @@ export default function Checkout() {
               toast.error(orderRes.data.message || "Order creation failed");
             }
           } else {
-            toast.error(verificationResponse.data.message || "Payment verification failed");
+            toast.error(
+              verificationResponse.data.message || "Payment verification failed"
+            );
           }
         } catch (error) {
           console.error("Payment processing error:", error);
-          toast.error(error.response?.data?.message || "Error processing your order. Please contact support.");
+          toast.error(
+            error.response?.data?.message ||
+              "Error processing your order. Please contact support."
+          );
         }
       },
       prefill: {
@@ -269,7 +281,7 @@ export default function Checkout() {
         },
       },
     };
-  
+
     if (window.Razorpay) {
       const rzp = new window.Razorpay(options);
       rzp.open();
@@ -289,11 +301,11 @@ export default function Checkout() {
         "State",
         "City",
         "PinCode",
-        "Street"
+        "Street",
       ];
-  
+
       const selectedAddress = addresses[selectedAddressIndex];
-      
+
       // Validate required fields
       for (const field of requiredFields) {
         if (!selectedAddress[field] || selectedAddress[field].trim() === "") {
@@ -301,47 +313,51 @@ export default function Checkout() {
           return;
         }
       }
-  
+
       // Validate email format
-      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(selectedAddress.email)) {
+      if (
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+          selectedAddress.email
+        )
+      ) {
         toast.error("Please enter a valid email address");
         return;
       }
-  
+
       // Validate phone number
       if (!/^[0-9]{10}$/.test(selectedAddress.phone)) {
         toast.error("Please enter a valid 10-digit phone number");
         return;
       }
-  
+
       // Validate PIN code
       if (!/^[1-9][0-9]{5}$/.test(selectedAddress.PinCode)) {
         toast.error("Please enter a valid 6-digit PIN code");
         return;
       }
-  
+
       // Prepare complete order data
       const orderData = {
         shippingAddress: {
           firstName: selectedAddress.firstName,
           lastName: selectedAddress.lastName,
-          companyName: selectedAddress.companyName || '',
+          companyName: selectedAddress.companyName || "",
           email: selectedAddress.email,
           phone: selectedAddress.phone,
           Street: selectedAddress.Street,
-          Landmark: selectedAddress.Landmark || '',
+          Landmark: selectedAddress.Landmark || "",
           City: selectedAddress.City,
           State: selectedAddress.State,
           PinCode: selectedAddress.PinCode,
-          country: selectedAddress.country || 'India',
-          isHome: selectedAddress.isHome !== false
+          country: selectedAddress.country || "India",
+          isHome: selectedAddress.isHome !== false,
         },
         paymentMode: "COD",
         itemsPrice: totalPrice,
         taxPrice: tax,
         shippingPrice: 0, // Or calculate if needed
         totalPrice: Math.ceil(totalPrice + tax),
-        items: cartItems.map(item => ({
+        items: cartItems.map((item) => ({
           productId: item.productId,
           productType: item.productType,
           productName: item.name,
@@ -351,17 +367,20 @@ export default function Checkout() {
           size: item.size,
           floorArea: item.floorArea,
           pricePerUnit: item.price,
-          totalPrice: item.totalPrice
-        }))
+          totalPrice: item.totalPrice,
+        })),
       };
       console.log(orderData, "orderData");
-  
+
       // Create order
-      const response = await axiosInstance.post("/orders/create-order", orderData);
-      
+      const response = await axiosInstance.post(
+        "/orders/create-order",
+        orderData
+      );
+
       if (response.data.success) {
         toast.success("COD order placed successfully!");
-        
+
         // Redirect to order confirmation page
         router.push(`/`);
       } else {
@@ -370,8 +389,8 @@ export default function Checkout() {
     } catch (error) {
       console.error("COD order error:", error);
       toast.error(
-        error.response?.data?.message || 
-        "Error placing COD order. Please try again."
+        error.response?.data?.message ||
+          "Error placing COD order. Please try again."
       );
     }
   };
@@ -626,14 +645,21 @@ export default function Checkout() {
                               </button>
                             </div>
 
-                            <div className="text-right">
+                            <div className="text-left">
                               <p className="text-base font-semibold">
-                                ₹{(item.totalPrice || 0).toFixed(2)}
+                                ₹
+                                {Math.ceil(item.totalPrice).toLocaleString(
+                                  "en-IN"
+                                )}
                               </p>
 
-                              <span className="px-4 py-1 font-medium text-sm">
-                                Qty:{item.quantity}
-                              </span>
+                              {item.isSample ? (
+                                <span className=" py-1 font-medium text-sm">
+                                  Qty:{item.quantity}
+                                </span>
+                              ) : (
+                                ""
+                              )}
                             </div>
                           </div>
                         </div>
@@ -672,7 +698,7 @@ export default function Checkout() {
                                         Price: ₹
                                         {(
                                           item.floorArea[wall].price || 0
-                                        ).toFixed(2)}
+                                        ).toLocaleString("en-IN")}
                                       </p>
                                     </div>
                                   )
@@ -691,7 +717,7 @@ export default function Checkout() {
                         <div className="space-y-2 pt-4 border-t text-sm">
                           <div className="flex justify-between text-gray-600">
                             <span>Subtotal</span>
-                            <span>₹{totalPrice}</span>
+                            <span>₹{totalPrice.toLocaleString("en-IN")}</span>
                           </div>
                           <div className="flex justify-between text-gray-600">
                             <span>Delivery</span>
@@ -699,12 +725,19 @@ export default function Checkout() {
                           </div>
                           <div className="flex justify-between text-gray-600">
                             <span>Tax</span>
-                            <span>₹ {Math.ceil(tax)}</span>
+                            <span>
+                              ₹ {Math.ceil(tax).toLocaleString("en-IN")}
+                            </span>
                           </div>
 
                           <div className="flex justify-between text-xl font-bold pt-4 border-t">
                             <span>Total</span>
-                            <span>₹{Math.ceil(totalPrice + tax)}</span>
+                            <span>
+                              ₹
+                              {Math.ceil(totalPrice + tax).toLocaleString(
+                                "en-IN"
+                              )}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -818,7 +851,7 @@ export default function Checkout() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span>Price ({cartItems.length} items)</span>
-                  <span>₹{totalPrice}</span>
+                  <span>₹{totalPrice.toLocaleString("en-IN")}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Charges</span>
@@ -827,11 +860,14 @@ export default function Checkout() {
 
                 <div className="flex justify-between font-semibold pt-3 border-t">
                   <span>Order Amount</span>
-                  <span>₹{Math.ceil(totalPrice)}</span>
+                  <span>₹{Math.ceil(totalPrice).toLocaleString("en-IN")}</span>
                 </div>
                 <div className="flex justify-between font-semibold pt-3 border-t">
                   <span>Total Amount</span>
-                  <span>₹{Math.ceil(tax + totalPrice)} (inclusion of tax)</span>
+                  <span>
+                    ₹{Math.ceil(tax + totalPrice).toLocaleString("en-IN")}{" "}
+                    (inclusion of tax)
+                  </span>
                 </div>
               </div>
             </div>
