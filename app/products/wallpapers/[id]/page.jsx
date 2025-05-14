@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import axiosInstance from "@/utils/AxiosInstance";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { color } from "framer-motion";
 
 export default function WallpaperProduct() {
   const { id } = useParams();
@@ -12,11 +13,15 @@ export default function WallpaperProduct() {
   const [selectedSize, setSelectedSize] = useState("Custom Roll Size");
   // Add the missing texture state
   const [selectedTexture, setSelectedTexture] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState(null);
   const router = useRouter();
   const [dimensions, setDimensions] = useState({
     width: 0,
     height: 0,
     area: 0,
+    texture:"",
+    color: ""
   });
   const [unit, setUnit] = useState("inches");
   const [price, setPrice] = useState(0);
@@ -25,16 +30,13 @@ export default function WallpaperProduct() {
   const [activeWall, setActiveWall] = useState("A");
   // Update wallDimensions state to include price
   const [wallDimensions, setWallDimensions] = useState({
-    A: { width: 0, height: 0, area: 0, price: 0 },
-    B: { width: 0, height: 0, area: 0, price: 0 },
-    C: { width: 0, height: 0, area: 0, price: 0 },
-    D: { width: 0, height: 0, area: 0, price: 0 },
+    A: { width: 0, height: 0, area: 0, price: 0, texture: "", color: "" },
+    B: { width: 0, height: 0, area: 0, price: 0, texture: "", color: "" },
+    C: { width: 0, height: 0, area: 0, price: 0, texture: "", color: "" },
+    D: { width: 0, height: 0, area: 0, price: 0, texture: "", color: "" },
   });
 
   const [selectedImage, setSelectedImage] = useState(0);
-
-  const [loading, setLoading] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState(null);
 
   const fetchProduct = async () => {
     try {
@@ -80,12 +82,13 @@ export default function WallpaperProduct() {
           height: dimensions.height,
           area: Math.ceil(areaWithWaste),
           price: wallPrice,
+          texture: currentProduct?.texture[selectedTexture]?.name,
+          color: currentProduct?.images[selectedImage].color,
         },
       }));
     }
-  }, [dimensions.width, dimensions.height, unit, activeWall, selectedTexture]);
+  }, [dimensions.width, dimensions.height, unit, activeWall, selectedTexture,selectedImage]);
 
- 
   // Update useEffect for total price calculation
   useEffect(() => {
     let totalWallsPrice =
@@ -141,7 +144,7 @@ export default function WallpaperProduct() {
             selectedWalls.map((wall) => [`wall${wall}`, wallDimensions[wall]])
           ),
           pricePerUnit: currentProduct?.dp,
-          totalPrice:price,
+          totalPrice: price,
         };
       }
 
@@ -175,6 +178,8 @@ export default function WallpaperProduct() {
       width: wallDimensions[wall].width,
       height: wallDimensions[wall].height,
       area: wallDimensions[wall].area,
+      texture: wallDimensions[wall].texture,
+      color: wallDimensions[wall].color,
     });
   };
 
@@ -473,6 +478,15 @@ export default function WallpaperProduct() {
                     <span>
                       {wallDimensions[wall].width}x{wallDimensions[wall].height}{" "}
                       {unit}
+                    </span>
+                    <span>texture:{wallDimensions[wall].texture}</span>
+                    <span> color:&nbsp;</span>
+                    <span className="flex text-center">
+                      <input
+                        type="color"
+                        value={wallDimensions[wall].color}
+                        disabled
+                      />
                     </span>
                     <span>({wallDimensions[wall].area} sq.ft)</span>
                     <span className="text-blue-600">
