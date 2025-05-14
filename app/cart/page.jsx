@@ -138,7 +138,9 @@ export default function CartPage() {
 
                         <div className="text-right">
                           <p className="text-base font-semibold">
-                            ₹{(item.totalPrice || 0).toFixed(2)}
+                            ₹
+                            {(item.totalPrice || 0)
+                              .toLocaleString("en-IN")}
                           </p>
                           {item.isSample && (
                             <div className="flex items-center border rounded-lg overflow-hidden bg-white mt-2">
@@ -195,9 +197,9 @@ export default function CartPage() {
                                   </p>
                                   <p>
                                     Price: ₹
-                                    {(item.floorArea[wall].price || 0).toFixed(
-                                      2
-                                    )}
+                                    {(item.floorArea[wall].price || 0)
+                                      .toFixed(2)
+                                      .toLocaleString("en-IN")}
                                   </p>
                                   <p>
                                     texture:{item.floorArea[wall].texture || ""}
@@ -229,7 +231,7 @@ export default function CartPage() {
                 <div className="space-y-2 pt-4 border-t text-sm">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal</span>
-                    <span>₹{totalPrice}</span>
+                    <span>₹{totalPrice.toLocaleString("en-IN")}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Delivery</span>
@@ -241,7 +243,7 @@ export default function CartPage() {
                   </div> */}
                   <div className="flex justify-between text-xl font-bold pt-4 border-t">
                     <span>Total</span>
-                    <span>₹{totalPrice}</span>
+                    <span>₹{totalPrice.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
 
