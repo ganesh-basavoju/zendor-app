@@ -211,7 +211,7 @@ const Navbar = () => {
                           key={`${product._id || product.id || index}`}
                           onClick={() => {
                             router.push(
-                              `/category/${product.category.toLowerCase()}`
+                              `/products/${product.type=="wallpaper"?"wallpapers":"wooden-flooring"}/${product.id}`
                             );
                             setSearchQuery("");
                             setShowSearchResults(false);
