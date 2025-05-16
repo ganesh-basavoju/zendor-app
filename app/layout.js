@@ -7,6 +7,7 @@ import ClientWrapper from "@/components/Global/ClientWrapper";
 import { usePathname } from "next/navigation";
 import { Provider, useDispatch } from "react-redux";
 import store from "../store"; // Ensure this path is correct
+import clsx from "clsx";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
 
   const isHomePage = pathname === "/";
+  const isAdminPage = pathname.startsWith("/admin");
 
   return (
     <html lang="en">
@@ -35,7 +37,10 @@ export default function RootLayout({ children }) {
       >
         <Provider store={store}>
           <Navbar />
-          <main className={!isHomePage && "mt-25"}>
+          <main className={clsx({
+          "mt-25": !isHomePage&&!isAdminPage,
+          "mt-15": isAdminPage
+        })}>
             <ClientWrapper>{children}</ClientWrapper>
           </main>
         </Provider>

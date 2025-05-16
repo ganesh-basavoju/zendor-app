@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Bell, ChevronDown, Search, Menu, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axiosInstance from "@/utils/AxiosInstance";
@@ -12,7 +12,8 @@ const AdminNavbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const router = useRouter();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
+  const dropdownRef = useRef(null);
 
   // Sample search data - replace with your actual data
   const searchItems = [
@@ -51,7 +52,16 @@ const AdminNavbar = () => {
             id: item._id,
             title: item.name || item.title,
             type: item.category || 'Product',
-            link: `/admin/products/${item._id}`
+            // Determine the link based on the item type/category
+            link: item.category === 'Order' 
+              ? `/admin/orders/${item.id}`
+              : item.category === 'User'
+                ? `/admin/users/${item.id}`
+                : item.type === 'wallpaper'
+                  ? `/admin/products/wallpapers/${item.id}`
+                  : item.type === 'woodenFloor'
+                    ? `/admin/products/wooden-flooring/${item.id}`
+                    : `/admin/products/${item.id}`
           }));
           setSearchResults(formattedResults);
         }
@@ -82,6 +92,25 @@ const AdminNavbar = () => {
 
     //  irect to home page
   };
+
+  // Handle clicks outside of dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    // Add event listener when dropdown is open
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    // Cleanup event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   return (
     <nav className="bg-white top-0 shadow-md h-16 px-4 md:px-6 flex items-center justify-between fixed w-full z-50">
@@ -170,7 +199,7 @@ const AdminNavbar = () => {
           </span>
         </button> */}
 
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <button 
             className="flex items-center gap-2 py-2 px-4 rounded-lg hover:bg-[#003f62]/10 transition-colors text-[#003f62]"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -181,12 +210,6 @@ const AdminNavbar = () => {
 
           {isDropdownOpen && (
             <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-1 border">
-              <button 
-                className="w-full text-left px-4 py-2 hover:bg-[#003f62]/10 transition-colors text-[#003f62]"
-                onClick={() => router.push('/admin/settings')}
-              >
-                Change Password
-              </button>
               <button 
                 className="w-full text-left px-4 py-2 hover:bg-red-50 transition-colors text-red-600"
                 onClick={() => {

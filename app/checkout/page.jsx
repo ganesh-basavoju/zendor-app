@@ -531,11 +531,16 @@ export default function Checkout() {
                     {selectedAddress != null ? <Check size={16} /> : "2"}
                   </span>
                   <h2 className="font-semibold">DELIVERY ADDRESS</h2>
+                  
                 </div>
+                
               </div>
-
+              
               {activeStep >= 2 && (
                 <>
+                <p className="pb-1">
+                  Select a Address from below
+                </p>
                   {addresses.map((address, id) => (
                     <div
                       key={id}
