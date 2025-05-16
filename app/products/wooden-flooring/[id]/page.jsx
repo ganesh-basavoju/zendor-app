@@ -120,6 +120,22 @@ export default function WoodenFlooringProduct() {
     try {
       let data = {};
       if (selectedSize === "Custom Roll Size") {
+        // Create an object with only the selected walls
+        const selectedFloorAreas = {};
+        
+        // Only include walls that are selected and have dimensions
+        selectedWalls.forEach(wall => {
+          if (wallDimensions[wall].area > 0) {
+            selectedFloorAreas[`wall${wall}`] = wallDimensions[wall];
+          }
+        });
+        
+        // Check if any walls are selected
+        if (Object.keys(selectedFloorAreas).length === 0) {
+          toast.error("Please select at least one wall and provide dimensions");
+          return;
+        }
+        
         data = {
           productId: currentProduct?._id,
           productType: "WoodenFloor",
@@ -127,12 +143,7 @@ export default function WoodenFlooringProduct() {
           size: {
             unit: unit, // Use the selected unit instead of hardcoding "feet"
           },
-          floorArea: {
-            wallA: wallDimensions.A,
-            wallB: wallDimensions.B,
-            wallC: wallDimensions.C,
-            wallD: wallDimensions.D,
-          },
+          floorArea: selectedFloorAreas,
           pricePerUnit: currentProduct?.dp,
           totalPrice: price,
         };

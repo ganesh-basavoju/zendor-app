@@ -6,27 +6,6 @@ import { useRouter } from 'next/navigation';
 export const HeroSection = () => {
   const router = useRouter();
 
-  const handleExplore = () => {
-    // Scroll to JourneySection
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth'
-    });
-  };
-
-  const handleContact = () => {
-    // Find the last section (ContactSection)
-    const sections = document.querySelectorAll('section');
-    const lastSection = sections[sections.length - 1];
-    
-    if (lastSection) {
-      window.scrollTo({
-        top: lastSection.offsetTop - 100,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
     <div className="relative bg-gradient-to-b from-white to-gray-50">
       <div className="absolute inset-0">
@@ -82,13 +61,13 @@ export const HeroSection = () => {
               className="flex flex-wrap gap-4 pt-4"
             >
               <button
-                onClick={()=>{handleExplore()}}
+                onClick={() => document.getElementById('featuredSection').scrollIntoView({ behavior: 'smooth' })}
                 className="px-6 py-3 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition duration-300"
               >
                 Explore Solutions
               </button>
               <button
-                onClick={handleContact}
+                onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}
                 className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-medium hover:border-blue-600 hover:text-blue-600 transition duration-300"
               >
                 Contact Us

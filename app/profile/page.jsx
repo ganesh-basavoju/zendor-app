@@ -14,6 +14,7 @@ import {
   MapPin,
   User,
   LogOut,
+  UserCircle,
 } from "lucide-react";
 import MoodBoard from "@/components/Profilepage/Wishlist";
 import localStorage from "redux-persist/lib/storage";
@@ -97,7 +98,7 @@ const Profilepage = () => {
     profilePicture: "",
     createdAt: "",
     orders: [],
-    wishlist: [],
+    MoodBoard: [],
     cart: [],
     billingAddress: {},
     shippingAddress: {},
@@ -116,13 +117,10 @@ const Profilepage = () => {
             userName: userData.userName || "Guest User",
             email: userData.email || "",
             phone: userData.phone === "None" ? "" : userData.phone,
-            profilePicture:
-              userData.profilePicture === "None"
-                ? "https://cdn-icons-png.freepik.com/512/13014/13014933.png"
-                : userData.profilePicture,
+            profilePicture: userData.profilePicture === "None" ? null : userData.profilePicture,
             createdAt: userData.createdAt,
             orders: userData.orders || [],
-            wishlist: userData.wishlist || [],
+            MoodBoard: userData.MoodBoard || [],
             cart: userData.cart || [],
             billingAddress: userData.billingAddress || {},
             shippingAddress: userData.shippingAddress || {},
@@ -162,7 +160,7 @@ const Profilepage = () => {
   };
 
   return (
-    <div className="mt-12 min-h-screen bg-gray-50">
+    <div className="mt-1 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center sm:text-left">
           My Account
@@ -174,13 +172,19 @@ const Profilepage = () => {
             <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
               <div className="text-center mb-6">
                 <div className="relative w-24 h-24 mx-auto mb-4">
-                  <Image
-                    src={userData.profilePicture}
-                    alt="Profile"
-                    width={96}
-                    height={96}
-                    className="rounded-full object-cover w-full h-full ring-4 ring-gray-50"
-                  />
+                  {userData.profilePicture ? (
+                    <Image
+                      src={userData.profilePicture}
+                      alt="Profile"
+                      width={96}
+                      height={96}
+                      className="rounded-full object-cover w-full h-full ring-4 ring-gray-50"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-full ring-4 ring-gray-50">
+                      <UserCircle size={80} className="text-gray-400" />
+                    </div>
+                  )}
                   <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-400 border-2 border-white rounded-full" />
                 </div>
                 <h2 className="font-semibold text-gray-900">
