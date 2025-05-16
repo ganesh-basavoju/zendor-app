@@ -548,7 +548,7 @@ export default function WoodenFlooringProduct() {
         </div>
       </div>
       {/* Related Products Section */}
-      <div className="mt-16">
+      {/* <div className="mt-16">
         <h2 className="text-2xl font-semibold mb-6">More products</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {relatedProducts.map((relatedProduct) => (
@@ -575,7 +575,7 @@ export default function WoodenFlooringProduct() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
