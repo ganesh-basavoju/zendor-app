@@ -118,7 +118,7 @@ const Profilepage = () => {
             phone: userData.phone === "None" ? "" : userData.phone,
             profilePicture:
               userData.profilePicture === "None"
-                ? "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg"
+                ? "https://cdn-icons-png.freepik.com/512/13014/13014933.png"
                 : userData.profilePicture,
             createdAt: userData.createdAt,
             orders: userData.orders || [],
@@ -138,6 +138,7 @@ const Profilepage = () => {
 
     fetchUserProfile();
   }, []);
+  console.log(userData, "userData");
 
   const CurrentComponent =
     menuItems.find((item) => item.id === current)?.component || Dashboard;
@@ -158,8 +159,6 @@ const Profilepage = () => {
     // Remove the token from localS
     dispatch(logout());
     router.push("/");
-
-    //  irect to home page
   };
 
   return (
