@@ -136,6 +136,7 @@ const Profilepage = () => {
 
     fetchUserProfile();
   }, []);
+  console.log(userData, "userData");
 
   const CurrentComponent =
     menuItems.find((item) => item.id === current)?.component || Dashboard;
@@ -156,8 +157,6 @@ const Profilepage = () => {
     // Remove the token from localS
     dispatch(logout());
     router.push("/");
-
-    //  irect to home page
   };
 
   return (

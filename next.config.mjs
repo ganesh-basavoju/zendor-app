@@ -21,6 +21,7 @@ const nextConfig = {
       "150751433.v2.pressablecdn.com",
       "i.ibb.co",
       "www.bohomaterials.com",
+      "cdn-icons-png.freepik.com"
     ], // Allow external images from Pexels
   },
 };
