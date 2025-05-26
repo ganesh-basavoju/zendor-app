@@ -31,6 +31,7 @@ const AllProducts = ({ name, subcategory }) => {
 
   // Fetch categories based on product type
   useEffect(() => {
+    
     const fetchCategories = async () => {
       setLoadingCategories(true);
       try {

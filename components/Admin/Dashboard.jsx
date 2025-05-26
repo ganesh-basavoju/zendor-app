@@ -372,7 +372,9 @@ const Dashboard = () => {
                         {order.status}
                       </span>
                     </td>
-                    <td className="p-4 text-right text-sm font-medium text-gray-800">{order.amount}</td>
+                    <td className="p-4 text-right text-sm font-medium text-gray-800">
+                      ₹{parseFloat(order.amount.toString().replace(/[₹,]/g, '')).toLocaleString('en-IN')}
+                    </td>
                   </tr>
                 ))}
               </tbody>

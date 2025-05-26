@@ -41,7 +41,14 @@ export default function CategoryPage({ params }) {
   const [collections, setCollections] = useState([,]);
 
   const handleHeartClick = (e, product) => {
+    
     e.stopPropagation(); // Prevent product click event
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to add to MoodBoard");
+      router.push("/login"); // Redirect to login page
+      return;
+    }
     setSelectedProduct(product);
     setShowCollectionModal(true);
   };
