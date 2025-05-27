@@ -78,6 +78,17 @@ export const HeroSection = () => {
               >
                 Request Callback
               </button>
+              <button
+              onClick={() => {
+                document.querySelector("#contact-form").scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+              className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition cursor-pointer"
+
+            >
+              Request a Callback
+            </button>
 
               <button
 

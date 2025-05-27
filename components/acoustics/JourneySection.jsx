@@ -50,7 +50,7 @@ export const JourneySection = () => {
           className="text-center mb-20"
         >
           <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Your Journey with Zendorr
+            Your Journey with Zendor
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-gray-900 to-gray-700 mx-auto"></div>
         </motion.div>
