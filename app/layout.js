@@ -7,6 +7,7 @@ import ClientWrapper from "@/components/Global/ClientWrapper";
 import { usePathname } from "next/navigation";
 import { Provider, useDispatch } from "react-redux";
 import store from "@/store";
+import clsx from "clsx";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
