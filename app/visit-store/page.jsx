@@ -6,15 +6,14 @@ import { MapPin, Clock, Phone, Mail, Car, Bike, Bus } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
 const VisitStore = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
 
   const handleWhatsAppMessage = () => {
-    if (!phoneNumber) return;
+
     const message = encodeURIComponent(
-      "Hi! I would like to visit your store. Please provide more information."
+      "Good day! I’d like to schedule a visit to your store. Kindly provide the necessary details"
     );
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+    window.open(`https://wa.me/${8433900692}?text=${message}`, "_blank");
   };
 
   return (
@@ -40,7 +39,6 @@ const VisitStore = () => {
                 });
               }}
               className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition cursor-pointer"
-
             >
               Request a Callback
             </button>
@@ -123,16 +121,20 @@ const VisitStore = () => {
                 Want to visit? Let's talk first.
               </h3>
               <div className="space-y-4">
-                <input
+                <span className="mb-5">
+                  Want to speak with us before you visit? Tap the button below
+                  to message our store manager directly on WhatsApp.
+                </span>
+                {/* <input
                   type="tel"
                   placeholder="Enter your mobile number"
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                />
+                /> */}
                 <button
                   onClick={handleWhatsAppMessage}
-                  className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
+                  className="w-full mt-3 cursor-pointer flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
                 >
                   <FaWhatsapp className="text-xl" />
                   Send WhatsApp Message
