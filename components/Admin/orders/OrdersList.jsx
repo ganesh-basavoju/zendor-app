@@ -72,7 +72,7 @@ const OrdersList = () => {
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <h3 className="text-gray-600">Total Revenue</h3>
-            <p className="text-2xl font-semibold text-green-600">₹{statistics.totalRevenue.toFixed(2)}</p>
+            <p className="text-2xl font-semibold text-green-600">₹{statistics.totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <h3 className="text-gray-600">Pending Orders</h3>
@@ -177,7 +177,7 @@ const OrdersList = () => {
                         {order.status}
                       </span>
                     </td>
-                    <td className="p-4 text-right font-medium text-gray-700">{order.amount}</td>
+                    <td className="p-4 text-right font-medium text-gray-700">₹{parseFloat(order.amount.toString().replace(/[₹,]/g, '')).toLocaleString('en-IN')}</td>
                     <td className="p-4 text-right">
                       <button 
                         onClick={() => handleViewDetails(order._id)}

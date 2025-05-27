@@ -442,7 +442,7 @@ export default function WoodenFlooringProduct() {
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    Wall {wall}
+                    Floor {wall}
                   </button>
                 ))}
               </div>
