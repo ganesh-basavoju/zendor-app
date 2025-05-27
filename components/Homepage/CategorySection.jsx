@@ -4,34 +4,36 @@ import { useRouter } from "next/navigation";
 
 const categories = [
   {
-    name: "Luxury Cushions",
-    description: "Handcrafted comfort for your home",
-    image: "https://images.pexels.com/photos/1435752/pexels-photo-1435752.jpeg",
-  },
-  {
-    name: "Premium Sheers",
-    description: "Elegant drapes that transform spaces",
-    image: "https://images.pexels.com/photos/1339194/pexels-photo-1339194.jpeg",
-  },
-  {
     name: "Designer Wallpapers",
-    description: "Artisan patterns for your walls",
-    image: "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg",
+    description: "Stylish and timeless wallpaper designs to elevate any space",
+    image: "https://2.wlimg.com/product_images/bc-full/2023/2/11673283/designer-wallpaper-1675669074-6749474.jpeg",
+    link:"/category/wallpaper/All"
   },
   {
-    name: "Wall Decals",
-    description: "Statement pieces that inspire",
-    image: "https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg",
+    name: "Wooden Floorings",
+    description: "Premium quality wooden floors that blend durability with elegance",
+    image: "https://images.pexels.com/photos/276528/pexels-photo-276528.jpeg",
+     link:"/category/wooden flooring/All"
   },
+  {
+    name: "Acoustic Panels",
+    description: "Modern soundproofing solutions for homes, studios, and offices",
+    image: "https://images.pexels.com/photos/164938/pexels-photo-164938.jpeg",
+    link:"/category/acoustics"
+  },
+  // {
+  //   name: "Decorative Wall Elements",
+  //   description: "Eye-catching designs and finishes that bring walls to life",
+  //   image: "https://images.pexels.com/photos/374870/pexels-photo-374870.jpeg",
+  // },
 ];
+
 
 const CategorySection = () => {
   const router = useRouter();
 
-  const handleCategoryClick = (categoryName) => {
-    // Convert category name to URL-friendly slug
-    const slug = categoryName.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/category/${slug}`);
+  const handleCategoryClick = (link) => {
+    router.push(link);
   };
 
   return (
@@ -46,12 +48,12 @@ const CategorySection = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {categories.map((category, index) => (
             <div 
               key={index} 
-              className="group cursor-pointer"
-              onClick={() => handleCategoryClick(category.name)}
+              className="group cursor-pointer w-full max-w-sm mx-auto"
+              onClick={() => handleCategoryClick(category.link)}
             >
               <div className="relative mb-6">
                 <div className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 group-hover:scale-105">

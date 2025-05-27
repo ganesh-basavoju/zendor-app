@@ -6,7 +6,7 @@ import Footer from "@/components/Global/Footer";
 import ClientWrapper from "@/components/Global/ClientWrapper";
 import { usePathname } from "next/navigation";
 import { Provider, useDispatch } from "react-redux";
-import store from "../store"; // Ensure this path is correct
+import store from "@/store";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+// in /lib/fonts.js
+
+
+
+
 
 // export const metadata = {
 //   title: "Zendor Home",

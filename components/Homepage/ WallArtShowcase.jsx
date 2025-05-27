@@ -6,7 +6,7 @@ const WallArtShowcase = () => {
   const router = useRouter();
 
   const handleShopNow = () => {
-    router.push('/products/explore');
+    router.push('/category/wallpaper/All');
   };
   return (
     <div className="relative w-full min-h-screen bg-white flex flex-col md:flex-row items-center px-6 md:px-12 py-12">

@@ -18,24 +18,28 @@ const Hero = () => {
 
   const slides = [
     {
-      image: "https://d3o59fu9acgbkr.cloudfront.net/jrc2021/home/master/2025/2/28/jrc-desktop-banner-2-28-2025-12-17-04-PM.jpg",
-      label: "Luxury Home Textiles",
-      description: "Transform your space with our premium collection",
-      buttonText: "Explore Collection"
-    },
-    {
-      image: "https://images.jaipurrugs.com/blog/2025/2/PO-361/ramadan-home-decor-tips-tricks.jpg",
-      label: "Artisan Crafted Fabrics",
-      description: "Handwoven excellence for your home",
-      buttonText: "Shop Fabrics"
-    },
-    {
-      image: "https://images.jaipurrugs.com/blog/2025/2/PO-361/rugs-and-carpets-for-ramadan.jpg",
+      image: "https://www.ddecor.com/media/wysiwyg/MODERN_METALLICS_1_main.jpg", // wallpaper
       label: "Designer Wallpapers",
-      description: "Elevate your walls with timeless designs",
-      buttonText: "View Wallpapers"
+      description: "Elevate your walls with artistic and timeless designs",
+      buttonText: "View Wallpapers",
+      link:"/category/wallpaper/All"
     },
+    {
+      image: "https://www.lifecoreflooring.com/wp-content/uploads/2019/04/Kitchen-Hardwood-Flooring-Options.png", // wooden flooring
+      label: "Premium Wooden Floorings",
+      description: "Timeless elegance and durability for your dream space",
+      buttonText: "Explore Floorings",
+      link:"/category/wooden flooring/All"
+    },
+    {
+      image: "https://www.thefloorgallery.sg/wp-content/uploads/acoustic-wall-panels-balancing-sound-and-design-in-modern-spaces.jpg", // acoustic panels
+      label: "Aesthetic Acoustic Panels",
+      description: "Reduce noise, enhance style — perfect for modern interiors",
+      buttonText: "Discover Acoustics",
+      link:"/category/acoustics"
+    }
   ];
+  
 
   return (
     <section className="w-full h-[800px] relative overflow-hidden">
@@ -76,7 +80,7 @@ const Hero = () => {
                   </p>
                   <div className="pt-4 flex gap-4">
                     <Button 
-                      onClick={()=>navigate(`/category/${slide.label}`)} 
+                      onClick={()=>navigate(slide.link)} 
                       className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-6 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       <ShoppingCart className="mr-2 h-5 w-5" />

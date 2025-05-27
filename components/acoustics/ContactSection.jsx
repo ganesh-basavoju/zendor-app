@@ -56,14 +56,14 @@ export const ContactSection = () => {
                   href="mailto:bohoprocure@gmail.com" 
                   className="text-white/80 text-md font-light hover:text-white transition-all duration-300 hover:tracking-wide"
                 >
-                  bohoprocure@gmail.com
+                  myzendor@gmail.com
                 </a>
               </div>
 
               <div>
                 <h3 className="text-xl font-semibold mb-2 text-white tracking-wide">PHONE NUMBER</h3>
                 <a 
-                  href="tel:+918433900692" 
+                  href="tel:+91 84339 00692" 
                   className="text-white/80 text-md font-light hover:text-white transition-all duration-300 hover:tracking-wide"
                 >
                   +91 8433900692

@@ -9,7 +9,7 @@ import CategorySection from "@/components/Homepage/CategorySection";
 import Handcrafted from "@/components/Homepage/HandCrafted";
 import Hero from "@/components/Homepage/Hero";
 import ImageSlider from "@/components/Homepage/ImageSlider";
-import ExploreAll from "@/components/Homepage/ExploreAll";
+// import ExploreAll from "@/components/Homepage/ExploreAll";
 import { Montserrat, Playfair_Display, Poppins, Lora } from 'next/font/google';
 
 export const mont = Montserrat({ subsets: ['latin'], weight: ['400', '600', '700'], variable: '--font-montserrat' });
@@ -29,7 +29,6 @@ export default function Home() {
       <AllTypesSection/>
       <WallArtShowcase/>
       <Bestsellers/>
-      {/* <ExploreAll/> */}
       <Handcrafted/>
     </div>
   );

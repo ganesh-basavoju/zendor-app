@@ -1,5 +1,14 @@
 import { poppins } from "@/app/page";
-import { Facebook, Instagram, Mail, Phone, MessageCircle, MapPin, Twitter, Youtube } from "lucide-react";
+import {
+  Facebook,
+  Instagram,
+  Mail,
+  Phone,
+  MessageCircle,
+  MapPin,
+  Twitter,
+  Youtube,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -7,20 +16,20 @@ const footerLinks = {
   company: [
     { title: "About Us", href: "/about" },
     { title: "Our Story", href: "/story" },
-    { title: "Careers", href: "/careers" },
-    { title: "Press", href: "/press" }
+    // { title: "Careers", href: "/careers" },
+    // { title: "Press", href: "/press" }
   ],
   support: [
     { title: "Contact", href: "/contact" },
     { title: "Order Tracking", href: "/tracking" },
     { title: "Shipping Info", href: "/shipping" },
-    { title: "Returns", href: "/returns" }
+    { title: "Returns", href: "/returns" },
   ],
   legal: [
     { title: "Terms of Service", href: "/terms" },
     { title: "Privacy Policy", href: "/privacy" },
-    { title: "Cookie Policy", href: "/cookies" }
-  ]
+    { title: "Cookie Policy", href: "/cookies" },
+  ],
 };
 
 export default function Footer() {
@@ -33,8 +42,9 @@ export default function Footer() {
             <div>
               <h2 className="text-2xl font-bold text-white">Zendorr</h2>
               <p className="text-gray-400 mt-4 leading-relaxed">
-                Crafting luxurious home décor through artisanal excellence. 
-                Transforming spaces with premium wallpapers, fabrics, and bespoke designs.
+                Elevating interiors with artistic precision. Explore premium
+                wallpapers, wooden floorings, and acoustic panels tailored for
+                timeless elegance.
               </p>
             </div>
             <div className="flex space-x-4">
@@ -52,26 +62,29 @@ export default function Footer() {
 
           {/* Contact Information */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Contact Us</h3>
+            <h3 className="text-lg font-semibold text-white">Get in Touch</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3 text-gray-400">
                 <Mail size={18} />
-                <span>care@zendorr.com</span>
+                <span>myzendor@gmail.com</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <Phone size={18} />
-                <span>+91 7400 464 922</span>
+                <span>+91 84339 00692 </span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <MapPin size={18} />
-                <span>10:30 to 18:30 IST | Mon – Sat</span>
+                <span>
+                  10:00 AM – 8:00 PM IST <br />
+                  Mon – Sun
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Company Links */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Company</h3>
+            <h3 className="text-lg font-semibold text-white">Explore</h3>
             <div className="grid grid-cols-1 gap-3">
               {footerLinks.company.map((link, index) => (
                 <Link
@@ -85,9 +98,9 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Support Links */}
+          {/* Customer Care */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Support</h3>
+            <h3 className="text-lg font-semibold text-white">Customer Care</h3>
             <div className="grid grid-cols-1 gap-3">
               {footerLinks.support.map((link, index) => (
                 <Link
@@ -106,7 +119,7 @@ export default function Footer() {
         <div className="mt-16 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} Zendorr. All rights reserved.
+              © {new Date().getFullYear()} Zendorr. Crafted with elegance.
             </p>
             <div className="flex space-x-6">
               {footerLinks.legal.map((link, index) => (
