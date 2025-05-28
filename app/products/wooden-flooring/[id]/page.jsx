@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axiosInstance from "@/utils/AxiosInstance";
 import toast, { Toaster } from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "@/store/cartSlice";
 
 export default function WoodenFlooringProduct() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function WoodenFlooringProduct() {
     area: 0,
   });
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -74,8 +76,14 @@ export default function WoodenFlooringProduct() {
   });
 
   useEffect(() => {
-    const totalWallsPrice =wallDimensions.A.price + wallDimensions.B.price + wallDimensions.C.price + wallDimensions.D.price;
-    setPrice(selectedSize==="Sample"? currentProduct?.sampleCost : totalWallsPrice);
+    const totalWallsPrice =
+      wallDimensions.A.price +
+      wallDimensions.B.price +
+      wallDimensions.C.price +
+      wallDimensions.D.price;
+    setPrice(
+      selectedSize === "Sample" ? currentProduct?.sampleCost : totalWallsPrice
+    );
   }, [wallDimensions, selectedWalls, selectedSize, quantity]);
 
   // Update useEffect for price calculations
@@ -107,35 +115,29 @@ export default function WoodenFlooringProduct() {
     }
   }, [dimensions.width, dimensions.height, unit, activeWall]);
 
-
   const handleAddToCart = async () => {
     // Check if token exists in both Redux and localStorage
     const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login to add to cart");
-      router.push("/login"); // Redirect to login page
-      return;
-    }
 
     try {
       let data = {};
       if (selectedSize === "Custom Roll Size") {
         // Create an object with only the selected walls
         const selectedFloorAreas = {};
-        
+
         // Only include walls that are selected and have dimensions
-        selectedWalls.forEach(wall => {
+        selectedWalls.forEach((wall) => {
           if (wallDimensions[wall].area > 0) {
             selectedFloorAreas[`wall${wall}`] = wallDimensions[wall];
           }
         });
-        
+
         // Check if any walls are selected
         if (Object.keys(selectedFloorAreas).length === 0) {
           toast.error("Please select at least one wall and provide dimensions");
           return;
         }
-        
+
         data = {
           productId: currentProduct?._id,
           productType: "WoodenFloor",
@@ -161,13 +163,18 @@ export default function WoodenFlooringProduct() {
         toast.error("Please give custom size for walls");
         return;
       }
-
-      const res = await axiosInstance.post("/cart/add-to-cart", {
-        items: [data],
-      });
-      if (res.status === 200) {
-        toast.success("Product added to cart");
-        router.push("/cart");
+      if (!token) {
+        dispatch(addToCart(data));
+        toast.success("product added successfully ");
+        return;
+      } else {
+        const res = await axiosInstance.post("/cart/add-to-cart", {
+          items: [data],
+        });
+        if (res.status === 200) {
+          toast.success("Product added to cart");
+          router.push("/cart");
+        }
       }
     } catch (error) {
       console.error("Cart error:", error);
@@ -246,10 +253,10 @@ export default function WoodenFlooringProduct() {
               {currentProduct?.description}
             </p>
             <p className="text-xl sm:text-2xl font-medium text-gray-900 mt-2 sm:mt-4">
-              ₹{' '}
+              ₹{" "}
               {selectedSize === "Sample"
-                ? currentProduct?.sampleCost?.toLocaleString('en-IN')
-                : price?.toLocaleString('en-IN')}
+                ? currentProduct?.sampleCost?.toLocaleString("en-IN")
+                : price?.toLocaleString("en-IN")}
             </p>
           </div>
 
@@ -460,7 +467,7 @@ export default function WoodenFlooringProduct() {
                     </span>
                     <span>({wallDimensions[wall].area} sq.ft)</span>
                     <span className="text-blue-600">
-                      ₹{wallDimensions[wall].price.toLocaleString('en-IN')}
+                      ₹{wallDimensions[wall].price.toLocaleString("en-IN")}
                     </span>
                   </div>
                 ))}

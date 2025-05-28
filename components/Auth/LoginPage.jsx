@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { Button } from "@mui/material";
 
 const LoginPage = ({ onSuccess }) => {
+  
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -44,6 +45,7 @@ const LoginPage = ({ onSuccess }) => {
       toast.error(errorMessage);
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

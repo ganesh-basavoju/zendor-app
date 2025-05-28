@@ -6,14 +6,15 @@ import { MapPin, Clock, Phone, Mail, Car, Bike, Bus } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
 const VisitStore = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [openFaq, setOpenFaq] = useState(null);
 
   const handleWhatsAppMessage = () => {
-
+    if (!phoneNumber) return;
     const message = encodeURIComponent(
-      "Good day! I’d like to schedule a visit to your store. Kindly provide the necessary details"
+      "Hi! I would like to visit your store. Please provide more information."
     );
-    window.open(`https://wa.me/${8433900692}?text=${message}`, "_blank");
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
   };
 
   return (
@@ -32,14 +33,7 @@ const VisitStore = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Let's connect in person - we'd love to meet you.
             </h1>
-            <button
-              onClick={() => {
-                document.querySelector("#store-info").scrollIntoView({
-                  behavior: "smooth",
-                });
-              }}
-              className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition cursor-pointer"
-            >
+            <button className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition">
               Request a Callback
             </button>
           </div>
@@ -47,7 +41,7 @@ const VisitStore = () => {
       </section>
 
       {/* Store Information */}
-      <section className="py-12 px-4 max-w-6xl mx-auto" id="store-info">
+      <section className="py-12 px-4 max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold">Store Information</h2>
@@ -56,10 +50,7 @@ const VisitStore = () => {
               <MapPin className="w-6 h-6 text-gray-600 mt-1" />
               <div>
                 <h3 className="font-medium">Address</h3>
-                <p className="text-gray-600">
-                  A-501 Orchid Business Park Military Road Marol Andheri East
-                  Mumbai
-                </p>
+                <p className="text-gray-600">A-501 Orchid Business Park Military Road Marol Andheri East Mumbai</p>
               </div>
             </div>
 
@@ -67,7 +58,9 @@ const VisitStore = () => {
               <Clock className="w-6 h-6 text-gray-600 mt-1" />
               <div>
                 <h3 className="font-medium">Opening Hours</h3>
-                <p className="text-gray-600">Mon-Sun: 10 AM - 8 PM</p>
+                <p className="text-gray-600">
+                  Mon-Sun: 10 AM - 8 PM
+                </p>
               </div>
             </div>
 
@@ -85,17 +78,6 @@ const VisitStore = () => {
                 <h3 className="font-medium">Email</h3>
                 <p className="text-gray-600">myzendor@gmail.com</p>
               </div>
-            </div>
-            <div className="mt-6 rounded-lg overflow-hidden shadow-sm h-[300px] w-full">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.7862000460214!2d72.87272087497825!3d19.107843982108674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c83e4a8c5e67%3A0x3a1e8c4f2e3f4c5d!2sOrchid%20Business%20Park%2C%20Military%20Rd%2C%20Marol%2C%20Andheri%20East%2C%20Mumbai%2C%20Maharashtra%20400059!5e0!3m2!1sen!2sin!4v1649234567890!5m2!1sen!2sin"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
             </div>
           </div>
 
@@ -121,20 +103,16 @@ const VisitStore = () => {
                 Want to visit? Let's talk first.
               </h3>
               <div className="space-y-4">
-                <span className="mb-5">
-                  Want to speak with us before you visit? Tap the button below
-                  to message our store manager directly on WhatsApp.
-                </span>
-                {/* <input
+                <input
                   type="tel"
                   placeholder="Enter your mobile number"
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                /> */}
+                />
                 <button
                   onClick={handleWhatsAppMessage}
-                  className="w-full mt-3 cursor-pointer flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
+                  className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
                 >
                   <FaWhatsapp className="text-xl" />
                   Send WhatsApp Message
@@ -186,16 +164,7 @@ const VisitStore = () => {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="flex items-center mb-4">
-              <Image
-                width={200}
-                height={200}
-                className="w-12 h-12 rounded-full bg-gray-200 mr-4"
-                src={
-                  "https://cdn.pixabay.com/photo/2024/03/31/05/00/ai-generated-8665996_960_720.jpg"
-                }
-                alt="client_pic"
-              />
-
+              <div className="w-12 h-12 rounded-full bg-gray-200 mr-4"></div>
               <div>
                 <h3 className="font-medium">Lalith Kumar</h3>
                 <p className="text-gray-500 text-sm">2 months ago</p>
@@ -222,15 +191,7 @@ const VisitStore = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="flex items-center mb-4">
-              <Image
-                width={200}
-                height={200}
-                className="w-12 h-12 rounded-full bg-gray-200 mr-4"
-                src={
-                  "https://images.generated.photos/E_pKlcsQQdq4fvCC4b6uiMZsJg4XjSLzhcGwk0SBFcs/g:no/rs:fill:256:384/czM6Ly9ncGhvdG9z/LXByb2QtaHVtYW4t/Z2FsbGVyeS8yMDUx/L2E3Mjg2ODY3LWNk/ZjktNDE2Mi1hODU1/LTk0OWY4OTZkODA2/ZS0xLmpwZw.jpg"
-                }
-                alt="client_pic"
-              />
+              <div className="w-12 h-12 rounded-full bg-gray-200 mr-4"></div>
               <div>
                 <h3 className="font-medium">Priya Sharma</h3>
                 <p className="text-gray-500 text-sm">3 months ago</p>
@@ -257,16 +218,7 @@ const VisitStore = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="flex items-center mb-4">
-              <Image
-                width={200}
-                height={200}
-                className="w-12 h-12 rounded-full bg-gray-200 mr-4"
-                src={
-                  "https://img.freepik.com/premium-photo/young-bearded-indian-businessman-relaxing-mall-bangkok_251136-53368.jpg?semt=ais_hybrid&w=740"
-                }
-                alt="client_pic"
-              />
-
+              <div className="w-12 h-12 rounded-full bg-gray-200 mr-4"></div>
               <div>
                 <h3 className="font-medium">Arun Patel</h3>
                 <p className="text-gray-500 text-sm">1 month ago</p>
@@ -507,18 +459,3 @@ const VisitStore = () => {
 };
 
 export default VisitStore;
-
-{
-  /* Google Maps Embed */
-}
-<div className="mt-6 rounded-lg overflow-hidden shadow-sm h-[300px] w-full">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.7862000460214!2d72.87272087497825!3d19.107843982108674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c83e4a8c5e67%3A0x3a1e8c4f2e3f4c5d!2sOrchid%20Business%20Park%2C%20Military%20Rd%2C%20Marol%2C%20Andheri%20East%2C%20Mumbai%2C%20Maharashtra%20400059!5e0!3m2!1sen!2sin!4v1649234567890!5m2!1sen!2sin"
-    width="100%"
-    height="100%"
-    style={{ border: 0 }}
-    allowFullScreen=""
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-  />
-</div>;

@@ -5,12 +5,32 @@ import Link from "next/link";
 import Image from "next/image";
 import axiosInstance from "@/utils/AxiosInstance";
 import toast, { Toaster } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { loadCartFromLocalStorage } from "@/utils/localStorage-util";
+import { removeFromCart } from "@/store/cartSlice";
 
 export default function CartPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const Guestcart = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
 
+  console.log("guest", Guestcart);
+
+  const token = localStorage.getItem("token");
+
+  const fetchGuestCartItems = async () => {
+    const data = loadCartFromLocalStorage();
+    const res = await axiosInstance.post("/cart/get-guest-cart", {
+      items: data.items,
+    });
+    console.log(res.data, "geuest");
+    if (res.status == 200) {
+      setCartItems(res.data.cart?.items);
+      setTotalPrice(res.data.cart.totalAmount);
+    }
+  };
   useEffect(() => {
     const fetchCartItems = async () => {
       const res = await axiosInstance.get("/cart/get-cart");
@@ -20,12 +40,25 @@ export default function CartPage() {
         setTotalPrice(res.data.cart.totalAmount);
       }
     };
-    fetchCartItems();
+    if (!token) {
+      fetchGuestCartItems();
+    } else {
+      fetchCartItems();
+    }
   }, []);
 
   console.log("items", cartItems);
+
   const updateQuantity = async (flag, item) => {
     try {
+      if(!token){
+        updateQuantity({productId:item?._id,flag:flag})
+        setTimeout(() => {
+          fetchGuestCartItems();
+        }, 2000);
+
+        return;
+      }
       const res = await axiosInstance.put("/cart/update-quantity", {
         productId: item?._id,
         action: flag ? "increment" : "decrement",
@@ -40,8 +73,18 @@ export default function CartPage() {
       console.log(error);
     }
   };
+
   const removeItem = async (itemId, isSample) => {
     try {
+      if (!token) {
+        dispatch(removeFromCart({ id: itemId._id }));
+        setTimeout(() => {
+          fetchGuestCartItems();
+          toast.success("Removed Successfully");
+        }, 2000);
+
+        return;
+      }
       const res = await axiosInstance.post(`/cart/remove-from-cart`, {
         productId: itemId?._id,
         isSample,
@@ -138,9 +181,7 @@ export default function CartPage() {
 
                         <div className="text-right">
                           <p className="text-base font-semibold">
-                            ₹
-                            {(item.totalPrice || 0)
-                              .toLocaleString("en-IN")}
+                            ₹{(item.totalPrice || 0).toLocaleString("en-IN")}
                           </p>
                           {item.isSample && (
                             <div className="flex items-center border rounded-lg overflow-hidden bg-white mt-2">
@@ -201,18 +242,23 @@ export default function CartPage() {
                                       .toFixed(2)
                                       .toLocaleString("en-IN")}
                                   </p>
-                                  <p>
-                                    texture:{item.floorArea[wall].texture || ""}
-                                  </p>
-                                  <p className="flex">
-                                    {" "}
-                                    color:&nbsp;
-                                    <input
-                                      type="color"
-                                      value={item.floorArea[wall].color}
-                                      disabled
-                                    />
-                                  </p>
+                                  {item.floorArea[wall].texture && (
+                                    <p>
+                                      texture:
+                                      {item.floorArea[wall].texture || ""}
+                                    </p>
+                                  )}
+                                  {item.productType == "Wallpaper" && (
+                                    <p className="flex">
+                                      {" "}
+                                      color:&nbsp;
+                                      <input
+                                        type="color"
+                                        value={item.floorArea[wall].color}
+                                        disabled
+                                      />
+                                    </p>
+                                  )}
                                 </div>
                               )
                           )}

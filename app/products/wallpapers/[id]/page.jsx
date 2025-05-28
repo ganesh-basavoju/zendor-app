@@ -5,12 +5,18 @@ import { useParams } from "next/navigation";
 import axiosInstance from "@/utils/AxiosInstance";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { color } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "@/store/cartSlice";
 
 export default function WallpaperProduct() {
+
+
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("Sample");
+  const GuestCart = useSelector((state) => state.cart);
+  console.log("geust", GuestCart);
+  const dispatch = useDispatch();
   // Add the missing texture state
   const [selectedTexture, setSelectedTexture] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -20,8 +26,8 @@ export default function WallpaperProduct() {
     width: 0,
     height: 0,
     area: 0,
-    texture:"",
-    color: ""
+    texture: "",
+    color: "",
   });
   const [unit, setUnit] = useState("inches");
   const [price, setPrice] = useState(0);
@@ -58,14 +64,18 @@ export default function WallpaperProduct() {
 
   // Add new useEffect to set initial texture and color after product is loaded
   useEffect(() => {
-    if (currentProduct && currentProduct.texture.length > 0 && currentProduct.images.length > 0) {
+    if (
+      currentProduct &&
+      currentProduct.texture.length > 0 &&
+      currentProduct.images.length > 0
+    ) {
       setWallDimensions((prev) => ({
         ...prev,
         A: {
           ...prev.A,
           texture: currentProduct.texture[0].name,
-          color: currentProduct.images[0].color
-        }
+          color: currentProduct.images[0].color,
+        },
       }));
     }
   }, [currentProduct]);
@@ -102,7 +112,14 @@ export default function WallpaperProduct() {
         },
       }));
     }
-  }, [dimensions.width, dimensions.height, unit, activeWall, selectedTexture,selectedImage]);
+  }, [
+    dimensions.width,
+    dimensions.height,
+    unit,
+    activeWall,
+    selectedTexture,
+    selectedImage,
+  ]);
 
   // Update useEffect for total price calculation
   useEffect(() => {
@@ -120,11 +137,6 @@ export default function WallpaperProduct() {
   const handleAddToCart = async () => {
     // Check if token exists in both Redux and localStorage
     const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login to add to cart");
-      router.push("/login"); // Redirect to login page
-      return;
-    }
 
     try {
       let cartData = {
@@ -162,14 +174,20 @@ export default function WallpaperProduct() {
           totalPrice: price,
         };
       }
+      if (!token) {
+        dispatch(addToCart(cartData));
+        router.push("/cart")
+        toast.success("product added successfully ")
+        return;
+      } else {
+        const res = await axiosInstance.post("/cart/add-to-cart", {
+          items: [cartData],
+        });
 
-      const res = await axiosInstance.post("/cart/add-to-cart", {
-        items: [cartData],
-      });
-
-      if (res.status === 200) {
-        toast.success("Product added to cart");
-        router.push("/cart");
+        if (res.status === 200) {
+          toast.success("Product added to cart");
+          router.push("/cart");
+        }
       }
     } catch (error) {
       console.error("Cart error:", error);
@@ -250,10 +268,10 @@ export default function WallpaperProduct() {
               {currentProduct?.description}
             </p>
             <p className="text-xl sm:text-2xl font-medium text-gray-900 mt-2 sm:mt-4">
-              ₹{' '}
+              ₹{" "}
               {selectedSize === "Sample"
-                ? currentProduct?.sampleCost?.toLocaleString('en-IN')
-                : price?.toLocaleString('en-IN')}
+                ? currentProduct?.sampleCost?.toLocaleString("en-IN")
+                : price?.toLocaleString("en-IN")}
             </p>
           </div>
 
@@ -490,7 +508,8 @@ export default function WallpaperProduct() {
                   >
                     <span className="font-medium">Wall {wall}:</span>
                     <span>
-                      {wallDimensions[wall].width}x{wallDimensions[wall].height} {unit}
+                      {wallDimensions[wall].width}x{wallDimensions[wall].height}{" "}
+                      {unit}
                     </span>
                     <span>texture:{wallDimensions[wall].texture}</span>
                     <span> color:&nbsp;</span>
@@ -503,7 +522,7 @@ export default function WallpaperProduct() {
                     </span>
                     <span>({wallDimensions[wall].area} sq.ft)</span>
                     <span className="text-blue-600">
-                      ₹{wallDimensions[wall].price?.toLocaleString('en-IN')}
+                      ₹{wallDimensions[wall].price?.toLocaleString("en-IN")}
                     </span>
                   </div>
                 ))}
@@ -552,7 +571,7 @@ export default function WallpaperProduct() {
 
               ] */}
 
-{[
+              {[
                 { label: "Brand", value: currentProduct?.brand || "N/A" },
                 { label: "Size", value: `${currentProduct?.size || "N/A"}` },
                 { label: "Thickness", value: `${currentProduct?.thickness}` },
