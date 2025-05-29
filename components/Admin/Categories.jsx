@@ -12,13 +12,19 @@ const Categories = () => {
       id: 1, 
       name: 'Wallpapers', 
       itemCount: 24, 
-      image: 'https://150751433.v2.pressablecdn.com/wp-content/uploads/2024/08/WP4008-1024x1536.jpg'
+      image: 'https://2.wlimg.com/product_images/bc-full/2023/2/11673283/designer-wallpaper-1675669074-6749474.jpeg'
     },
     { 
       id: 2, 
       name: 'Wooden Floorings', 
       itemCount: 18, 
-      image: 'https://150751433.v2.pressablecdn.com/wp-content/uploads/2024/08/WP4023-683x1024.jpg'
+      image: 'https://images.pexels.com/photos/276528/pexels-photo-276528.jpeg'
+    },
+    { 
+      id: 3, 
+      name: 'Acoustic Panels', 
+      itemCount: 12, 
+      image: 'https://images.pexels.com/photos/164938/pexels-photo-164938.jpeg'
     },
   ]);
   const [showModal, setShowModal] = useState(false);
@@ -45,7 +51,13 @@ const Categories = () => {
         {categories.map((category) => (
           <div
             key={category.id}
-            onClick={() => router.push(`/admin/categories/${category.name.toLowerCase().replace(/\s+/g, '-')}`)}
+            onClick={() => {
+              if (category.name === 'Acoustic Panels') {
+                router.push('/admin/acoustics');
+              } else {
+                router.push(`/admin/categories/${category.name.toLowerCase().replace(/\s+/g, '-')}`);
+              }
+            }}
             className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer"
           >
             {/* Background Image */}

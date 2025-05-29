@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { FaWhatsapp } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
+import axiosInstance from '@/utils/AxiosInstance';
 
 export default function ContactFormSection() {
   const [formData, setFormData] = useState({
@@ -23,7 +26,7 @@ export default function ContactFormSection() {
     setIsSubmitting(true);
 
     try {
-      await axios.post('/api/contact', formData);
+      await axiosInstance.post('/acoustics', formData);
       setIsSubmitted(true);
     } catch (error) {
       console.error('Submission error:', error);
@@ -31,6 +34,18 @@ export default function ContactFormSection() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleWhatsApp = () => {
+    const phoneNumber = '919876543210'; // Replace with your WhatsApp number
+    const message = encodeURIComponent(`Hi, I'd like to know more about your acoustic solutions.`);
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
+
+  const handleEmail = () => {
+    const email = 'myzendor@gmail.com'; // Replace with your email
+    const subject = encodeURIComponent('Inquiry about Acoustic Solutions');
+    window.location.href = `mailto:${email}?subject=${subject}`;
   };
 
   if (isSubmitted) {
@@ -111,13 +126,35 @@ export default function ContactFormSection() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3 px-6 rounded-lg text-white font-medium transition duration-200 ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-          >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
-          </button>
+          <div className="flex gap-4 items-center">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`flex-1 py-3 px-6 rounded-lg text-white font-medium transition duration-200 ${
+                isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+              }`}
+            >
+              {isSubmitting ? 'Sending...' : 'Send Message'}
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleWhatsApp}
+              className="p-3 rounded-lg bg-green-500 hover:bg-green-600 text-white transition duration-200"
+              title="Contact via WhatsApp"
+            >
+              <FaWhatsapp size={24} />
+            </button>
+
+            <button
+              type="button"
+              onClick={handleEmail}
+              className="p-3 rounded-lg bg-red-500 hover:bg-red-600 text-white transition duration-200"
+              title="Contact via Email"
+            >
+              <MdEmail size={24} />
+            </button>
+          </div>
         </form>
       </div>
     </section>
