@@ -7,7 +7,7 @@ import axiosInstance from "@/utils/AxiosInstance";
 import toast, { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { loadCartFromLocalStorage } from "@/utils/localStorage-util";
-import { removeFromCart } from "@/store/cartSlice";
+import { removeFromCart, updateQuantity } from "@/store/cartSlice";
 
 export default function CartPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +31,7 @@ export default function CartPage() {
       setTotalPrice(res.data.cart.totalAmount);
     }
   };
+
   useEffect(() => {
     const fetchCartItems = async () => {
       const res = await axiosInstance.get("/cart/get-cart");
@@ -49,14 +50,13 @@ export default function CartPage() {
 
   console.log("items", cartItems);
 
-  const updateQuantity = async (flag, item) => {
+  const handleupdateQuantity = async (flag, item) => {
     try {
-      if(!token){
-        updateQuantity({productId:item?._id,flag:flag})
+      if (!token) {
+        dispatch(updateQuantity({ productId: item?._id, flag: flag }));
         setTimeout(() => {
           fetchGuestCartItems();
         }, 2000);
-
         return;
       }
       const res = await axiosInstance.put("/cart/update-quantity", {
@@ -146,7 +146,7 @@ export default function CartPage() {
                     className="flex flex-col p-3 bg-gray-50 rounded-lg hover:shadow-md transition-all duration-300"
                   >
                     <div className="flex gap-4">
-                      <div className="relative w-24 h-24 rounded-md overflow-hidden">
+                      <div className="relative w-24 h-32 rounded-md overflow-hidden">
                         <Image
                           // src={item.productId?.images ||item.productId?.images[0].pic}
                           src={
@@ -169,11 +169,24 @@ export default function CartPage() {
                             {item.productType} -{" "}
                             {item.isSample ? "Sample" : "Full Product"}
                           </p>
+                          {item.isSample && (
+                            <>
+                            <p className="flex">
+                              color:&nbsp;
+                              <input
+                                type="color"
+                                value={item?.color}
+                                disabled
+                              />
+                              </p>
+                              <p>Texture:{item?.texture}</p>
+                            </>
+                          )}
                           <button
                             onClick={() =>
                               removeItem(item.productId, item.isSample)
                             }
-                            className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                            className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors cursor-pointer"
                           >
                             Remove
                           </button>
@@ -187,20 +200,20 @@ export default function CartPage() {
                             <div className="flex items-center border rounded-lg overflow-hidden bg-white mt-2">
                               <button
                                 onClick={() =>
-                                  updateQuantity(false, item.productId)
+                                  handleupdateQuantity(false, item.productId)
                                 }
-                                className="px-3 py-1 hover:bg-gray-100 transition-colors"
+                                className="px-3 cursor-pointer py-1 hover:bg-gray-100 transition-colors"
                               >
                                 −
                               </button>
-                              <span className="px-4 py-1 font-medium text-sm">
+                              <span className="px-4 py-1  font-medium text-sm">
                                 {item.quantity}
                               </span>
                               <button
                                 onClick={() =>
-                                  updateQuantity(true, item.productId)
+                                  handleupdateQuantity(true, item.productId)
                                 }
-                                className="px-3 py-1 hover:bg-gray-100 transition-colors"
+                                className="px-3 cursor-pointer py-1 hover:bg-gray-100 transition-colors"
                               >
                                 +
                               </button>

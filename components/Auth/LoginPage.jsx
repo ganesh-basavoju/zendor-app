@@ -8,11 +8,10 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import localStorage from "redux-persist/lib/storage";
 import { login } from "@/store/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
 
 const LoginPage = ({ onSuccess }) => {
-  
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -25,6 +24,7 @@ const LoginPage = ({ onSuccess }) => {
   });
   const navigate = useRouter();
   const dispatch = useDispatch();
+  const guestCartItems = useSelector((state) => state.cart.items);
   // Handle form submission and login/signup proces
 
   const handleForgotPassword = async (e) => {
@@ -45,7 +45,6 @@ const LoginPage = ({ onSuccess }) => {
       toast.error(errorMessage);
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,14 +74,27 @@ const LoginPage = ({ onSuccess }) => {
         localStorage.setItem("email", email);
         localStorage.setItem("role", role);
         dispatch(login({ token: token, name: name, email: email, role: role }));
-        toast.success("Login successful!");
-        if (role == "admin") {
+
+        if (guestCartItems.length > 0) {
+          try {
+            await axiosInstance.post("/cart/add-to-cart", {
+              items: guestCartItems,
+            });
+            // Clear guest cart after successful merge
+            localStorage.removeItem("cart");
+            toast.success("Guest cart items merged successfully!");
+            navigate.push("/checkout");
+          } catch (error) {
+            console.error("Error merging cart:", error);
+            toast.error("Failed to merge guest cart items");
+          }
+        } else if (role == "admin") {
           navigate.push("/admin");
           return;
+        } else {
+          navigate.push("/");
         }
-        navigate.push("/");
       }
-
     } catch (error) {
       console.error("Error during login/signup:", error);
       const errorMessage =
@@ -106,6 +118,19 @@ const LoginPage = ({ onSuccess }) => {
       localStorage.setItem("email", email);
       localStorage.setItem("role", role);
       dispatch(login({ token: G_token, name: name, email: email, role: role }));
+      if (guestCartItems.length > 0) {
+        try {
+          await axiosInstance.post("/cart/add-to-cart", {
+            items: guestCartItems,
+          });
+          // Clear guest cart after successful merge
+          localStorage.removeItem("cart");
+          toast.success("Guest cart items merged successfully!");
+        } catch (error) {
+          console.error("Error merging cart:", error);
+          toast.error("Failed to merge guest cart items");
+        }
+      }
       toast.success("Login successful!");
       navigate.push("/");
     } catch (error) {
@@ -150,6 +175,7 @@ const LoginPage = ({ onSuccess }) => {
         toast.error(errorMessage);
       }
     };
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 w-full max-w-md relative">

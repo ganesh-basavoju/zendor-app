@@ -5,23 +5,20 @@ import { useParams } from "next/navigation";
 import axiosInstance from "@/utils/AxiosInstance";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { color } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/store/cartSlice";
 
 export default function WallpaperProduct() {
-
-
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("Sample");
-  const GuestCart = useSelector((state) => state.cart);
-  console.log("geust", GuestCart);
-  const dispatch = useDispatch();
   // Add the missing texture state
   const [selectedTexture, setSelectedTexture] = useState(0);
   const [loading, setLoading] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const router = useRouter();
+  const dispatch = useDispatch();
   const [dimensions, setDimensions] = useState({
     width: 0,
     height: 0,
@@ -134,52 +131,52 @@ export default function WallpaperProduct() {
     );
   }, [wallDimensions, selectedWalls, selectedSize, selectedTexture]);
 
+ 
+ 
   const handleAddToCart = async () => {
-    // Check if token exists in both Redux and localStorage
     const token = localStorage.getItem("token");
 
-    try {
-      let cartData = {
-        productId: currentProduct?._id,
-        productType: "Wallpaper",
-        isSample: selectedSize === "Sample",
+    let cartData = {
+      productId: currentProduct?._id,
+      productType: "Wallpaper",
+      isSample: selectedSize === "Sample",
+    };
+
+    if (selectedSize === "Sample") {
+      cartData = {
+        ...cartData,
+        quantity,
+        pricePerUnit: currentProduct?.sampleCost,
+        totalPrice: currentProduct?.sampleCost * quantity,
+        texture: currentProduct?.texture[selectedTexture]?.name || currentProduct?.texture[0]?.name,
+        color: currentProduct?.images[selectedImage]?.color || currentProduct?.images[0]?.color
       };
+    } else {
+      const hasValidDimensions = selectedWalls.every(
+        (wall) =>
+          wallDimensions[wall].width > 0 && wallDimensions[wall].height > 0
+      );
 
-      if (selectedSize === "Sample") {
-        cartData = {
-          ...cartData,
-          quantity,
-          pricePerUnit: currentProduct?.sampleCost,
-          totalPrice: currentProduct?.sampleCost * quantity,
-        };
-      } else {
-        // Validate wall dimensions
-        const hasValidDimensions = selectedWalls.every(
-          (wall) =>
-            wallDimensions[wall].width > 0 && wallDimensions[wall].height > 0
-        );
-
-        if (!hasValidDimensions) {
-          toast.error("Please enter valid dimensions for all selected walls");
-          return;
-        }
-
-        cartData = {
-          ...cartData,
-          size: { unit },
-          floorArea: Object.fromEntries(
-            selectedWalls.map((wall) => [`wall${wall}`, wallDimensions[wall]])
-          ),
-          pricePerUnit: currentProduct?.dp,
-          totalPrice: price,
-        };
-      }
-      if (!token) {
-        dispatch(addToCart(cartData));
-        router.push("/cart")
-        toast.success("product added successfully ")
+      if (!hasValidDimensions) {
+        toast.error("Please enter valid dimensions for all selected walls");
         return;
-      } else {
+      }
+
+      cartData = {
+        ...cartData,
+        size: { unit },
+        floorArea: Object.fromEntries(
+          selectedWalls.map((wall) => [`wall${wall}`, wallDimensions[wall]])
+        ),
+        quantity,
+        price: currentProduct?.dp,
+        totalPrice: price,
+      };
+    }
+
+    try {
+      if (token) {
+        // Logged-in user → Send to backend
         const res = await axiosInstance.post("/cart/add-to-cart", {
           items: [cartData],
         });
@@ -188,6 +185,11 @@ export default function WallpaperProduct() {
           toast.success("Product added to cart");
           router.push("/cart");
         }
+      } else {
+        // Guest user → Redux store
+        dispatch(addToCart(cartData));
+        toast.success("Added to cart (guest)");
+        router.push("/cart");
       }
     } catch (error) {
       console.error("Cart error:", error);

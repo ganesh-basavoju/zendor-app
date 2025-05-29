@@ -46,6 +46,7 @@ const cartSlice = createSlice({
         (item) =>
           item.productId === productId
       );
+      
       if (item) {
         if(flag){
           item.quantity=item.quantity+1;
