@@ -67,6 +67,31 @@ const Navbar = () => {
     // fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const mobileMenu = document.querySelector(".mobile-menu-container");
+      if (isMobileMenuOpen && mobileMenu && !mobileMenu.contains(e.target)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleScroll = () => {
+      if (isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+      window.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobileMenuOpen]);
+
   // Add useEffect for window-dependent initialization
   useEffect(() => {
     // Initialize any window-dependent states here
@@ -253,7 +278,11 @@ const Navbar = () => {
             <div className="flex items-center space-x-4">
               {[
                 { icon: FaUser, onClick: handleSignIn },
-                { icon: FaHeart,name:"moodboard", onClick: () => router.push("/profile") },
+                {
+                  icon: FaHeart,
+                  name: "moodboard",
+                  onClick: () => router.push("/profile?to=3"),
+                },
                 { icon: FaCartPlus, onClick: () => router.push("/cart") },
               ].map((item, index) => (
                 <button
@@ -279,7 +308,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2.5 hover:bg-white/10 rounded-lg transition-colors"
+            className="md:hidden p-2.5 hover:bg-white/30 rounded-lg transition-colors"
           >
             {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
@@ -359,40 +388,149 @@ const Navbar = () => {
 
       {/* Mobile Menu - Updated styles */}
       <div
-        className={`md:hidden bg-[#012b5b] border-t border-gray-700 ${
+        className={`mobile-menu-container md:hidden bg-[#012b5b] border-t border-gray-700 ${
           isMobileMenuOpen ? "block" : "hidden"
         }`}
       >
         <div className="px-4 py-3 space-y-4">
-          <div className="relative">
-            {/* Mobile Menu Search */}
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearchQuery(value);
-              }}
-              placeholder="Search products..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-full border-0 bg-[#283593] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/20"
-            />
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
+      
+          <div className="md:hidden flex-1 max-w-2xl mx-auto">
+            <div className="relative group">
+              {/* // Modify the search input to prevent immediate state changes */}
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchQuery(value);
+                }}
+                onFocus={() => {
+                  if (searchQuery.trim() !== "") {
+                    setShowSearchResults(true);
+                  }
+                }}
+                placeholder="Search for wallpapers, floorings, and more..."
+                className="w-full pl-12 pr-4 py-1 rounded-full border border-gray-400 bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:bg-white/30"
+              />
+              <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+
+              {/* Search Results - Updated styles */}
+              {showSearchResults && searchQuery && (
+                <div className="absolute mt-2 w-full bg-white rounded-lg shadow-xl overflow-hidden z-[60]">
+                  {products.length > 0 ? (
+                    <div className="max-h-[300px] overflow-y-auto bg-white">
+                      {products.map((product, index) => (
+                        <button
+                          key={`${product._id || product.id || index}`}
+                          onClick={() => {
+                            router.push(
+                              `/products/${
+                                product.type == "wallpaper"
+                                  ? "wallpapers"
+                                  : "wooden-flooring"
+                              }/${product.id}`
+                            );
+                            setSearchQuery("");
+                            setShowSearchResults(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100 flex items-center justify-between group bg-white"
+                        >
+                          <span>{product.name}</span>
+                          <span className="text-sm text-gray-500 group-hover:text-[#012b5b]">
+                            {product.category}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="px-4 py-3 text-gray-600 text-center bg-white">
+                      No products found
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col space-y-2">
-            {menuItems.map((item, index) => (
-              <button
-                key={`menu-item-${index}`}
-                onClick={() => {
-                  router.push(`/category/${item.toLowerCase()}`);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="flex items-center justify-between p-3 hover:bg-[#283593] rounded-lg text-gray-200 hover:text-white"
-              >
-                {item}
-                <FaChevronDown />
-              </button>
-            ))}
+            {menuItems.map((item) => {
+              const path = `/category/${item.toLowerCase()}`;
+              const isActive = pathname.startsWith(path);
+              const [isOpen, setIsOpen] = useState(false);
+
+              return (
+                <div key={item} className="relative">
+                  <button
+                    onClick={() => {
+                      if (item === "Wooden Flooring" || item === "Wallpaper") {
+                        setIsOpen(!isOpen);
+                      } else {
+                        router.push(
+                          path + (path !== "/category/acoustics" ? "/All" : "")
+                        );
+                        setIsMobileMenuOpen(false);
+                      }
+                    }}
+                    className={`flex items-center justify-between w-full p-3 rounded-lg ${
+                      isActive
+                        ? "bg-[#283593] text-white"
+                        : "text-gray-200 hover:bg-[#283593] hover:text-white"
+                    }`}
+                  >
+                    <span>{item}</span>
+                    <FaChevronDown
+                      className={`transition-transform ${
+                        isOpen ? "rotate-180" : ""
+                      } ${
+                        item === "Wooden Flooring" || item === "Wallpaper"
+                          ? ""
+                          : "opacity-0"
+                      }`}
+                    />
+                  </button>
+
+                  {/* Dropdown for Wooden Flooring */}
+                  {item === "Wooden Flooring" && isOpen && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {subcategoriesForWoodenFloorings.map((subcat) => (
+                        <button
+                          key={subcat._id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(
+                              `/category/wooden flooring/${subcat.name}`
+                            );
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#283593]/50 hover:text-white rounded-lg"
+                        >
+                          {subcat.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Dropdown for Wallpaper */}
+                  {item === "Wallpaper" && isOpen && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {subcategoriesWallpaper.map((subcat) => (
+                        <button
+                          key={subcat._id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/category/wallpaper/${subcat.name}`);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#283593]/50 hover:text-white rounded-lg"
+                        >
+                          {subcat.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#283593]">
@@ -404,7 +542,7 @@ const Navbar = () => {
               <span className="text-sm">Account</span>
             </button>
             <button
-              onClick={() => router.push("/wishlist")}
+              onClick={() => router.push("/profile?to=3")}
               className="flex flex-col text-gray-200 items-center space-y-1 p-3 hover:bg-[#283593] rounded-lg"
             >
               <Image
@@ -414,7 +552,7 @@ const Navbar = () => {
                 height={16}
               />
 
-              <span className="text-sm">Wishlist</span>
+              <span className="text-sm">Mood board</span>
             </button>
             <button
               onClick={() => router.push("/cart")}

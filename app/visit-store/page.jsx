@@ -4,15 +4,24 @@ import { useState } from "react";
 import Image from "next/image";
 import { MapPin, Clock, Phone, Mail, Car, Bike, Bus } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const VisitStore = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(8433900692);
   const [openFaq, setOpenFaq] = useState(null);
-
-  const handleWhatsAppMessage = () => {
-    if (!phoneNumber) return;
+  const [name, setName] = useState("");
+  const router = useRouter();
+  const handleNormalMessage=()=>{
+    if (!phoneNumber ) return;
     const message = encodeURIComponent(
-      "Hi! I would like to visit your store. Please provide more information."
+      `Hi!My name is ${name}. I would like to visit your store. Please provide more information.`
+    );
+    window.open(`tel:${phoneNumber}?body=${message}`, "_blank");
+  }
+  const handleWhatsAppMessage = () => {
+    if (!phoneNumber || !name.trim()) return;
+    const message = encodeURIComponent(
+      `Hi!My name is ${name}. I would like to visit your store. Please provide more information.`
     );
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
   };
@@ -20,7 +29,7 @@ const VisitStore = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[400px]">
+      <section className="relative h-[60vh] -mt-10 min-h-[400px]">
         <Image
           src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format"
           alt="Modern Interior Showroom"
@@ -50,7 +59,10 @@ const VisitStore = () => {
               <MapPin className="w-6 h-6 text-gray-600 mt-1" />
               <div>
                 <h3 className="font-medium">Address</h3>
-                <p className="text-gray-600">A-501 Orchid Business Park Military Road Marol Andheri East Mumbai</p>
+                <p className="text-gray-600">
+                  A-501 Orchid Business Park Military Road Marol
+                  Andheri East Mumbai
+                </p>
               </div>
             </div>
 
@@ -58,9 +70,7 @@ const VisitStore = () => {
               <Clock className="w-6 h-6 text-gray-600 mt-1" />
               <div>
                 <h3 className="font-medium">Opening Hours</h3>
-                <p className="text-gray-600">
-                  Mon-Sun: 10 AM - 8 PM
-                </p>
+                <p className="text-gray-600">Mon-Sun: 10 AM - 8 PM</p>
               </div>
             </div>
 
@@ -104,15 +114,16 @@ const VisitStore = () => {
               </h3>
               <div className="space-y-4">
                 <input
-                  type="tel"
-                  placeholder="Enter your mobile number"
+                  type="text"
+                  placeholder="Enter Your Good Name"
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
+                Send a Message to Us, before visiting us.
                 <button
                   onClick={handleWhatsAppMessage}
-                  className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
+                  className="w-full flex items-center mt-1.5 justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
                 >
                   <FaWhatsapp className="text-xl" />
                   Send WhatsApp Message
@@ -255,7 +266,7 @@ const VisitStore = () => {
             <div className="bg-white rounded-lg overflow-hidden shadow-sm">
               <div className="relative h-48">
                 <Image
-                  src="/wall.png"
+                  src="https://www.ddecor.com/media/wysiwyg/MODERN_METALLICS_1_main.jpg"
                   alt="Premium Wallpapers"
                   fill
                   className="object-cover"
@@ -266,7 +277,10 @@ const VisitStore = () => {
                 <p className="text-gray-600 mb-4">
                   Exclusive collection of designer wallpapers for your walls
                 </p>
-                <button className="text-blue-600 font-medium hover:text-blue-700">
+                <button
+                  onClick={() => router.push("/category/wallpaper/All")}
+                  className="text-blue-600 font-medium hover:text-blue-700"
+                >
                   View Collection →
                 </button>
               </div>
@@ -275,7 +289,7 @@ const VisitStore = () => {
             <div className="bg-white rounded-lg overflow-hidden shadow-sm">
               <div className="relative h-48">
                 <Image
-                  src="/indoor-bg.png"
+                  src="https://www.thefloorgallery.sg/wp-content/uploads/acoustic-wall-panels-balancing-sound-and-design-in-modern-spaces.jpg"
                   alt="Acoustic Solutions"
                   fill
                   className="object-cover"
@@ -286,7 +300,10 @@ const VisitStore = () => {
                 <p className="text-gray-600 mb-4">
                   Professional sound management systems for any space
                 </p>
-                <button className="text-blue-600 font-medium hover:text-blue-700">
+                <button
+                  onClick={() => router.push("/category/acoustics")}
+                  className="text-blue-600 font-medium hover:text-blue-700"
+                >
                   View Collection →
                 </button>
               </div>
@@ -295,7 +312,7 @@ const VisitStore = () => {
             <div className="bg-white rounded-lg overflow-hidden shadow-sm">
               <div className="relative h-48">
                 <Image
-                  src="/handcraft.png"
+                  src="https://www.lifecoreflooring.com/wp-content/uploads/2019/04/Kitchen-Hardwood-Flooring-Options.png"
                   alt="Wooden Flooring"
                   fill
                   className="object-cover"
@@ -306,7 +323,10 @@ const VisitStore = () => {
                 <p className="text-gray-600 mb-4">
                   Premium quality wooden flooring solutions
                 </p>
-                <button className="text-blue-600 font-medium hover:text-blue-700">
+                <button
+                  onClick={() => router.push("/category/wooden flooring/All")}
+                  className="text-blue-600 font-medium hover:text-blue-700"
+                >
                   View Collection →
                 </button>
               </div>
@@ -429,7 +449,7 @@ const VisitStore = () => {
           </p>
           <div className="flex justify-center gap-4">
             <button
-              onClick={handleWhatsAppMessage}
+              onClick={handleNormalMessage}
               className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center gap-2"
             >
               <FaWhatsapp className="text-xl" />

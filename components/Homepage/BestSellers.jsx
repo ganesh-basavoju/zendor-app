@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Playfair_Display } from 'next/font/google';
+import { Playfair_Display } from "next/font/google";
 const bestsellers = [
   {
     title: "Diner",
@@ -55,7 +55,7 @@ export default function Bestsellers() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
-          {bestsellers.map((item, index) => (
+          {/* {bestsellers.map((item, index) => (
             <div
               key={index}
               className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
@@ -67,22 +67,22 @@ export default function Bestsellers() {
                   alt={item.title}
                   width={600}
                   height={700}
-                  className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-auto transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-8 left-8 right-8">
-                    <span className="text-white/90 text-sm font-medium tracking-wide uppercase">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-300">
+                    <span className="text-white/90 text-xs md:text-sm font-medium tracking-wide uppercase">
                       {item.category}
                     </span>
-                    <h3 className="text-2xl font-semibold text-white mt-3 font-playfair">
+                    <h3 className="text-base md:text-xl font-semibold text-white mb-1 md:mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-white/90 text-base mt-3 line-clamp-3 font-light leading-relaxed">
+                    <p className="text-white/90 text-xs md:text-base mt-1 md:mt-3 line-clamp-2 md:line-clamp-3 font-light leading-relaxed">
                       {item.description}
                     </p>
-                    <div className="flex items-center justify-between mt-6">
+                    <div className="flex items-center justify-between mt-3 md:mt-6">
                       <button
-                        className="px-6 py-3 bg-white text-gray-900 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors tracking-wide"
+                        className="px-4 py-2 md:px-6 md:py-3 bg-white text-gray-900 rounded-lg text-xs md:text-sm font-medium hover:bg-gray-100 transition-colors tracking-wide"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleProductClick(item.link);
@@ -93,6 +93,61 @@ export default function Bestsellers() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          ))} */}
+          {bestsellers.map((item, index) => (
+            <div
+              key={index}
+              className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+              onClick={() => handleProductClick(index)}
+            >
+              {/* Image container with fixed aspect ratio */}
+              <div className="relative aspect-square overflow-hidden">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                />
+
+                {/* Overlay - visible on mobile, hover on desktop */}
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent 
+                      opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
+                >
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 space-y-1 md:space-y-2">
+                    <span className="text-white/90 text-xs md:text-sm font-semibold tracking-wide block">
+                      {item.category}
+                    </span>
+                    <h3 className="text-white text-sm md:text-base font-semibold line-clamp-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-white/80 text line-clamp-2-xs md:text-sm font-light line-clamp-2">
+                      {item.description}
+                    </p>
+                    <button
+                      className="mt-2 md:mt-3 px-4 py-2 bg-white text-gray-900 rounded-lg text-xs md:text-sm font-medium hover:bg-gray-100 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProductClick(item.link);
+                      }}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Always visible info on mobile */}
+              <div className="p-3 md:hidden">
+                <span className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+                  {item.category}
+                </span>
+                <h3 className="text-gray-900 text-sm font-semibold mt-1 line-clamp-2">
+                  {item.title}
+                </h3>
               </div>
             </div>
           ))}

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import AccountDetails from "@/components/Profilepage/AccountDetails";
 import { Addresses } from "@/components/Profilepage/Addresses";
@@ -95,7 +96,19 @@ const NavButton = ({ item, isActive, onClick, isMobile }) => (
 
 const Profilepage = () => {
   const router = useRouter();
-  const [current, setCurrent] = useState(1);
+  const searchParams = useSearchParams();
+  const to = searchParams.get("to");
+
+  const [current, setCurrent] = useState(() => {
+    // Initialize current state based on 'to' parameter
+    return to === "3" ? 3 : 1;
+  });
+
+  // Remove this line as it's causing infinite re-renders
+  // if (to === "3") {
+  //   setCurrent(3);
+  // }
+
   const [userData, setUserData] = useState({
     userName: "",
     email: "",
@@ -111,6 +124,14 @@ const Profilepage = () => {
   });
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+
+  // Add effect to handle 'to' parameter changes
+  useEffect(() => {
+    if (to === "3") {
+      setCurrent(3);
+    }
+  }, [to]);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -144,10 +165,11 @@ const Profilepage = () => {
 
     fetchUserProfile();
   }, []);
-  console.log(userData, "userData");
 
-  const CurrentComponent =
-    menuItems.find((item) => item.id === current)?.component || Dashboard;
+  // Remove this line as it's causing infinite re-renders
+  // setCurrent();
+
+  const CurrentComponent = menuItems.find((item) => item.id === current)?.component || Dashboard;
 
   if (loading) {
     return (

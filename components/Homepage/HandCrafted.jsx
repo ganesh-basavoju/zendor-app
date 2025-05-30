@@ -64,13 +64,13 @@ export default function Handcrafted() {
           <div className="flex gap-4">
             <button
               onClick={() => navigate("/custom-design")}
-              className="px-8 py-4 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              className="px-8 cursor-pointer py-4 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition-colors"
             >
               Start Custom Project
             </button>
             <button
-              onClick={() => navigate("/about")}
-              className="px-8 py-4 bg-transparent border border-white text-white rounded-lg font-medium hover:bg-white/10 transition-colors"
+              onClick={() => navigate("/visit-store")}
+              className="px-8 cursor-pointer py-4 bg-transparent border border-white text-white rounded-lg font-medium hover:bg-white/10 transition-colors"
             >
               Learn More
             </button>

@@ -9,7 +9,6 @@ import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
-
 const Hero = () => {
   const router = useRouter();
   const navigate = (path) => {
@@ -42,7 +41,7 @@ const Hero = () => {
   
 
   return (
-    <section className="w-full h-[800px] relative overflow-hidden">
+    <section className="w-full h-[500px] sm:h-[600px] md:h-[800px] relative overflow-hidden">
       <Swiper
         modules={[Autoplay]}
         spaceBetween={0}
@@ -53,7 +52,7 @@ const Hero = () => {
         {slides.map((slide, index) => (
           <SwiperSlide key={index} className="relative w-full h-full">
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent z-10"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent z-10"></div>
 
             {/* Background Image */}
             <Image
@@ -66,29 +65,31 @@ const Hero = () => {
             />
 
             {/* Content Section */}
-            <div className="absolute inset-0 flex items-center z-20 ml-5">
-              <div className="container mx-auto px-4">
-                <div className="max-w-xl space-y-8">
+            <div className="absolute inset-0 flex items-center z-20">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-xl space-y-4 sm:space-y-6 md:space-y-8">
                   <div className="space-y-2">
-                    <span className="inline-block text-amber-400 font-medium tracking-wider text-lg uppercase">Premium Collection</span>
-                    <h2 className="text-5xl md:text-6xl font-bold text-white leading-tight drop-shadow-md">
+                    <span className="inline-block text-amber-400 font-medium tracking-wider text-sm sm:text-base lg:text-lg uppercase">
+                      Premium Collection
+                    </span>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-md">
                       {slide.label}
                     </h2>
                   </div>
-                  <p className="text-xl text-white/90 drop-shadow-md max-w-md">
+                  <p className="text-base sm:text-lg md:text-xl text-white/90 drop-shadow-md max-w-md">
                     {slide.description}
                   </p>
-                  <div className="pt-4 flex gap-4">
+                  <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <Button 
-                      onClick={()=>navigate(slide.link)} 
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-6 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
+                      onClick={() => navigate(slide.link)} 
+                      className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
                     >
-                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      <ShoppingCart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                       {slide.buttonText}
                     </Button>
                     <Button 
-                      onClick={()=>navigate('/visit-store')} 
-                      className="bg-transparent border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6 rounded-md transition-all duration-300"
+                      onClick={() => navigate('/visit-store')} 
+                      className="w-full sm:w-auto bg-transparent border-2 border-white text-white hover:bg-white/10 text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 rounded-md transition-all duration-300"
                     >
                       Visit Store
                     </Button>
@@ -99,11 +100,6 @@ const Hero = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* Custom Navigation Buttons */}
-    
-      {/* Decorative Bottom Border */}
-      {/* <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-r from-blue-600/20 to-amber-500/20 backdrop-blur-sm z-20" /> */}
     </section>
   );
 };

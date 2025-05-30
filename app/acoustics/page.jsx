@@ -8,9 +8,59 @@ import CustomSolutionsSection from "@/components/acoustics/CustomSolutionsSectio
 import { JourneySection } from "@/components/acoustics/JourneySection";
 import SustainableMaterialsSection from "@/components/acoustics/SustainableMaterialsSection";
 import Image from "next/image";
-import Link from "next/link";
-
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 const AcousticsPage = () => {
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    threshold: 0.3,
+    triggerOnce: false,
+  });
+
+  useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    } else {
+      controls.start("hidden");
+    }
+  }, [controls, inView]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10,
+      },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { scale: 1.1 },
+    visible: {
+      scale: 1,
+      transition: {
+        duration: 1.5,
+        ease: [0.2, 0.85, 0.4, 1],
+      },
+    },
+  };
+
   const scrollToNextSection = () => {
     const journeySection = document.getElementById("Applications");
     if (journeySection) {
@@ -18,50 +68,101 @@ const AcousticsPage = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-white">
+    <div className=" bg-white">
       {/* Hero Section */}
-      <section className="relative h-[540px]  overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://www.muffle.co.uk/cdn/shop/articles/Home_Cinema.jpg?v=1747737541&width=1100"
-            alt="Acoustic Solutions Background"
-            fill
-            className="object-cover opacity-90"
-            priority
-          />
-        </div>
-        <div className="relative h-full max-w-6xl mx-auto px-4 flex flex-col items-center justify-center text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Elevate Your Space with Premium Acoustic Solutions
-          </h1>
-          <p className="text-xl text-white/90 mb-8 max-w-3xl">
-            Discover a curated selection of acoustic panels, sound barriers, and
-            more, designed to enhance any environment.
-          </p>
-          {/* <Link
-            href="/products?category=acoustics"
-            className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition duration-300 text-lg font-medium"
+
+      <motion.section
+      ref={ref}
+      initial="hidden"
+      animate={controls}
+      className="relative md:h-screen sm:h-[480px] h-[400px] -mt-10 md:-mt-20 overflow-hidden"
+    >
+      <motion.div 
+        className="absolute inset-0"
+        variants={imageVariants}
+      >
+        <Image
+          src="https://www.muffle.co.uk/cdn/shop/articles/Home_Cinema.jpg?v=1747737541&width=1100"
+          alt="Acoustic Solutions Background"
+          fill
+          className="object-cover opacity-90"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/30"></div>
+      </motion.div>
+
+      <motion.div 
+        className="relative h-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center text-center"
+        variants={containerVariants}
+      >
+        <motion.h1 
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 leading-tight"
+          variants={itemVariants}
+        >
+          Elevate Your Space with <br className="hidden sm:block" />
+          Premium Acoustic Solutions
+        </motion.h1>
+
+        <motion.p 
+          className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-3xl px-2 sm:px-0 leading-relaxed"
+          variants={itemVariants}
+        >
+          Discover a curated selection of acoustic panels, sound barriers, and
+          more, designed to enhance any environment.
+        </motion.p>
+
+        <motion.button
+          onClick={scrollToNextSection}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 sm:px-8 sm:py-3 rounded-md transition duration-300 text-base sm:text-lg font-medium whitespace-nowrap"
+          aria-label="Learn more about acoustic solutions"
+          variants={itemVariants}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Learn More
+        </motion.button>
+
+        <motion.div
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 cursor-pointer"
+          onClick={scrollToNextSection}
+          variants={itemVariants}
+          animate={{
+            y: [0, 10, 0],
+            transition: {
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-8 w-8 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            Explore Products
-          </Link> */}
-          <button
-            onClick={scrollToNextSection}
-            className="bg-blue-600 cursor-pointer text-white px-8 py-3 rounded-md hover:bg-blue-700 transition duration-300 text-lg font-medium"
-          >
-            Learn More
-          </button>
-        </div>
-      </section>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </motion.div>
+      </motion.div>
+    </motion.section>
+
       <JourneySection />
-      <section className="w-full py-12 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+      <section className="w-full py-12 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* About Section */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
-            <div className="max-w-xl w-full">
-              <h2 className="text-3xl font-bold mb-6 text-center lg:text-left">
+          <div className="w-full lg:w-1/2 flex flex-col justify-center">
+            <div className="max-w-xl w-full mx-auto lg:mx-0">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 p-2 md:p-0 sm:mb-6 text-center lg:text-left">
                 About Zendor Acoustics
               </h2>
-              <p className="text-gray-600 text-lg leading-relaxed text-center lg:text-left">
+              <p className="text-gray-600 text-justify text-base sm:text-lg leading-relaxed sm:leading-loose p-2 lg:text-left">
                 At Zendor Acoustics, we are passionate about creating
                 exceptional acoustic environments. With years of expertise, we
                 offer a comprehensive range of products and solutions tailored
@@ -73,111 +174,83 @@ const AcousticsPage = () => {
 
           {/* Testimonials Section */}
           <div className="w-full lg:w-1/2">
-            <h2 className="text-3xl font-bold mb-8 text-center lg:text-left">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center lg:text-left">
               What Our Clients Say
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-              {/* First Testimonial */}
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center mb-4">
-                  <Image
-                    width={48}
-                    height={48}
-                    className="w-12 h-12 rounded-full bg-gray-200 mr-4 object-cover"
-                    src="https://cdn.pixabay.com/photo/2024/03/31/05/00/ai-generated-8665996_960_720.jpg"
-                    alt="client_pic"
-                  />
-                  <div>
-                    <h3 className="font-medium">Lalith Kumar</h3>
-                    <p className="text-gray-500 text-sm">2 months ago</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              {[
+                {
+                  name: "Lalith Kumar",
+                  date: "2 months ago",
+                  rating: 5,
+                  comment:
+                    "The team at Zendor transformed our living space with their premium wallpapers. Their attention to detail and professional installation made all the difference.",
+                  image:
+                    "https://cdn.pixabay.com/photo/2024/03/31/05/00/ai-generated-8665996_960_720.jpg",
+                },
+                {
+                  name: "Priya Sharma",
+                  date: "3 months ago",
+                  rating: 5,
+                  comment:
+                    "The acoustic solutions provided by Zendor have significantly improved our home theater experience. Their expertise in sound management is exceptional.",
+                  image:
+                    "https://images.generated.photos/E_pKlcsQQdq4fvCC4b6uiMZsJg4XjSLzhcGwk0SBFcs/g:no/rs:fill:256:384/czM6Ly9ncGhvdG9z/LXByb2QtaHVtYW4t/Z2FsbGVyeS8yMDUx/L2E3Mjg2ODY3LWNk/ZjktNDE2Mi1hODU1/LTk0OWY4OTZkODA2/ZS0xLmpwZw.jpg",
+                },
+                {
+                  name: "Arun Patel",
+                  date: "1 month ago",
+                  rating: 4,
+                  comment:
+                    "The wooden flooring installation was seamless, and the quality is outstanding. Their design suggestions helped us choose the perfect style for our home.",
+                  image:
+                    "https://img.freepik.com/premium-photo/young-bearded-indian-businessman-relaxing-mall-bangkok_251136-53368.jpg?semt=ais_hybrid&w=740",
+                },
+              ].map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="bg-white p-4 sm:p-6 rounded-lg shadow-xs hover:shadow-sm transition-shadow duration-200 border border-gray-100"
+                >
+                  <div className="flex items-center mb-3 sm:mb-4">
+                    <Image
+                      width={40}
+                      height={40}
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 mr-3 sm:mr-4 object-cover"
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      loading="lazy"
+                    />
+                    <div>
+                      <h3 className="font-medium text-sm sm:text-base">
+                        {testimonial.name}
+                      </h3>
+                      <p className="text-gray-500 text-xs sm:text-sm">
+                        {testimonial.date}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-5 h-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600">
-                  "The team at Zendor transformed our living space with their
-                  premium wallpapers. Their attention to detail and professional
-                  installation made all the difference."
-                </p>
-              </div>
-
-              {/* Second Testimonial */}
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center mb-4">
-                  <Image
-                    width={48}
-                    height={48}
-                    className="w-12 h-12 rounded-full bg-gray-200 mr-4 object-cover"
-                    src="https://images.generated.photos/E_pKlcsQQdq4fvCC4b6uiMZsJg4XjSLzhcGwk0SBFcs/g:no/rs:fill:256:384/czM6Ly9ncGhvdG9z/LXByb2QtaHVtYW4t/Z2FsbGVyeS8yMDUx/L2E3Mjg2ODY3LWNk/ZjktNDE2Mi1hODU1/LTk0OWY4OTZkODA2/ZS0xLmpwZw.jpg"
-                    alt="client_pic"
-                  />
-                  <div>
-                    <h3 className="font-medium">Priya Sharma</h3>
-                    <p className="text-gray-500 text-sm">3 months ago</p>
+                  <div className="flex mb-2 sm:mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                          i < testimonial.rating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        aria-hidden="true"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
                   </div>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    "{testimonial.comment}"
+                  </p>
                 </div>
-                <div className="flex mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-5 h-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600">
-                  "The acoustic solutions provided by Zendor have significantly
-                  improved our home theater experience. Their expertise in sound
-                  management is exceptional."
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center mb-4">
-                  <Image
-                    width={48}
-                    height={48}
-                    className="w-12 h-12 rounded-full bg-gray-200 mr-4 object-cover"
-                    src="https://img.freepik.com/premium-photo/young-bearded-indian-businessman-relaxing-mall-bangkok_251136-53368.jpg?semt=ais_hybrid&w=740"
-                    alt="client_pic"
-                  />
-
-                  <div>
-                    <h3 className="font-medium">Arun Patel</h3>
-                    <p className="text-gray-500 text-sm">1 month ago</p>
-                  </div>
-                </div>
-                <div className="flex mb-3">
-                  {[...Array(4)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="w-5 h-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600">
-                  "The wooden flooring installation was seamless, and the
-                  quality is outstanding. Their design suggestions helped us
-                  choose the perfect style for our home."
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>

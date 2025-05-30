@@ -6,6 +6,7 @@ import axiosInstance from "@/utils/AxiosInstance";
 import toast, { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/store/cartSlice";
+import SocialShare from "@/components/Global/Socialshare";
 
 export default function WoodenFlooringProduct() {
   const { id } = useParams();
@@ -215,14 +216,6 @@ export default function WoodenFlooringProduct() {
       </div>
     );
   }
-
-  // if (error) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <div className="text-red-500">Error: {error}</div>
-  //     </div>
-  //   );
-  // }
 
   // Update your JSX to use the currentProduct?. data
   return (
@@ -498,6 +491,10 @@ export default function WoodenFlooringProduct() {
               Buy Now
             </button> */}
           </div>
+          <SocialShare
+            link={location.href}
+            title={currentProduct?.name + "||" + currentProduct?.description}
+          />
 
           {/* Specifications */}
           <div className="pt-6 sm:pt-8 border-t">

@@ -91,7 +91,7 @@ const AllTypesSection = () => {
           {categories.map((category, index) => (
             <div
               key={index}
-              className="mb-4 cursor-pointer group"
+              className="mb-6 cursor-pointer group"
               onClick={() => handleCategoryClick(category.link)}
             >
               <div className="relative overflow-hidden rounded-xl shadow-lg">
@@ -102,19 +102,19 @@ const AllTypesSection = () => {
                   height={400}
                   className="w-full h-auto transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 transform md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-300">
                     <h3 className="text-xl font-semibold text-white mb-2">
                       {category.name}
                     </h3>
-                    <p className="text-white/80 text-sm">
+                    <p className="text-white/90 text-sm line-clamp-2 sm:line-clamp-none">
                       {category.description}
                     </p>
                     <button
-                      className="mt-4 px-4 py-2 bg-white/90 text-gray-900 rounded-lg text-sm font-medium hover:bg-white transition-colors duration-200"
+                      className="mt-4 px-4 py-2 bg-white/90 text-gray-900 rounded-lg text-sm font-medium hover:bg-white transition-colors duration-200 shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleCategoryClick(category.name);
+                        handleCategoryClick(category.link);
                       }}
                     >
                       Explore Collection

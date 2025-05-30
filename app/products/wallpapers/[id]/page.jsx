@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { color } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/store/cartSlice";
+import SocialShare from "@/components/Global/Socialshare";
 
 export default function WallpaperProduct() {
   const { id } = useParams();
@@ -550,6 +551,8 @@ export default function WallpaperProduct() {
               Add to Cart
             </button>
           </div>
+           
+          <SocialShare link={location.href} title={currentProduct?.name+"||"+currentProduct?.description}/>
 
           {/* Specifications */}
           <div className="pt-6 sm:pt-8 border-t">
