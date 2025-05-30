@@ -1,6 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from 'next/dynamic';
+
+const ReactConfetti = dynamic(() => import('react-confetti'), {
+  ssr: false
+});
 import { CreditCard, Wallet, Check } from "lucide-react";
 import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
@@ -21,6 +26,11 @@ export default function Checkout() {
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
   const [tax, setTax] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0
+  });
   const userName = useSelector((state) => state.user.name);
   const userEmail = useSelector((state) => state.user.email);
 
@@ -36,6 +46,20 @@ export default function Checkout() {
 
   useEffect(() => {
     fetchCartItems();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   const fetchAddresses = async () => {
@@ -135,161 +159,145 @@ export default function Checkout() {
     }
   };
 
-  const handleRazorpayPayment = () => {
-    // Validate address fields
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "phone",
-      "State",
-      "City",
-      "PinCode",
-      "Street",
-    ];
+  const handleRazorpayPayment = async () => {
+    try {
+      // Validate address fields
+      const requiredFields = [
+        "firstName",
+        "lastName",
+        "email",
+        "phone",
+        "City",
+        "PinCode",
+        "Street",
+      ];
 
-    const selectedAddress = addresses[selectedAddressIndex];
+      const selectedAddress = addresses[selectedAddressIndex];
 
-    for (const field of requiredFields) {
-      if (!selectedAddress[field] || selectedAddress[field].trim() === "") {
-        toast.error(`Please fill the ${field} field in shipping address`);
+      for (const field of requiredFields) {
+        if (!selectedAddress[field] || selectedAddress[field].trim() === "") {
+          toast.error(`Please fill the ${field} field in shipping address`);
+          return;
+        }
+      }
+
+      // Create order first
+      const orderResponse = await axiosInstance.post('/payments/create-order', {
+        amount: Math.ceil(totalPrice + tax) * 100, // Convert to paise
+        currency: 'INR'
+      });
+
+      if (!orderResponse.data.success) {
+        toast.error('Could not create order. Please try again.');
         return;
       }
-    }
 
-    // Validate email format
-    if (
-      !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
-        selectedAddress.email
-      )
-    ) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-
-    // Validate phone number
-    if (!/^[0-9]{10}$/.test(selectedAddress.phone)) {
-      toast.error("Please enter a valid 10-digit phone number");
-      return;
-    }
-
-    // Validate PIN code
-    if (!/^[1-9][0-9]{5}$/.test(selectedAddress.PinCode)) {
-      toast.error("Please enter a valid 6-digit PIN code");
-      return;
-    }
-
-    const options = {
-      //key: "rzp_live_UPGjFs1QXCHtCV",
-      key: "rzp_test_qtfHIjOyxlQnr5",
-      amount: Math.ceil(totalPrice + tax) * 100,
-      currency: "INR",
-      name: "Zendor",
-      description: "Order Payment",
-      image: "https://i.ibb.co/WvMk7BFM/image.png",
-      handler: async function (response) {
-        try {
-          // Verify payment first
-          const verificationResponse = await axiosInstance.post(
-            "/payments/verify-payment",
-            {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-            }
-          );
-
-          if (verificationResponse.status === 200) {
-            // Prepare complete order data
-            const orderData = {
-              shippingAddress: {
-                firstName: selectedAddress.firstName,
-                lastName: selectedAddress.lastName,
-                companyName: selectedAddress.companyName || "",
-                email: selectedAddress.email,
-                phone: selectedAddress.phone,
-                Street: selectedAddress.Street,
-                Landmark: selectedAddress.Landmark || "",
-                City: selectedAddress.City,
-                State: selectedAddress.State,
-                PinCode: selectedAddress.PinCode,
-                country: selectedAddress.country || "India",
-                isHome: selectedAddress.isHome !== false,
-              },
-              paymentMode: "Prepaid",
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpaySignature: response.razorpay_signature,
-              itemsPrice: totalPrice,
-              taxPrice: tax,
-              shippingPrice: 0, // Or calculate if needed
-              totalPrice: Math.ceil(totalPrice + tax),
-              items: cartItems.map((item) => ({
-                productId: item.productId,
-                productType: item.productType,
-                productName: item.name,
-                productThumbnail: item.thumbnail,
-                isSample: item.isSample,
-                quantity: item.quantity,
-                size: item.size,
-                floorArea: item.floorArea,
-                pricePerUnit: item.price,
-                totalPrice: item.totalPrice,
-              })),
-            };
-
-            // Create order with all required data
-            const orderRes = await axiosInstance.post(
-              "/orders/create-order",
-              orderData
+      const options = {
+        key: "rzp_test_qtfHIjOyxlQnr5",
+        amount: Math.ceil(totalPrice + tax) * 100,
+        currency: "INR",
+        name: "Zendor",
+        description: "Order Payment",
+        image: "https://i.ibb.co/WvMk7BFM/image.png",
+        order_id: orderResponse.data.orderId,
+        handler: async function (response) {
+          try {
+            const verificationResponse = await axiosInstance.post(
+              "/payments/verify-payment",
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              }
             );
 
-            if (orderRes.data.success) {
-              toast.success("Order placed successfully");
-              // Clear cart or perform other success actions
-              router.push(`/orders/${orderRes.data.data.orderId}?success=true`);
+            if (verificationResponse.data.success) {
+              // Prepare order data
+              const orderData = {
+                shippingAddress: {
+                  firstName: selectedAddress.firstName,
+                  lastName: selectedAddress.lastName,
+                  companyName: selectedAddress.companyName || "",
+                  email: selectedAddress.email,
+                  phone: selectedAddress.phone,
+                  Street: selectedAddress.Street,
+                  Landmark: selectedAddress.Landmark || "",
+                  City: selectedAddress.City,
+                  State: selectedAddress.State,
+                  PinCode: selectedAddress.PinCode,
+                  country: selectedAddress.country || "India",
+                  isHome: selectedAddress.isHome !== false,
+                },
+                paymentMode: "Prepaid",
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpayOrderId: response.razorpay_order_id,
+                razorpaySignature: response.razorpay_signature,
+                itemsPrice: totalPrice,
+                taxPrice: tax,
+                shippingPrice: 0,
+                totalPrice: Math.ceil(totalPrice + tax),
+                items: cartItems.map((item) => ({
+                  productId: item.productId,
+                  productType: item.productType,
+                  productName: item.name,
+                  productThumbnail: item.thumbnail,
+                  isSample: item.isSample,
+                  quantity: item.quantity,
+                  size: item.size,
+                  floorArea: item.floorArea,
+                  pricePerUnit: item.price,
+                  totalPrice: item.totalPrice,
+                })),
+              };
+
+              const orderRes = await axiosInstance.post(
+                "/orders/create-order",
+                orderData
+              );
+
+              if (orderRes.data.success) {
+                setShowConfetti(true);
+                toast.success("Order placed successfully");
+                setTimeout(() => {
+                  setShowConfetti(false);
+                  router.push(`/`);
+                }, 3000);
+              } else {
+                toast.error(orderRes.data.message || "Order creation failed");
+              }
             } else {
-              toast.error(orderRes.data.message || "Order creation failed");
+              toast.error(
+                verificationResponse.data.message || "Payment verification failed"
+              );
             }
-          } else {
+          } catch (error) {
+            console.error("Payment processing error:", error);
             toast.error(
-              verificationResponse.data.message || "Payment verification failed"
+              error.response?.data?.message ||
+                "Error processing your order. Please contact support."
             );
           }
-        } catch (error) {
-          console.error("Payment processing error:", error);
-          toast.error(
-            error.response?.data?.message ||
-              "Error processing your order. Please contact support."
-          );
-        }
-      },
-      prefill: {
-        name: `${selectedAddress.firstName} ${selectedAddress.lastName}`,
-        email: selectedAddress.email,
-        contact: selectedAddress.phone,
-      },
-      notes: {
-        address: `${selectedAddress.Street}, ${selectedAddress.City}`,
-      },
-      theme: {
-        color: "#003f62",
-      },
-      modal: {
-        ondismiss: function () {
-          document.body.style.overflow = "scroll";
         },
-      },
-    };
+        prefill: {
+          name: `${selectedAddress.firstName} ${selectedAddress.lastName}`,
+          email: selectedAddress.email,
+          contact: selectedAddress.phone,
+        },
+        notes: {
+          address: `${selectedAddress.Street}, ${selectedAddress.City}`,
+        },
+        theme: {
+          color: "#003f62",
+        },
+      };
 
-    if (window.Razorpay) {
       const rzp = new window.Razorpay(options);
       rzp.open();
-    } else {
-      toast.error("Razorpay SDK failed to load. Please try again.");
+    } catch (error) {
+      console.error('Payment initialization error:', error);
+      toast.error('Failed to initialize payment. Please try again.');
     }
   };
-
   const handleCODOrder = async () => {
     try {
       // Validate address fields
@@ -379,10 +387,12 @@ export default function Checkout() {
       );
 
       if (response.data.success) {
+        setShowConfetti(true);
         toast.success("COD order placed successfully!");
-
-        // Redirect to order confirmation page
-        router.push(`/`);
+        setTimeout(() => {
+          setShowConfetti(false);
+          router.push(`/`);
+        }, 3000);
       } else {
         toast.error(response.data.message || "Failed to place COD order");
       }
@@ -478,6 +488,27 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-gray-100 pt-20">
+      {showConfetti && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
+          <ReactConfetti
+            width={windowSize.width}
+            height={windowSize.height}
+            numberOfPieces={500}
+            recycle={true}
+            run={showConfetti}
+            tweenDuration={1000}
+            gravity={0.2}
+            initialVelocityY={20}
+            confettiSource={{
+              x: windowSize.width / 2,
+              y: 0,
+              w: 0,
+              h: 0
+            }}
+            colors={['#003f62', '#EAA451', '#ffffff', '#000000', '#FFD700', '#87CEEB']}
+          />
+        </div>
+      )}
       <Toaster />
       <h2 className="text-center capitalize  font-bold text-2xl  text-blue-700">
         Checkout page
@@ -531,16 +562,12 @@ export default function Checkout() {
                     {selectedAddress != null ? <Check size={16} /> : "2"}
                   </span>
                   <h2 className="font-semibold">DELIVERY ADDRESS</h2>
-                  
                 </div>
-                
               </div>
-              
+
               {activeStep >= 2 && (
                 <>
-                <p className="pb-1">
-                  Select a Address from below
-                </p>
+                  <p className="pb-1">Select a Address from below</p>
                   {addresses.map((address, id) => (
                     <div
                       key={id}
