@@ -24,7 +24,7 @@ const LoginPage = ({ onSuccess }) => {
   });
   const navigate = useRouter();
   const dispatch = useDispatch();
-  const guestCartItems = useSelector((state) => state.cart.items);
+  const guestCartItems = useSelector((state) => state.cart?.items || []);
   // Handle form submission and login/signup proces
 
   const handleForgotPassword = async (e) => {
@@ -75,12 +75,12 @@ const LoginPage = ({ onSuccess }) => {
         localStorage.setItem("role", role);
         dispatch(login({ token: token, name: name, email: email, role: role }));
 
-        if (guestCartItems.length > 0) {
+        // Add null check here
+        if (guestCartItems && guestCartItems.length > 0) {
           try {
             await axiosInstance.post("/cart/add-to-cart", {
               items: guestCartItems,
             });
-            // Clear guest cart after successful merge
             localStorage.removeItem("cart");
             toast.success("Guest cart items merged successfully!");
             navigate.push("/checkout");
