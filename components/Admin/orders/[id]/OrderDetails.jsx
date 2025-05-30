@@ -215,7 +215,7 @@ const OrderDetails = ({ params }) => {
           <Toaster/>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Order #{orderData?.orderInfo?.trackingNumber}
+              Order #{orderData?.orderInfo?.number}
             </h1>
             <div className="flex items-center gap-2 mt-1">
               <span
@@ -313,9 +313,22 @@ const OrderDetails = ({ params }) => {
                               SKU: {item.sku}
                             </p>
                             {item.isSample && (
-                              <span className="inline-block mt-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                              <span className="inline-block h-6 mt-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                                 Sample
                               </span>
+                            )}
+                            
+                              {item.category == "Wallpaper" && (
+                                <span className="inline-block mt-1 ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                                  {" "}
+                                  color:&nbsp;
+                                  <input
+                                    type="color"
+                                    className="w-6 h-5 rounded-full border border-gray-300"
+                                    value={item.image.color}
+                                    disabled
+                                  />
+                                </span>
                             )}
                           </div>
                         </div>

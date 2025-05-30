@@ -264,7 +264,7 @@ export default function CartPage() {
                                   {item.productType == "Wallpaper" && (
                                     <p className="flex">
                                       {" "}
-                                      color:&nbsp;
+                                      Color:&nbsp;
                                       <input
                                         type="color"
                                         value={item.floorArea[wall].color}
