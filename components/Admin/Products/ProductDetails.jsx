@@ -10,7 +10,7 @@ const ProductDetails = () => {
     name: 'Lorem Ipsum',
     description: 'Lorem Ipsum Is A Dummy Text',
     category: 'Wall Covers',
-    brand: 'Zendorr',
+    brand: 'zendor',
     sku: '#32453',
     stockQuantity: '211',
     regularPrice: '₹110.40',

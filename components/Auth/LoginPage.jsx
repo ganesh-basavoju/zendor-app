@@ -429,7 +429,7 @@ const LoginPage = ({ onSuccess }) => {
         <div className="absolute inset-0 flex items-center justify-center z-20 p-4">
           <div className="text-center text-white p-6 md:p-8 bg-[#003f62]/40 backdrop-blur-sm rounded-xl max-w-md w-full">
             <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">
-              Welcome to Zendorr
+              Welcome to zendor
             </h2>
             <p className="text-base md:text-lg">
               Transform your space with our premium collection

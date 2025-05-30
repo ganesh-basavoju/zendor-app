@@ -1,12 +1,6 @@
 "use client";
 import Image from "next/image";
-import {
-  Heart,
-  Search,
-  Grid,
-  List,
-  SlidersHorizontal,
-} from "lucide-react";
+import { Search, Grid, List, SlidersHorizontal } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import { usePathname } from "next/navigation";
@@ -40,7 +34,6 @@ export default function CategoryPage({ params }) {
   const [collections, setCollections] = useState([,]);
 
   const handleHeartClick = (e, product) => {
-    
     e.stopPropagation(); // Prevent product click event
     const token = localStorage.getItem("token");
     if (!token) {
@@ -369,7 +362,13 @@ export default function CategoryPage({ params }) {
                         className="bg-white cursor-pointer p-2 rounded-full hover:bg-gray-100 transition-colors"
                         onClick={(e) => handleHeartClick(e, product.id)}
                       >
-                        <Heart size={20} className="text-gray-800" />
+                        {" "}
+                        <Image
+                          src="/moodboard.png"
+                          alt="moodboard icon"
+                          width={16}
+                          height={16}
+                        />
                       </button>
                     </div>
                   </div>
@@ -417,6 +416,13 @@ export default function CategoryPage({ params }) {
 
               {/* Collections List */}
               <div className="space-y-2">
+                {collections.length == 0 && (
+                  <p className=" font-sans leading-relaxed text-blue-600">
+                    {`You have't created any Collections yet.`}
+                    <br />
+                    {` Go to profile ->moodbard ->create moodboard`}
+                  </p>
+                )}
                 {collections.map((collection) => (
                   <button
                     key={collection.id}
@@ -431,7 +437,7 @@ export default function CategoryPage({ params }) {
               {/* Close Button */}
               <button
                 onClick={() => setShowCollectionModal(false)}
-                className="mt-4 w-full p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="mt-4 w-full p-3 cursor-pointer text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 Cancel
               </button>

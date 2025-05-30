@@ -40,7 +40,7 @@ export const CommercialSolutionsSection = () => {
           className="max-w-3xl mx-auto text-center mb-16"
         >
           <span className="text-blue-600 font-semibold mb-2 block">Premium Solutions</span>
-          <h2 className="text-5xl font-bold mb-4">Zendorr's Commercial Solutions</h2>
+          <h2 className="text-5xl font-bold mb-4">zendor's Commercial Solutions</h2>
           <div className="flex justify-center space-x-4 mb-6">
             <div className="w-12 h-0.5 bg-blue-600"></div>
             <div className="w-12 h-0.5 bg-gray-300"></div>

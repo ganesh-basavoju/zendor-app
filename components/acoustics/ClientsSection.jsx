@@ -52,7 +52,7 @@ export const ClientsSection = () => {
               <div className="w-16 h-16 relative">
                 <Image
                   src="https://i.ibb.co/v64m9Fgb/image-14-1.jpg"
-                  alt="Zendorr Logo"
+                  alt="zendor Logo"
                   fill
                   className="object-contain"
                 />

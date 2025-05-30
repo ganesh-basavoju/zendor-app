@@ -19,8 +19,8 @@ import {
 import MoodBoard from "@/components/Profilepage/Wishlist";
 import localStorage from "redux-persist/lib/storage";
 import { useDispatch } from "react-redux";
-import {  logout } from "@/store/userSlice";
- 
+import { logout } from "@/store/userSlice";
+
 const menuItems = [
   {
     id: 1,
@@ -76,7 +76,12 @@ const NavButton = ({ item, isActive, onClick, isMobile }) => (
       }
     `}
   >
-    <item.icon size={isMobile ? 24 : 20} />
+    {item.text == "Mood Board" ? (
+      <Image src="/moodboard.png" alt="moodboard icon" width={16} height={16} />
+    ) : (
+      <item.icon size={isMobile ? 24 : 20} />
+    )}
+
     {isMobile ? (
       <span className="text-xs mt-1">{item.text}</span>
     ) : (
@@ -117,7 +122,10 @@ const Profilepage = () => {
             userName: userData.userName || "Guest User",
             email: userData.email || "",
             phone: userData.phone === "None" ? "" : userData.phone,
-            profilePicture: userData.profilePicture === "None" ? null : userData.profilePicture,
+            profilePicture:
+              userData.profilePicture === "None"
+                ? null
+                : userData.profilePicture,
             createdAt: userData.createdAt,
             orders: userData.orders || [],
             MoodBoard: userData.MoodBoard || [],

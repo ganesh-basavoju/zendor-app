@@ -60,7 +60,7 @@ const LocationModal = ({ onClose, onSelectLocation }) => {
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
             {
               headers: {
-                'User-Agent': 'Zendorr Location Service'
+                'User-Agent': 'zendor Location Service'
               }
             }
           );

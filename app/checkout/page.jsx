@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const ReactConfetti = dynamic(() => import('react-confetti'), {
-  ssr: false
+const ReactConfetti = dynamic(() => import("react-confetti"), {
+  ssr: false,
 });
 import { CreditCard, Wallet, Check } from "lucide-react";
 import Image from "next/image";
@@ -28,8 +28,8 @@ export default function Checkout() {
   const [tax, setTax] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
   });
   const userName = useSelector((state) => state.user.name);
   const userEmail = useSelector((state) => state.user.email);
@@ -52,13 +52,13 @@ export default function Checkout() {
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
       });
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
 
@@ -182,13 +182,13 @@ export default function Checkout() {
       }
 
       // Create order first
-      const orderResponse = await axiosInstance.post('/payments/create-order', {
+      const orderResponse = await axiosInstance.post("/payments/create-order", {
         amount: Math.ceil(totalPrice + tax) * 100, // Convert to paise
-        currency: 'INR'
+        currency: "INR",
       });
 
       if (!orderResponse.data.success) {
-        toast.error('Could not create order. Please try again.');
+        toast.error("Could not create order. Please try again.");
         return;
       }
 
@@ -267,7 +267,8 @@ export default function Checkout() {
               }
             } else {
               toast.error(
-                verificationResponse.data.message || "Payment verification failed"
+                verificationResponse.data.message ||
+                  "Payment verification failed"
               );
             }
           } catch (error) {
@@ -294,8 +295,8 @@ export default function Checkout() {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      console.error('Payment initialization error:', error);
-      toast.error('Failed to initialize payment. Please try again.');
+      console.error("Payment initialization error:", error);
+      toast.error("Failed to initialize payment. Please try again.");
     }
   };
   const handleCODOrder = async () => {
@@ -489,7 +490,16 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-gray-100 pt-20">
       {showConfetti && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: 9999,
+          }}
+        >
           <ReactConfetti
             width={windowSize.width}
             height={windowSize.height}
@@ -503,9 +513,16 @@ export default function Checkout() {
               x: windowSize.width / 2,
               y: 0,
               w: 0,
-              h: 0
+              h: 0,
             }}
-            colors={['#003f62', '#EAA451', '#ffffff', '#000000', '#FFD700', '#87CEEB']}
+            colors={[
+              "#003f62",
+              "#EAA451",
+              "#ffffff",
+              "#000000",
+              "#FFD700",
+              "#87CEEB",
+            ]}
           />
         </div>
       )}

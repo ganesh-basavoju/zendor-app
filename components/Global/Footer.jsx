@@ -22,8 +22,8 @@ const footerLinks = {
   support: [
     { title: "Contact", href: "/contact" },
     { title: "Order Tracking", href: "/tracking" },
-    { title: "Shipping Info", href: "/shipping" },
-    { title: "Returns", href: "/returns" },
+    // { title: "Shipping Info", href: "/shipping" },
+    // { title: "Returns", href: "/returns" },
   ],
   legal: [
     { title: "Terms of Service", href: "/terms" },
@@ -40,7 +40,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold text-white">Zendorr</h2>
+              <h2 className="text-2xl font-bold text-white">zendor</h2>
               <p className="text-gray-400 mt-4 leading-relaxed">
                 Elevating interiors with artistic precision. Explore premium
                 wallpapers, wooden floorings, and acoustic panels tailored for
@@ -119,7 +119,7 @@ export default function Footer() {
         <div className="mt-16 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} Zendorr. Crafted with elegance.
+              © {new Date().getFullYear()} zendor. Crafted with elegance.
             </p>
             <div className="flex space-x-6">
               {footerLinks.legal.map((link, index) => (

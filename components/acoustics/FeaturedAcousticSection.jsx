@@ -37,7 +37,7 @@ export const FeaturedAcousticSection = () => {
   const handleContact = () => {
     // WhatsApp API URL with your phone number
     const phoneNumber = "918433900692"; // Replace with your WhatsApp number (include country code without +)
-    const message = "Hello, I'm interested in Zendorr's acoustic solutions."; // Pre-filled message
+    const message = "Hello, I'm interested in zendor's acoustic solutions."; // Pre-filled message
     
     // Create WhatsApp URL with encoded message
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

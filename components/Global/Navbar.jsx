@@ -17,6 +17,7 @@ import LocationModal from "./LocationModal";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/utils/AxiosInstance";
 import { login } from "@/store/userSlice";
+import Image from "next/image";
 
 const Navbar = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -44,11 +45,10 @@ const Navbar = () => {
     } catch (error) {
       console.log(error);
     }
-    
   };
   const fetchWallpaperCategories = async () => {
     try {
-      const url = "/wallpapers/getCategories";         
+      const url = "/wallpapers/getCategories";
       const res = await axiosInstance.get(url);
       if (res.status === 200) {
         setSubcategoriesWallpaper(res.data.data);
@@ -59,7 +59,7 @@ const Navbar = () => {
     }
   };
   //  const [loading,setLoading]=useState(false);
- 
+
   //  const [loading,setLoading]=useState(false);
   useEffect(() => {
     fetchWoodenFloorCategories();
@@ -71,10 +71,10 @@ const Navbar = () => {
   useEffect(() => {
     // Initialize any window-dependent states here
     const token = localStorage.getItem("token");
-    const name=localStorage.getItem("name");
-    const email=localStorage.getItem("email");
+    const name = localStorage.getItem("name");
+    const email = localStorage.getItem("email");
     if (token) {
-      dispatch(login({ token,name,email}));
+      dispatch(login({ token, name, email }));
     }
   }, []); // Empty dependency array for initialization
   // Add scroll effect
@@ -96,7 +96,7 @@ const Navbar = () => {
         `/user/search-products?search=${searchQuery}`
       );
       if (res.status === 200) {
-        console.log("data",res.data)
+        console.log("data", res.data);
         const data = res.data;
         setProducts(data);
       }
@@ -212,7 +212,11 @@ const Navbar = () => {
                           key={`${product._id || product.id || index}`}
                           onClick={() => {
                             router.push(
-                              `/products/${product.type=="wallpaper"?"wallpapers":"wooden-flooring"}/${product.id}`
+                              `/products/${
+                                product.type == "wallpaper"
+                                  ? "wallpapers"
+                                  : "wooden-flooring"
+                              }/${product.id}`
                             );
                             setSearchQuery("");
                             setShowSearchResults(false);
@@ -249,15 +253,24 @@ const Navbar = () => {
             <div className="flex items-center space-x-4">
               {[
                 { icon: FaUser, onClick: handleSignIn },
-                { icon: FaHeart, onClick: () => router.push("/profile") },
-                { icon: FaCartPlus, onClick: () => router.push("/cart") }
+                { icon: FaHeart,name:"moodboard", onClick: () => router.push("/profile") },
+                { icon: FaCartPlus, onClick: () => router.push("/cart") },
               ].map((item, index) => (
                 <button
                   key={`nav-icon-${index}`}
                   onClick={item.onClick}
-                  className="p-2.5 hover:bg-white/10 rounded-full transition-colors text-white"
+                  className="p-2.5 cursor-pointer hover:bg-white/10 rounded-full transition-colors text-white"
                 >
-                  <item.icon className="text-xl" />
+                  {item?.name === "moodboard" ? (
+                    <Image
+                      src="/moodboard.png"
+                      alt="moodboard icon"
+                      width={22}
+                      height={22}
+                    />
+                  ) : (
+                    <item.icon className="text-xl" />
+                  )}
                 </button>
               ))}
             </div>
@@ -326,9 +339,7 @@ const Navbar = () => {
                           key={subcat._id}
                           onClick={(e) => {
                             e.stopPropagation();
-                            router.push(
-                              `/category/wallpaper/${subcat.name}`
-                            );
+                            router.push(`/category/wallpaper/${subcat.name}`);
                           }}
                           className="block cursor-pointer w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
                         >
@@ -338,8 +349,6 @@ const Navbar = () => {
                     </div>
                   )}
 
-                 
-                
                   <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform" />
                 </button>
               );
@@ -398,7 +407,13 @@ const Navbar = () => {
               onClick={() => router.push("/wishlist")}
               className="flex flex-col text-gray-200 items-center space-y-1 p-3 hover:bg-[#283593] rounded-lg"
             >
-              <FaHeart />
+              <Image
+                src="/moodboard.png"
+                alt="moodboard icon"
+                width={16}
+                height={16}
+              />
+
               <span className="text-sm">Wishlist</span>
             </button>
             <button
