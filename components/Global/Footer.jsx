@@ -21,7 +21,7 @@ const footerLinks = {
   ],
   support: [
     { title: "Contact", href: "/contact" },
-    { title: "Order Tracking", href: "/tracking" },
+    { title: "Order Tracking", href: "/order-tracking" },
     // { title: "Shipping Info", href: "/shipping" },
     // { title: "Returns", href: "/returns" },
   ],

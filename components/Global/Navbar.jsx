@@ -17,7 +17,6 @@ import LocationModal from "./LocationModal";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/utils/AxiosInstance";
 import { login } from "@/store/userSlice";
-import Image from "next/image";
 
 const Navbar = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -177,6 +176,20 @@ const Navbar = () => {
     router.push("/login");
   };
 
+  //location
+  useEffect(() => {
+    const savedLocation = localStorage.getItem("deliveryLocation");
+    if (savedLocation) {
+      try {
+        const { name, pincode } = JSON.parse(savedLocation);
+        setSelectedLocation(name);
+        setSelectedPincode(pincode);
+      } catch (e) {
+        console.error("Error parsing saved location:", e);
+      }
+    }
+  }, []);
+
   return (
     <nav
       className={`w-full fixed top-0 z-50 transition-all duration-300 ${
@@ -291,12 +304,14 @@ const Navbar = () => {
                   className="p-2.5 cursor-pointer hover:bg-white/10 rounded-full transition-colors text-white"
                 >
                   {item?.name === "moodboard" ? (
-                    <Image
-                      src="/moodboard.png"
-                      alt="moodboard icon"
-                      width={22}
-                      height={22}
-                    />
+                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                   <rect x="3" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="2"/>
+                   <rect x="14" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="2"/>
+                   <rect x="3" y="14" width="7" height="7" rx="1" stroke="white" stroke-width="2"/>
+                   <path d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z" fill="white"/>
+                   <path d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z" fill="white"/>
+                 </svg>
+                 
                   ) : (
                     <item.icon className="text-xl" />
                   )}
@@ -393,7 +408,6 @@ const Navbar = () => {
         }`}
       >
         <div className="px-4 py-3 space-y-4">
-      
           <div className="md:hidden flex-1 max-w-2xl mx-auto">
             <div className="relative group">
               {/* // Modify the search input to prevent immediate state changes */}
@@ -545,12 +559,55 @@ const Navbar = () => {
               onClick={() => router.push("/profile?to=3")}
               className="flex flex-col text-gray-200 items-center space-y-1 p-3 hover:bg-[#283593] rounded-lg"
             >
-              <Image
+              {/* <Image
                 src="/moodboard.png"
                 alt="moodboard icon"
                 width={16}
                 height={16}
-              />
+              /> */}
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="3"
+                  y="3"
+                  width="7"
+                  height="7"
+                  rx="1"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect
+                  x="14"
+                  y="3"
+                  width="7"
+                  height="7"
+                  rx="1"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <rect
+                  x="3"
+                  y="14"
+                  width="7"
+                  height="7"
+                  rx="1"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <path
+                  d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z"
+                  fill="white"
+                />
+                <path
+                  d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z"
+                  fill="white"
+                />
+              </svg>
 
               <span className="text-sm">Mood board</span>
             </button>

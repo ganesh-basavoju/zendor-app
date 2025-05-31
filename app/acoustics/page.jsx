@@ -72,86 +72,83 @@ const AcousticsPage = () => {
       {/* Hero Section */}
 
       <motion.section
-      ref={ref}
-      initial="hidden"
-      animate={controls}
-      className="relative md:h-screen sm:h-[480px] h-[400px] -mt-10 md:-mt-20 overflow-hidden"
-    >
-      <motion.div 
-        className="absolute inset-0"
-        variants={imageVariants}
+        ref={ref}
+        initial="hidden"
+        animate={controls}
+        className="relative md:h-screen sm:h-[480px] h-[400px] -mt-10 md:-mt-20 overflow-hidden"
       >
-        <Image
-          src="https://www.muffle.co.uk/cdn/shop/articles/Home_Cinema.jpg?v=1747737541&width=1100"
-          alt="Acoustic Solutions Background"
-          fill
-          className="object-cover opacity-90"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/30"></div>
-      </motion.div>
-
-      <motion.div 
-        className="relative h-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center text-center"
-        variants={containerVariants}
-      >
-        <motion.h1 
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 leading-tight"
-          variants={itemVariants}
-        >
-          Elevate Your Space with <br className="hidden sm:block" />
-          Premium Acoustic Solutions
-        </motion.h1>
-
-        <motion.p 
-          className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-3xl px-2 sm:px-0 leading-relaxed"
-          variants={itemVariants}
-        >
-          Discover a curated selection of acoustic panels, sound barriers, and
-          more, designed to enhance any environment.
-        </motion.p>
-
-        <motion.button
-          onClick={scrollToNextSection}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 sm:px-8 sm:py-3 rounded-md transition duration-300 text-base sm:text-lg font-medium whitespace-nowrap"
-          aria-label="Learn more about acoustic solutions"
-          variants={itemVariants}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          Learn More
-        </motion.button>
+        <motion.div className="absolute inset-0" variants={imageVariants}>
+          <Image
+            src="https://www.muffle.co.uk/cdn/shop/articles/Home_Cinema.jpg?v=1747737541&width=1100"
+            alt="Acoustic Solutions Background"
+            fill
+            className="object-cover opacity-90"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/30"></div>
+        </motion.div>
 
         <motion.div
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 cursor-pointer"
-          onClick={scrollToNextSection}
-          variants={itemVariants}
-          animate={{
-            y: [0, 10, 0],
-            transition: {
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }
-          }}
+          className="relative h-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center text-center"
+          variants={containerVariants}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+          <motion.h1
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 leading-tight"
+            variants={itemVariants}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
+            Elevate Your Space with <br className="hidden sm:block" />
+            Premium Acoustic Solutions
+          </motion.h1>
+
+          <motion.p
+            className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-3xl px-2 sm:px-0 leading-relaxed"
+            variants={itemVariants}
+          >
+            Discover a curated selection of acoustic panels, sound barriers, and
+            more, designed to enhance any environment.
+          </motion.p>
+
+          <motion.button
+            onClick={scrollToNextSection}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 sm:px-8 sm:py-3 rounded-md transition duration-300 text-base sm:text-lg font-medium whitespace-nowrap"
+            aria-label="Learn more about acoustic solutions"
+            variants={itemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Learn More
+          </motion.button>
+
+          <motion.div
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 cursor-pointer"
+            onClick={scrollToNextSection}
+            variants={itemVariants}
+            animate={{
+              y: [0, 10, 0],
+              transition: {
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </motion.section>
+      </motion.section>
 
       <JourneySection />
       <section className="w-full py-12 px-4 sm:px-6">
