@@ -1,18 +1,25 @@
-"use client"
-import { useState, useEffect } from 'react';
-import { FaSearch, FaTruck, FaBoxOpen, FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
-import axiosInstance from '@/utils/AxiosInstance';
+"use client";
+import { useState, useEffect } from "react";
+import {
+  FaSearch,
+  FaTruck,
+  FaBoxOpen,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaSpinner,
+} from "react-icons/fa";
+import axiosInstance from "@/utils/AxiosInstance";
 
 const OrderTrackingPage = () => {
-  const [trackingId, setTrackingId] = useState('');
+  const [trackingId, setTrackingId] = useState("");
   const [trackingData, setTrackingData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // Load tracking ID from URL if present
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const id = params.get('tracking_id');
+    const id = params.get("tracking_id");
     if (id) {
       setTrackingId(id);
       handleTrackOrder(id);
@@ -22,21 +29,25 @@ const OrderTrackingPage = () => {
   const handleTrackOrder = async (id) => {
     const trackId = id || trackingId;
     if (!trackId.trim()) {
-      setError('Please enter a tracking number');
+      setError("Please enter a tracking number");
       return;
     }
-   
+
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
-      const response = await axiosInstance.get(`/shiprocket/track?tracking_id=${trackId}`);
+      const response = await axiosInstance.get(
+        `/shiprocket/track?tracking_id=${trackId}`
+      );
       setTrackingData(response.data);
-      console.log(response.data,"ship track")
+      console.log(response.data, "ship track");
       // Update URL without reload
-      window.history.pushState({}, '', `?tracking_id=${trackId}`);
+      window.history.pushState({}, "", `?tracking_id=${trackId}`);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch tracking details');
+      setError(
+        err.response?.data?.message || "Failed to fetch tracking details"
+      );
       setTrackingData(null);
     } finally {
       setLoading(false);
@@ -45,11 +56,14 @@ const OrderTrackingPage = () => {
 
   const getStatusIcon = (status) => {
     const statusLower = status.toLowerCase();
-    if (statusLower.includes('delivered')) {
+    if (statusLower.includes("delivered")) {
       return <FaCheckCircle className="text-green-500" />;
-    } else if (statusLower.includes('cancel')) {
+    } else if (statusLower.includes("cancel")) {
       return <FaTimesCircle className="text-red-500" />;
-    } else if (statusLower.includes('transit') || statusLower.includes('shipped')) {
+    } else if (
+      statusLower.includes("transit") ||
+      statusLower.includes("shipped")
+    ) {
       return <FaTruck className="text-blue-500" />;
     }
     return <FaBoxOpen className="text-yellow-500" />;
@@ -59,7 +73,9 @@ const OrderTrackingPage = () => {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">Order Tracking</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">
+            Order Tracking
+          </h1>
           <p className="mt-2 text-sm text-gray-600">
             Track your shipment in real-time
           </p>
@@ -72,9 +88,9 @@ const OrderTrackingPage = () => {
                 type="text"
                 value={trackingId}
                 onChange={(e) => setTrackingId(e.target.value)}
-                placeholder="Enter your tracking number"
+                placeholder="Enter your order shipment number"
                 className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                onKeyPress={(e) => e.key === 'Enter' && handleTrackOrder()}
+                onKeyPress={(e) => e.key === "Enter" && handleTrackOrder()}
               />
             </div>
             <button
@@ -95,9 +111,7 @@ const OrderTrackingPage = () => {
               )}
             </button>
           </div>
-          {error && (
-            <div className="mt-4 text-red-500 text-sm">{error}</div>
-          )}
+          {error && <div className="mt-4 text-red-500 text-sm">{error}</div>}
         </div>
 
         {trackingData && (
@@ -110,7 +124,9 @@ const OrderTrackingPage = () => {
               <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-gray-500">Status</p>
-                  <p className="font-medium capitalize">{trackingData.status}</p>
+                  <p className="font-medium capitalize">
+                    {trackingData.status}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Courier</p>
@@ -119,7 +135,9 @@ const OrderTrackingPage = () => {
                 <div>
                   <p className="text-sm text-gray-500">Estimated Delivery</p>
                   <p className="font-medium">
-                    {trackingData.estimated_delivery || 'Calculating...'}
+                    {trackingData.estimated_delivery === null
+                      ? "We will Update it later"
+                      : trackingData.estimated_delivery}
                   </p>
                 </div>
               </div>

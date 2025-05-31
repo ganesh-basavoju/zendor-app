@@ -48,7 +48,7 @@ export const Dashboard = ({ userData, setCurrent }) => {
       icon: Package2,
       iconColor: 'text-blue-600',
       bgColor: 'bg-blue-100',
-      text: `Order #${order._id.slice(-5)} ${order.status || 'placed'}`,
+      text: `Order - ${order.order_id} ${order.status || 'placed'}`,
       time: new Date(order.createdAt).toLocaleDateString()
     })),
     ...(userData?.wishlist?.slice(0, 2) || []).map(item => ({
