@@ -164,32 +164,59 @@ export default function Orders({ userData }) {
                           <div className="flex flex-col p-3">
                             <h3>Information:</h3>
                             {Object.keys(item?.floorArea).map((floor, ind) => (
-                              <div key={ind} className="flex flex-wrap gap-3">
-                                <p className="text-black font-bold flex">
-                                  {item.productType=="Wallpaper"?"Wall":"Floor"}{` `}
-                                  <p className="uppercase">{` `}{String.fromCharCode(97+ind)}</p>
+                              <>
+                                <div key={ind} className="flex flex-wrap gap-2">
+                                  <p className="text-black font-bold flex">
+                                    {item.productType == "Wallpaper"
+                                      ? "Wall"
+                                      : "Floor"}
+                                    {` `}
+                                    <p className="uppercase">
+                                      {` `}
+                                      {String.fromCharCode(97 + ind)}
+                                    </p>
                                   </p>
-                                <p>
-                                  Dimensions:{` `}
-                                  {item.floorArea[floor].width} X{" "}
-                                  {item.floorArea[floor].height}{" "}
-                                </p>
-                                <p>
-                                  Area:{` `}
-                                  {item.floorArea[
-                                    floor
-                                  ].area.toLocaleString()}{" "}
-                                  sq/feet
-                                </p>
-                                <p>
-                                  Price:{` `}₹
-                                  {item.floorArea[floor].price.toLocaleString()}
-                                </p>
-                              </div>
+                                  <p>
+                                    Dimensions:{` `}
+                                    {item.floorArea[floor].width} X{" "}
+                                    {item.floorArea[floor].height}{" "}
+                                  </p>
+                                  <p>
+                                    Area:{` `}
+                                    {item.floorArea[
+                                      floor
+                                    ].area.toLocaleString()}{" "}
+                                    sq/feet
+                                  </p>
+
+                                  {item.productType == "Wallpaper" && (
+                                    <p className="flex">
+                                      Color:{` `}
+                                      <input
+                                        type="color"
+                                        disabled
+                                        value={item.floorArea[floor].color}
+                                      />
+                                    </p>
+                                  )}
+                                  {item.productType == "Wallpaper" && (
+                                    <p>
+                                      Texture:{` `}
+                                      {item.floorArea[floor].texture}
+                                    </p>
+                                  )}
+                                  <p>
+                                    Price:{` `}₹
+                                    {item.floorArea[
+                                      floor
+                                    ].price.toLocaleString()}
+                                  </p>
+                                </div>
+                                <span className="w-full h-[1px] bg-gray-900 mt-1" />
+                              </>
                             ))}
                           </div>
                         )}
-                        
                       </>
                     ))}
                   </div>
