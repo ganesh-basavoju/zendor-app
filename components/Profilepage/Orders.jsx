@@ -112,39 +112,85 @@ export default function Orders({ userData }) {
                       })}
                     </span>
                   </div>
-                  <div className="flex flex-col pt-2">
+
+                  <div className="flex flex-col pt-2 gap-2">
                     <h3 className="font-medium text-gray-900">
                       Items: ({order.items?.length})
                     </h3>
+                    {/* <span className="w-full h-0.5 bg-black" /> */}
                     {order.items.map((item, ind) => (
-                      <div
-                        key={ind}
-                        className="flex items-center place-items-center"
-                      >
-                        <div className="flex  gap-2 items-center place-items-cente">
-                          {item.productThumbnail && (
-                            <Image
-                              src={item?.productThumbnail}
-                              alt={item.productName}
-                              width={32}
-                              height={32}
-                              className="rounded-sm"
-                            />
-                          )}
-                          <p className="text-blue-950 font-bold">
-                            {" "}
-                            {item.productName} -{" "}
-                          </p>
-                          {item.color && (
+                      <>
+                        <div
+                          key={ind}
+                          className="flex items-center place-items-center"
+                        >
+                          <div className="flex  gap-2 items-center place-items-cente">
+                            {item.productThumbnail && (
+                              <Image
+                                src={item?.productThumbnail}
+                                alt={item.productName}
+                                width={32}
+                                height={32}
+                                className="rounded-sm"
+                              />
+                            )}
+                            <p className="text-blue-950 font-bold">
+                              {" "}
+                              {item.productName} -{" "}
+                            </p>
+                            {item.productType == "Wallpaper" &&
+                              item.isSample && (
+                                <>
+                                  Color:
+                                  <input
+                                    type="color"
+                                    disabled
+                                    value={item.color}
+                                  ></input>
+                                </>
+                              )}
+
                             <>
-                              Color:
-                              <input type="color" value={item.color}></input>
+                              <p>Type:-{item?.productType}</p>
+                              {item?.texture &&
+                                item.productType == "Wallpaper" &&
+                                item.isSample && (
+                                  <p> Texture:-{item?.texture}</p>
+                                )}
                             </>
-                          )}
-                          <p>Type:-{item?.productType}</p>
-                          {item?.texture && <p> Texture:-{item?.texture}</p>}
+                          </div>
                         </div>
-                      </div>
+                        {!item.isSample && (
+                          <div className="flex flex-col p-3">
+                            <h3>Information:</h3>
+                            {Object.keys(item?.floorArea).map((floor, ind) => (
+                              <div key={ind} className="flex flex-wrap gap-3">
+                                <p className="text-black font-bold flex">
+                                  {item.productType=="Wallpaper"?"Wall":"Floor"}{` `}
+                                  <p className="uppercase">{` `}{String.fromCharCode(97+ind)}</p>
+                                  </p>
+                                <p>
+                                  Dimensions:{` `}
+                                  {item.floorArea[floor].width} X{" "}
+                                  {item.floorArea[floor].height}{" "}
+                                </p>
+                                <p>
+                                  Area:{` `}
+                                  {item.floorArea[
+                                    floor
+                                  ].area.toLocaleString()}{" "}
+                                  sq/feet
+                                </p>
+                                <p>
+                                  Price:{` `}₹
+                                  {item.floorArea[floor].price.toLocaleString()}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                      </>
                     ))}
                   </div>
 
@@ -169,11 +215,15 @@ export default function Orders({ userData }) {
                           Payment Pending
                         </span>
                       )}
-                      <button 
-                      onClick={()=>{
-                        window.open(`https://trackcourier.io/track-and-trace/shiprocket/${order.shipment_id}`,"_blank")
-                      }}
-                      className="flex cursor-pointer items-center text-sm font-medium text-gray-600 hover:text-gray-900">
+                      <button
+                        onClick={() => {
+                          window.open(
+                            `https://trackcourier.io/track-and-trace/shiprocket/${order.shipment_id}`,
+                            "_blank"
+                          );
+                        }}
+                        className="flex cursor-pointer items-center text-sm font-medium text-gray-600 hover:text-gray-900"
+                      >
                         Track Order
                         <ChevronRight size={16} className="ml-1" />
                       </button>
