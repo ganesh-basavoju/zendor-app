@@ -146,10 +146,6 @@ const Profilepage = () => {
     return to === "3" ? 3 : 1;
   });
 
-  // Remove this line as it's causing infinite re-renders
-  // if (to === "3") {
-  //   setCurrent(3);
-  // }
 
   const [userData, setUserData] = useState({
     userName: "",

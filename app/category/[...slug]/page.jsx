@@ -376,7 +376,7 @@ export default function CategoryPage({ params }) {
                             width="7"
                             height="7"
                             rx="1"
-                            stroke="white"
+                            stroke="#000"
                             stroke-width="2"
                           />
                           <rect
@@ -385,7 +385,7 @@ export default function CategoryPage({ params }) {
                             width="7"
                             height="7"
                             rx="1"
-                            stroke="white"
+                            stroke="#000"
                             stroke-width="2"
                           />
                           <rect
@@ -394,16 +394,16 @@ export default function CategoryPage({ params }) {
                             width="7"
                             height="7"
                             rx="1"
-                            stroke="white"
+                            stroke="#000"
                             stroke-width="2"
                           />
                           <path
                             d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z"
-                            fill="white"
+                            fill="#000"
                           />
                           <path
                             d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z"
-                            fill="white"
+                            fill="#000"
                           />
                         </svg>
                       </button>

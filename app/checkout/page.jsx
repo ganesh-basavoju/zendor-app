@@ -743,6 +743,23 @@ export default function Checkout() {
                                         sq.
                                         {item.size?.unit || "feet"}
                                       </p>
+                                      {item.floorArea[wall].color &&item.productType==="Wallpaper"&& (
+                                        <p className="flex">
+                                          Color:{" "}
+                                          <input
+                                            disabled
+                                            type="color"
+                                            value={item.floorArea[wall].color}
+                                          />
+                                        </p>
+                                      )}
+                                      {item.productType==="Wallpaper" &&item.floorArea[wall].texture &&(
+                                        <p className="flex">
+                                          Texture:{" "}
+                                          {item.floorArea[wall].texture}
+                                        </p>
+                                      )}
+
                                       <p>
                                         Price: ₹
                                         {(
@@ -872,7 +889,7 @@ export default function Checkout() {
                   <button
                     onClick={handlePayment}
                     disabled={!paymentMethod || isLoading}
-                    className={`w-full py-3 px-4 text-white rounded-lg font-medium transition-all duration-200 ${
+                    className={`w-full py-3 cursor-pointer px-4 text-white rounded-lg font-medium transition-all duration-200 ${
                       !paymentMethod || isLoading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"

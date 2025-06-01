@@ -44,12 +44,12 @@ const ImageSlider = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
             Featured Collections
           </h2>
-          <Link
+          {/* <Link
             href="/products/explore"
             className="text-gray-600 hover:text-gray-900 transition-colors"
           >
             View All Collections →
-          </Link>
+          </Link> */}
         </div>
 
         <Swiper
