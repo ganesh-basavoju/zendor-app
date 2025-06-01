@@ -1,12 +1,16 @@
 export const loadCartFromLocalStorage = () => {
-    try {
-      const serializedState = localStorage.getItem('cart');
-      return serializedState ? JSON.parse(serializedState) : undefined;
-    } catch (e) {
-      console.warn("Could not load cart from localStorage", e);
-      return undefined;
-    }
-  };
+  if (typeof window === 'undefined') {
+    // Running on server, return empty cart
+    return { items: [] };
+  }
+  try {
+    const serializedState = localStorage.getItem('cart');
+    return serializedState ? JSON.parse(serializedState) : { items: [] };
+  } catch (e) {
+    console.warn("Could not load cart from localStorage", e);
+    return { items: [] };
+  }
+};
   
   export const saveCartToLocalStorage = (cartState) => {
     try {

@@ -13,24 +13,39 @@ export default function CartPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [token, setToken] = useState(null); // Add token state
   const Guestcart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
-  console.log("guest", Guestcart);
+  useEffect(() => {
+    // This code runs only on client side
+    setToken(localStorage.getItem("token"));
+    
+    const fetchCartItems = async () => {
+      const res = await axiosInstance.get("/cart/get-cart");
+      if (res.status == 200) {
+        setCartItems(res.data.cart.items);
+        setTotalPrice(res.data.cart.totalAmount);
+      }
+    };
 
-  const token = localStorage.getItem("token");
+    const fetchGuestCartItems = async () => {
+      const data = loadCartFromLocalStorage();
+      const res = await axiosInstance.post("/cart/get-guest-cart", {
+        items: data.items,
+      });
+      if (res.status == 200) {
+        setCartItems(res.data.cart?.items);
+        setTotalPrice(res.data.cart.totalAmount);
+      }
+    };
 
-  const fetchGuestCartItems = async () => {
-    const data = loadCartFromLocalStorage();
-    const res = await axiosInstance.post("/cart/get-guest-cart", {
-      items: data.items,
-    });
-    console.log(res.data, "geuest");
-    if (res.status == 200) {
-      setCartItems(res.data.cart?.items);
-      setTotalPrice(res.data.cart.totalAmount);
+    if (!token) {
+      fetchGuestCartItems();
+    } else {
+      fetchCartItems();
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -50,14 +65,15 @@ export default function CartPage() {
 
   console.log("items", cartItems);
 
-  const handleupdateQuantity = async (flag, item) => {
-    try {
-      if (!token) {
-        dispatch(updateQuantity({ productId: item?._id, flag: flag }));
-        setTimeout(() => {
-          fetchGuestCartItems();
-        }, 2000);
-        return;
+const handleupdateQuantity = async (flag, item) => {
+  try {
+    if (!token) { // Use token state instead of localStorage directly
+      dispatch(updateQuantity({ productId: item?._id, flag: flag }));
+      setTimeout(() => {
+        fetchGuestCartItems();
+      }, 2000);
+      return;
+        
       }
       const res = await axiosInstance.put("/cart/update-quantity", {
         productId: item?._id,
@@ -75,15 +91,14 @@ export default function CartPage() {
   };
 
   const removeItem = async (itemId, isSample) => {
-    try {
-      if (!token) {
-        dispatch(removeFromCart({ id: itemId._id }));
-        setTimeout(() => {
-          fetchGuestCartItems();
-          toast.success("Removed Successfully");
-        }, 2000);
-
-        return;
+  try {
+    if (!token) { // Use token state instead of localStorage directly
+      dispatch(removeFromCart({ id: itemId._id }));
+      setTimeout(() => {
+        fetchGuestCartItems();
+        toast.success("Removed Successfully");
+      }, 2000);
+      return;
       }
       const res = await axiosInstance.post(`/cart/remove-from-cart`, {
         productId: itemId?._id,
