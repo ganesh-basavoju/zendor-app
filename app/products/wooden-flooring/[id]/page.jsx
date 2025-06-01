@@ -167,6 +167,7 @@ export default function WoodenFlooringProduct() {
       if (!token) {
         dispatch(addToCart(data));
         toast.success("product added successfully ");
+        router.push("/cart");
         return;
       } else {
         const res = await axiosInstance.post("/cart/add-to-cart", {

@@ -11,13 +11,14 @@ const VisitStore = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const [name, setName] = useState("");
   const router = useRouter();
-  const handleNormalMessage=()=>{
-    if (!phoneNumber ) return;
+
+  const handleNormalMessage = () => {
+    if (!phoneNumber) return;
     const message = encodeURIComponent(
       `Hi!My name is ${name}. I would like to visit your store. Please provide more information.`
     );
     window.open(`tel:${phoneNumber}?body=${message}`, "_blank");
-  }
+  };
   const handleWhatsAppMessage = () => {
     if (!phoneNumber || !name.trim()) return;
     const message = encodeURIComponent(
@@ -42,7 +43,15 @@ const VisitStore = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Let's connect in person - we'd love to meet you.
             </h1>
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition">
+            <button
+              onClick={() => {
+                const elem = document.getElementById("contact-section");
+                if (elem) {
+                  elem.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="bg-blue-600 cursor-pointer text-white px-8 py-3 rounded-full hover:bg-blue-700 transition"
+            >
               Request a Callback
             </button>
           </div>
@@ -50,7 +59,7 @@ const VisitStore = () => {
       </section>
 
       {/* Store Information */}
-      <section className="py-12 px-4 max-w-6xl mx-auto">
+      <section className="py-12 px-4 max-w-6xl mx-auto"  id="contact-section">
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold">Store Information</h2>

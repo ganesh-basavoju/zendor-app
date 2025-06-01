@@ -529,7 +529,7 @@ export default function Checkout() {
       <Toaster />
       <h2 className="text-center capitalize  font-bold text-2xl  text-blue-700">
         Checkout page
-      </h2>
+      </h2> 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Column */}
@@ -872,7 +872,7 @@ export default function Checkout() {
                   <button
                     onClick={handlePayment}
                     disabled={!paymentMethod || isLoading}
-                    className={`w-full py-3 px-4 text-white rounded-lg font-medium transition-all duration-200 ${
+                    className={`w-full py-3 cursor-pointer px-4 text-white rounded-lg font-medium transition-all duration-200 ${
                       !paymentMethod || isLoading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"
