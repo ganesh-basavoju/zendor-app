@@ -82,14 +82,14 @@ const Hero = () => {
                   <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <Button 
                       onClick={() => navigate(slide.link)} 
-                      className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="w-full cursor-pointer sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 rounded-md shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       <ShoppingCart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                       {slide.buttonText}
                     </Button>
                     <Button 
                       onClick={() => navigate('/visit-store')} 
-                      className="w-full sm:w-auto bg-transparent border-2 border-white text-white hover:bg-white/10 text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 rounded-md transition-all duration-300"
+                      className="w-full cursor-pointer sm:w-auto bg-transparent border-2 border-white text-white hover:bg-white/10 text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 rounded-md transition-all duration-300"
                     >
                       Visit Store
                     </Button>
