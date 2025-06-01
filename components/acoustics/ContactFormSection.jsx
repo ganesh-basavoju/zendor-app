@@ -130,7 +130,7 @@ export default function ContactFormSection() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`flex-1 py-3 px-6 rounded-lg text-white font-medium transition duration-200 ${
+              className={`flex-1 cursor-pointer py-3 px-6 rounded-lg text-white font-medium transition duration-200 ${
                 isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
               }`}
             >
@@ -140,7 +140,7 @@ export default function ContactFormSection() {
             <button
               type="button"
               onClick={handleWhatsApp}
-              className="p-3 rounded-lg bg-green-500 hover:bg-green-600 text-white transition duration-200"
+              className="p-3 rounded-lg cursor-pointer bg-green-500 hover:bg-green-600 text-white transition duration-200"
               title="Contact via WhatsApp"
             >
               <FaWhatsapp size={24} />
@@ -149,7 +149,7 @@ export default function ContactFormSection() {
             <button
               type="button"
               onClick={handleEmail}
-              className="p-3 rounded-lg bg-red-500 hover:bg-red-600 text-white transition duration-200"
+              className="p-3 rounded-lg cusror-pointer bg-red-500 hover:bg-red-600 text-white transition duration-200"
               title="Contact via Email"
             >
               <MdEmail size={24} />

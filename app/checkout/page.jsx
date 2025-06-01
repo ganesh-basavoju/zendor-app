@@ -436,23 +436,28 @@ export default function Checkout() {
 
     loadRazorpay();
   }, []);
-
+  const [flag, setFlag] = useState("");
   const handlePayment = () => {
+    setFlag(true);
     if (!paymentMethod) {
+      setFlag(false);
       toast.error("Please select a payment method");
       return;
     }
 
     if (paymentMethod === "razorpay") {
       if (!isRazorpayReady) {
+        setFlag(false);
         toast.error(
           "Payment gateway is loading. Please try again in a moment."
         );
         return;
       }
       handleRazorpayPayment();
+      setFlag(false);
     } else if (paymentMethod === "cod") {
       handleCODOrder();
+      setFlag(false);
     }
   };
 
@@ -743,22 +748,24 @@ export default function Checkout() {
                                         sq.
                                         {item.size?.unit || "feet"}
                                       </p>
-                                      {item.floorArea[wall].color &&item.productType==="Wallpaper"&& (
-                                        <p className="flex">
-                                          Color:{" "}
-                                          <input
-                                            disabled
-                                            type="color"
-                                            value={item.floorArea[wall].color}
-                                          />
-                                        </p>
-                                      )}
-                                      {item.productType==="Wallpaper" &&item.floorArea[wall].texture &&(
-                                        <p className="flex">
-                                          Texture:{" "}
-                                          {item.floorArea[wall].texture}
-                                        </p>
-                                      )}
+                                      {item.floorArea[wall].color &&
+                                        item.productType === "Wallpaper" && (
+                                          <p className="flex">
+                                            Color:{" "}
+                                            <input
+                                              disabled
+                                              type="color"
+                                              value={item.floorArea[wall].color}
+                                            />
+                                          </p>
+                                        )}
+                                      {item.productType === "Wallpaper" &&
+                                        item.floorArea[wall].texture && (
+                                          <p className="flex">
+                                            Texture:{" "}
+                                            {item.floorArea[wall].texture}
+                                          </p>
+                                        )}
 
                                       <p>
                                         Price: ₹
@@ -888,14 +895,14 @@ export default function Checkout() {
 
                   <button
                     onClick={handlePayment}
-                    disabled={!paymentMethod || isLoading}
+                    disabled={!paymentMethod || isLoading||flag}
                     className={`w-full py-3 cursor-pointer px-4 text-white rounded-lg font-medium transition-all duration-200 ${
                       !paymentMethod || isLoading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"
                     }`}
                   >
-                    {isLoading ? (
+                    {isLoading||flag ? (
                       <span className="flex items-center justify-center gap-2">
                         Processing... <span className="animate-spin">⌛</span>
                       </span>

@@ -110,7 +110,7 @@ const AcousticsPage = () => {
 
           <motion.button
             onClick={scrollToNextSection}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 sm:px-8 sm:py-3 rounded-md transition duration-300 text-base sm:text-lg font-medium whitespace-nowrap"
+            className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-6 py-2 sm:px-8 sm:py-3 rounded-md transition duration-300 text-base sm:text-lg font-medium whitespace-nowrap"
             aria-label="Learn more about acoustic solutions"
             variants={itemVariants}
             whileHover={{ scale: 1.05 }}

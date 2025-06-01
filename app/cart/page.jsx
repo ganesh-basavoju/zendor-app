@@ -169,15 +169,15 @@ export default function CartPage() {
                             {item.productType} -{" "}
                             {item.isSample ? "Sample" : "Full Product"}
                           </p>
-                          {item.isSample &&  item.productType == "Wallpaper"&&(
+                          {item.isSample && item.productType == "Wallpaper" && (
                             <>
-                            <p className="flex">
-                              color:&nbsp;
-                              <input
-                                type="color"
-                                value={item?.color}
-                                disabled
-                              />
+                              <p className="flex">
+                                color:&nbsp;
+                                <input
+                                  type="color"
+                                  value={item?.color}
+                                  disabled
+                                />
                               </p>
                               <p>Texture:{item?.texture}</p>
                             </>
@@ -235,7 +235,9 @@ export default function CartPage() {
                                   className="bg-white p-3 rounded-lg"
                                 >
                                   <h5 className="font-medium">
-                                    Wall {wall.slice(-1)}
+                                  {item.productType == "Wallpaper"
+                                      ? "Wall"
+                                      : "Floor"}{` `}{wall.slice(-1)}
                                   </h5>
                                   <p>
                                     Width: {item.floorArea[wall].width || 0}{" "}

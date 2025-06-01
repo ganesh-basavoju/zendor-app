@@ -132,9 +132,10 @@ export default function WallpaperProduct() {
     );
   }, [wallDimensions, selectedWalls, selectedSize, selectedTexture]);
 
- 
- 
+  const [flag, setFlag] = useState(false);
+
   const handleAddToCart = async () => {
+    setFlag(true);
     const token = localStorage.getItem("token");
 
     let cartData = {
@@ -149,8 +150,12 @@ export default function WallpaperProduct() {
         quantity,
         pricePerUnit: currentProduct?.sampleCost,
         totalPrice: currentProduct?.sampleCost * quantity,
-        texture: currentProduct?.texture[selectedTexture]?.name || currentProduct?.texture[0]?.name,
-        color: currentProduct?.images[selectedImage]?.color || currentProduct?.images[0]?.color
+        texture:
+          currentProduct?.texture[selectedTexture]?.name ||
+          currentProduct?.texture[0]?.name,
+        color:
+          currentProduct?.images[selectedImage]?.color ||
+          currentProduct?.images[0]?.color,
       };
     } else {
       const hasValidDimensions = selectedWalls.every(
@@ -190,9 +195,12 @@ export default function WallpaperProduct() {
         // Guest user → Redux store
         dispatch(addToCart(cartData));
         toast.success("Added to cart (guest)");
+        setFlag(false);
         router.push("/cart");
       }
+      setFlag(false);
     } catch (error) {
+      setFlag(false);
       console.error("Cart error:", error);
       toast.error(error.response?.data?.message || "Failed to add to cart");
     }
@@ -545,14 +553,18 @@ export default function WallpaperProduct() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6">
             <button
+              disabled={flag}
               onClick={handleAddToCart}
-              className="w-full py-3 sm:py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
+              className="w-full cursor-pointer py-3 sm:py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
             >
-              Add to Cart
+              {flag ? "Adding to cart ..." : "Add to Cart"}
             </button>
           </div>
-           
-          <SocialShare link={location.href} title={currentProduct?.name+"||"+currentProduct?.description}/>
+
+          <SocialShare
+            link={location.href}
+            title={currentProduct?.name + "||" + currentProduct?.description}
+          />
 
           {/* Specifications */}
           <div className="pt-6 sm:pt-8 border-t">

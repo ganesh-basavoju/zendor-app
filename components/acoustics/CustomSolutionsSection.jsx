@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function CustomSolutionsSection() {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white md:px-8 px-6">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-serif font-bold text-center mb-12">
           Tailored Acoustic Solutions
