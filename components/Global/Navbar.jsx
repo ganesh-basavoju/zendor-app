@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -19,6 +17,15 @@ import axiosInstance from "@/utils/AxiosInstance";
 import { login } from "@/store/userSlice";
 
 const Navbar = () => {
+  // Hooks must be called unconditionally at the top level
+  const pathname = usePathname();
+  
+  // Don't render navbar if we're in an admin route (must be before any other hooks)
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
+  // State hooks
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("Mumbai");
   const [selectedPincode, setSelectedPincode] = useState("400017");
@@ -26,44 +33,79 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [subcategoriesForWoodenFloorings, setSubcategoriesForWoodenFloorings] =
-    useState([]);
-  const pathname = usePathname();
-  const isHomePage = pathname === "/";
-  const islogin = useSelector((state) => state.user.isAuthenticated);
-  const dispatch = useDispatch();
+  const [subcategoriesForWoodenFloorings, setSubcategoriesForWoodenFloorings] = useState([]);
   const [subcategoriesWallpaper, setSubcategoriesWallpaper] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [mobileMenuDropdowns, setMobileMenuDropdowns] = useState({
+    woodenFlooring: false,
+    wallpaper: false
+  });
 
+  // Other hooks
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const islogin = useSelector((state) => state.user.isAuthenticated);
+  const isHomePage = pathname === "/";
+
+  // Menu items
+  const menuItems = ["Wallpaper", "Wooden Flooring", "Acoustics"];
+
+  // Async functions
   const fetchWoodenFloorCategories = async () => {
     try {
       const res = await axiosInstance.get("/wooden-floors/getCategories");
       if (res.status === 200) {
         setSubcategoriesForWoodenFloorings(res.data.data);
-        console.log(res.data);
       }
     } catch (error) {
       console.log(error);
     }
   };
+
   const fetchWallpaperCategories = async () => {
     try {
-      const url = "/wallpapers/getCategories";
-      const res = await axiosInstance.get(url);
+      const res = await axiosInstance.get("/wallpapers/getCategories");
       if (res.status === 200) {
         setSubcategoriesWallpaper(res.data.data);
-        console.log(res.data);
       }
     } catch (error) {
       console.log(error);
     }
   };
-  //  const [loading,setLoading]=useState(false);
 
-  //  const [loading,setLoading]=useState(false);
+  const fetchProducts = async () => {
+    try {
+      setShowSearchResults(false);
+      const res = await axiosInstance.get(`/user/search-products?search=${searchQuery}`);
+      if (res.status === 200) {
+        setProducts(res.data);
+      }
+    } catch (error) {
+      console.log(error);
+      setProducts([]);
+    }
+    setShowSearchResults(true);
+  };
+
+  const handleSignIn = () => {
+    if (islogin) {
+      router.push("/profile");
+      return;
+    }
+    router.push("/login");
+  };
+
+  const toggleMobileDropdown = (menu) => {
+    setMobileMenuDropdowns(prev => ({
+      ...prev,
+      [menu]: !prev[menu]
+    }));
+  };
+
+  // Effect hooks
   useEffect(() => {
     fetchWoodenFloorCategories();
     fetchWallpaperCategories();
-    // fetchProducts();
   }, []);
 
   useEffect(() => {
@@ -91,17 +133,15 @@ const Navbar = () => {
     };
   }, [isMobileMenuOpen]);
 
-  // Add useEffect for window-dependent initialization
   useEffect(() => {
-    // Initialize any window-dependent states here
     const token = localStorage.getItem("token");
     const name = localStorage.getItem("name");
     const email = localStorage.getItem("email");
     if (token) {
       dispatch(login({ token, name, email }));
     }
-  }, []); // Empty dependency array for initialization
-  // Add scroll effect
+  }, [dispatch]);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -111,32 +151,10 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Sample products data for search functionality
-  const [products, setProducts] = useState([]);
-  const fetchProducts = async () => {
-    try {
-      setShowSearchResults(false);
-      const res = await axiosInstance.get(
-        `/user/search-products?search=${searchQuery}`
-      );
-      if (res.status === 200) {
-        console.log("data", res.data);
-        const data = res.data;
-        setProducts(data);
-      }
-    } catch (error) {
-      console.log(error);
-      setProducts([]); // Reset products on error
-    }
-    setShowSearchResults(true);
-  };
-
-  // Move the useEffect for search outside of render
   useEffect(() => {
     if (searchQuery.trim() !== "") {
       const timer = setTimeout(() => {
         fetchProducts();
-        setShowSearchResults(true);
       }, 300);
       return () => clearTimeout(timer);
     } else {
@@ -145,38 +163,6 @@ const Navbar = () => {
     }
   }, [searchQuery]);
 
-  const router = useRouter();
-
-  // Add menuItems array
-  const menuItems = ["Wallpaper", "Wooden Flooring", "Acoustics"];
-
-  // Close search results when clicking outside
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowSearchResults(false);
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
-  // Don't render navbar if we're in an admin route
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
-
-  const handleSignIn = () => {
-    if (islogin) {
-      router.push("/profile");
-      return;
-    }
-    // Toggle the login modal or navigate to login page
-    router.push("/login");
-  };
-
-  //location
   useEffect(() => {
     const savedLocation = localStorage.getItem("deliveryLocation");
     if (savedLocation) {
@@ -470,14 +456,15 @@ const Navbar = () => {
             {menuItems.map((item) => {
               const path = `/category/${item.toLowerCase()}`;
               const isActive = pathname.startsWith(path);
-              const [isOpen, setIsOpen] = useState(false);
+              const isDropdown = item === "Wooden Flooring" || item === "Wallpaper";
+              const dropdownKey = item.toLowerCase().replace(' ', '');
 
               return (
                 <div key={item} className="relative">
                   <button
                     onClick={() => {
-                      if (item === "Wooden Flooring" || item === "Wallpaper") {
-                        setIsOpen(!isOpen);
+                      if (isDropdown) {
+                        toggleMobileDropdown(dropdownKey);
                       } else {
                         router.push(
                           path + (path !== "/category/acoustics" ? "/All" : "")
@@ -492,19 +479,17 @@ const Navbar = () => {
                     }`}
                   >
                     <span>{item}</span>
-                    <FaChevronDown
-                      className={`transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      } ${
-                        item === "Wooden Flooring" || item === "Wallpaper"
-                          ? ""
-                          : "opacity-0"
-                      }`}
-                    />
+                    {isDropdown && (
+                      <FaChevronDown
+                        className={`transition-transform ${
+                          mobileMenuDropdowns[dropdownKey] ? "rotate-180" : ""
+                        }`}
+                      />
+                    )}
                   </button>
 
                   {/* Dropdown for Wooden Flooring */}
-                  {item === "Wooden Flooring" && isOpen && (
+                  {item === "Wooden Flooring" && mobileMenuDropdowns.woodenflooring && (
                     <div className="ml-4 mt-1 space-y-1">
                       {subcategoriesForWoodenFloorings.map((subcat) => (
                         <button
@@ -525,7 +510,7 @@ const Navbar = () => {
                   )}
 
                   {/* Dropdown for Wallpaper */}
-                  {item === "Wallpaper" && isOpen && (
+                  {item === "Wallpaper" && mobileMenuDropdowns.wallpaper && (
                     <div className="ml-4 mt-1 space-y-1">
                       {subcategoriesWallpaper.map((subcat) => (
                         <button

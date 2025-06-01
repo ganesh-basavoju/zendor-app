@@ -44,8 +44,8 @@ const OrderDetails = ({ params }) => {
         );
         if (response.data.success) {
           setOrderData(response.data.data);
-          if (response.data.data.orderInfo.trackingNumber) {
-            fetchTrackingInfo(response.data.data.orderInfo.trackingNumber);
+          if (response.data.data.orderInfo.shipmentId) {
+            fetchTrackingInfo(response.data.data.orderInfo.shipmentId);
           }
         }
       } catch (error) {
@@ -215,7 +215,7 @@ const OrderDetails = ({ params }) => {
           <Toaster/>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Order #{orderData?.orderInfo?.number}
+              Order #{orderData?.orderInfo?.id}
             </h1>
             <div className="flex items-center gap-2 mt-1">
               <span
@@ -295,7 +295,7 @@ const OrderDetails = ({ params }) => {
                         <div className="flex items-center gap-4">
                           <div className="relative w-16 h-16 rounded-lg overflow-hidden">
                             <Image
-                              src={item.category==="Wallpaper"?item.image?.pic:item.images}
+                              src={item.image}
                               alt={item.name}
                               fill
                               className="object-cover"
@@ -309,23 +309,25 @@ const OrderDetails = ({ params }) => {
                             >
                               {item.name}
                             </Link>
-                            <p className="text-sm text-gray-500 mt-1">
-                              SKU: {item.sku}
-                            </p>
+                            <p></p>
+                            {item.type === "Wallpaper" && (<p className="text-sm text-gray-500 mt-1">
+                              Texture: {item.texture}
+                            </p>)}
                             {item.isSample && (
                               <span className="inline-block h-6 mt-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                                 Sample
                               </span>
                             )}
                             
-                              {item.category == "Wallpaper" && (
+                            
+                              {item.type == "Wallpaper" && (
                                 <span className="inline-block mt-1 ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                                   {" "}
                                   color:&nbsp;
                                   <input
                                     type="color"
                                     className="w-6 h-5 rounded-full border border-gray-300"
-                                    value={item.image.color}
+                                    value={item.color}
                                     disabled
                                   />
                                 </span>
@@ -393,7 +395,7 @@ const OrderDetails = ({ params }) => {
           </div>
 
           {/* Tracking Information */}
-          {orderData.orderInfo.trackingNumber && (
+          {orderData.orderInfo?.shipmentId && (
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">Tracking Information</h2>
@@ -409,12 +411,12 @@ const OrderDetails = ({ params }) => {
                   </p>
                   <div className="flex items-center gap-2">
                     <p className="font-mono font-medium">
-                      {orderData.orderInfo.trackingNumber}
+                      {orderData.orderInfo.shipmentId}
                     </p>
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(
-                          orderData.orderInfo.trackingNumber
+                          orderData.orderInfo.shipmentId
                         );
                         toast.success("Tracking number copied to clipboard");
                       }}
@@ -425,7 +427,7 @@ const OrderDetails = ({ params }) => {
                   </div>
                 </div>
                 <a
-                  href={`https://shipcorrect.com/tracking/${orderData.orderInfo.trackingNumber}`}
+                  href={`https://trackcourier.io/track-and-trace/shiprocket/${orderData.orderInfo.shipmentId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-[#003f62] text-white rounded-lg hover:bg-[#002a44] transition-colors text-sm"
@@ -502,7 +504,7 @@ const OrderDetails = ({ params }) => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium">{orderData.customer.phone}</p>
+                <p className="font-medium">+91 {orderData.shipping.address.phone}</p>
               </div>
             </div>
           </div>
@@ -520,16 +522,16 @@ const OrderDetails = ({ params }) => {
                   {orderData.shipping.address.street}
                 </p>
                 {orderData.shipping.address.landmark && (
-                  <p className="text-gray-600">
+                  <p className="font-medium">
                     Near {orderData.shipping.address.landmark}
                   </p>
                 )}
-                <p className="text-gray-600">
+                <p className="font-medium">
                   {orderData.shipping.address.city},{" "}
                   {orderData.shipping.address.state} -{" "}
                   {orderData.shipping.address.pinCode}
                 </p>
-                <p className="text-gray-600">
+                <p className="font-medium">
                   {orderData.shipping.address.country}
                 </p>
               </div>
