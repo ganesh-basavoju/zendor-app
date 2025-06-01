@@ -139,13 +139,15 @@ const NavButton = ({ item, isActive, onClick, isMobile }) => (
 const Profilepage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const to = searchParams.get("to");
+   const [current, setCurrent] = useState(1);
+  const [initialized, setInitialized] = useState(false);
 
-  const [current, setCurrent] = useState(() => {
-    // Initialize current state based on 'to' parameter
-    return to === "3" ? 3 : 1;
-  });
-
+  useEffect(() => {
+    // This runs only on client side after hydration
+    const to = searchParams.get("to");
+    setCurrent(to === "3" ? 3 : 1);
+    setInitialized(true);
+  }, [searchParams]);
 
   const [userData, setUserData] = useState({
     userName: "",
@@ -219,15 +221,18 @@ const Profilepage = () => {
   }
 
   const handleSignOut = () => {
+    if (typeof window !== 'undefined') {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
     localStorage.removeItem("role");
-    // Remove the token from localS
-    dispatch(logout());
-    router.push("/");
+  }
+  dispatch(logout());
+  router.push("/");
   };
 
+
+  if (!initialized) {
   return (
     <div className="mt-1 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -317,6 +322,6 @@ const Profilepage = () => {
       </div>
     </div>
   );
-};
+};};
 
 export default Profilepage;
