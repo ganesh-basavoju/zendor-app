@@ -116,7 +116,10 @@ export default function WoodenFlooringProduct() {
     }
   }, [dimensions.width, dimensions.height, unit, activeWall]);
 
+  const [flag, setFlag] = useState(false);
+
   const handleAddToCart = async () => {
+    setFlag(true);
     // Check if token exists in both Redux and localStorage
     const token = localStorage.getItem("token");
 
@@ -175,10 +178,13 @@ export default function WoodenFlooringProduct() {
         });
         if (res.status === 200) {
           toast.success("Product added to cart");
+          setFlag(false);
           router.push("/cart");
         }
       }
+      setFlag(false);
     } catch (error) {
+      setFlag(false);
       console.error("Cart error:", error);
       toast.error(error.response?.data?.message || "Failed to add to cart");
     }
@@ -483,10 +489,11 @@ export default function WoodenFlooringProduct() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6">
             <button
+              disabled={flag}
               onClick={handleAddToCart}
-              className="w-full py-3 sm:py-4 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
+              className={`w-full ${flag?"cursor-not-allowed":"cursor-pointer"} py-3 sm:py-4 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium`}
             >
-              Add to Cart
+              {flag ? "Adding to cart" : "Add to Cart"}
             </button>
             {/* <button className="w-full py-3 sm:py-4 px-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm sm:text-base font-medium">
               Buy Now
