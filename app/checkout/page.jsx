@@ -529,7 +529,7 @@ export default function Checkout() {
       <Toaster />
       <h2 className="text-center capitalize  font-bold text-2xl  text-blue-700">
         Checkout page
-      </h2> 
+      </h2>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Column */}
@@ -743,6 +743,23 @@ export default function Checkout() {
                                         sq.
                                         {item.size?.unit || "feet"}
                                       </p>
+                                      {item.floorArea[wall].color &&item.productType==="Wallpaper"&& (
+                                        <p className="flex">
+                                          Color:{" "}
+                                          <input
+                                            disabled
+                                            type="color"
+                                            value={item.floorArea[wall].color}
+                                          />
+                                        </p>
+                                      )}
+                                      {item.productType==="Wallpaper" &&item.floorArea[wall].texture &&(
+                                        <p className="flex">
+                                          Texture:{" "}
+                                          {item.floorArea[wall].texture}
+                                        </p>
+                                      )}
+
                                       <p>
                                         Price: ₹
                                         {(
