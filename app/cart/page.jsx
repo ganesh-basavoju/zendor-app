@@ -169,7 +169,7 @@ export default function CartPage() {
                             {item.productType} -{" "}
                             {item.isSample ? "Sample" : "Full Product"}
                           </p>
-                          {item.isSample && (
+                          {item.isSample &&  item.productType == "Wallpaper"&&(
                             <>
                             <p className="flex">
                               color:&nbsp;
