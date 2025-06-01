@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from 'react';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
@@ -22,7 +23,9 @@ import localStorage from "redux-persist/lib/storage";
 import { useDispatch } from "react-redux";
 import { logout } from "@/store/userSlice";
 
-const menuItems = [
+
+const ProfilepageContent = () => {
+  const menuItems = [
   {
     id: 1,
     icon: LayoutDashboard,
@@ -139,15 +142,13 @@ const NavButton = ({ item, isActive, onClick, isMobile }) => (
 const Profilepage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-   const [current, setCurrent] = useState(1);
-  const [initialized, setInitialized] = useState(false);
+  const to = searchParams.get("to");
 
-  useEffect(() => {
-    // This runs only on client side after hydration
-    const to = searchParams.get("to");
-    setCurrent(to === "3" ? 3 : 1);
-    setInitialized(true);
-  }, [searchParams]);
+  const [current, setCurrent] = useState(() => {
+    // Initialize current state based on 'to' parameter
+    return to === "3" ? 3 : 1;
+  });
+
 
   const [userData, setUserData] = useState({
     userName: "",
@@ -221,7 +222,7 @@ const Profilepage = () => {
   }
 
   const handleSignOut = () => {
-    if (typeof window !== 'undefined') {
+     if (typeof window !== 'undefined') {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
@@ -231,8 +232,6 @@ const Profilepage = () => {
   router.push("/");
   };
 
-
-  if (!initialized) {
   return (
     <div className="mt-1 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -322,6 +321,16 @@ const Profilepage = () => {
       </div>
     </div>
   );
-};};
+};
+
+};
+
+const Profilepage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfilepageContent />
+    </Suspense>
+  );
+}
 
 export default Profilepage;
