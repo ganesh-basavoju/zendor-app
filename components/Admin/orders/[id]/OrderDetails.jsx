@@ -18,6 +18,7 @@ import axiosInstance from "@/utils/AxiosInstance";
 import Image from "next/image";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 const OrderDetails = ({ params }) => {
   const router = useRouter();
@@ -58,9 +59,8 @@ const OrderDetails = ({ params }) => {
     const fetchTrackingInfo = async (trackingNumber) => {
       try {
         setTrackingLoading(true);
-        const response = await axiosInstance.post("/orders/track-shipment", {
-          trackingNumber,
-        });
+        const response = await axios.get(`https://apiv2.shiprocket.in/v1/external/courier/track/awb/${trackingNumber}`);
+        console.log("Tracking response:", response.data);
         setTrackingData(response.data);
       } catch (error) {
         console.error("Error fetching tracking info:", error);
@@ -76,7 +76,7 @@ const OrderDetails = ({ params }) => {
 
   const handleStatusUpdate = async (newStatus) => {
     try {
-      setLoading(true);
+      
 
       // Prepare the request data
       const updateData = {
@@ -102,8 +102,8 @@ const OrderDetails = ({ params }) => {
       }
 
       // Make the API request
-      const response = await axiosInstance.patch(
-        `/orders/updateOrderStatus/${orderData.orderInfo.id}`,
+      const response = await axiosInstance.put(
+        `/orders/updateOrderStatus/${orderData.orderInfo.number}`,
         updateData
       );
 
@@ -486,7 +486,7 @@ const OrderDetails = ({ params }) => {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <  div className="space-y-6">
           {/* Customer Information */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
