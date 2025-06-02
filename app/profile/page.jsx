@@ -22,7 +22,9 @@ import localStorage from "redux-persist/lib/storage";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/store/userSlice";
 
-const menuItems = [
+
+const ProfilepageContent = () => {
+  const menuItems = [
   {
     id: 1,
     icon: LayoutDashboard,
@@ -405,13 +407,14 @@ function ProfileContent() {
   }
 
   const handleSignOut = () => {
+     if (typeof window !== 'undefined') {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
     localStorage.removeItem("role");
-    // Remove the token from localS
-    dispatch(logout());
-    router.push("/");
+  }
+  dispatch(logout());
+  router.push("/");
   };
 
   return (

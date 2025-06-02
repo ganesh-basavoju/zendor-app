@@ -18,6 +18,7 @@ import axiosInstance from "@/utils/AxiosInstance";
 import Image from "next/image";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 const OrderDetails = ({ params }) => {
   const router = useRouter();
@@ -58,9 +59,8 @@ const OrderDetails = ({ params }) => {
     const fetchTrackingInfo = async (trackingNumber) => {
       try {
         setTrackingLoading(true);
-        const response = await axiosInstance.post("/orders/track-shipment", {
-          trackingNumber,
-        });
+        const response = await axios.get(`https://apiv2.shiprocket.in/v1/external/courier/track/awb/${trackingNumber}`);
+        console.log("Tracking response:", response.data);
         setTrackingData(response.data);
       } catch (error) {
         console.error("Error fetching tracking info:", error);
@@ -76,7 +76,7 @@ const OrderDetails = ({ params }) => {
 
   const handleStatusUpdate = async (newStatus) => {
     try {
-      setLoading(true);
+      
 
       // Prepare the request data
       const updateData = {
@@ -102,8 +102,8 @@ const OrderDetails = ({ params }) => {
       }
 
       // Make the API request
-      const response = await axiosInstance.patch(
-        `/orders/updateOrderStatus/${orderData.orderInfo.id}`,
+      const response = await axiosInstance.put(
+        `/orders/updateOrderStatus/${orderData.orderInfo.number}`,
         updateData
       );
 
@@ -288,70 +288,100 @@ const OrderDetails = ({ params }) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody>
-                  {orderData.items.map((item, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="relative w-16 h-16 rounded-lg overflow-hidden">
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                          </div>
+                
+<tbody>
+  {orderData.items.map((item, index) => (
+    <tr key={index} className="border-b">
+      <td className="py-4">
+        <div className="flex items-center gap-4">
+          <div className="relative w-16 h-16 rounded-lg overflow-hidden">
+            <Image
+              src={item.image}
+              alt={item.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </div>
+          <div className="flex-1">
+            <Link
+              href={`/products/${item.id}`}
+              className="font-medium hover:text-[#003f62] transition-colors"
+            >
+              {item.name}
+            </Link>
+            
+            {item.isSample ? (
+              <>
+                <p className="text-sm text-gray-500 mt-1">
+                  Texture: {item.texture}
+                </p>
+                <span className="inline-block h-6 mt-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                  Sample
+                </span>
+                <span className="inline-block mt-1 ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                  Color:&nbsp;
+                  <input
+                    type="color"
+                    className="w-6 h-5 rounded-full border border-gray-300"
+                    value={item.color}
+                    disabled
+                  />
+                </span>
+              </>
+            ) : (
+              item.floorArea && (
+                <div className="mt-2 space-y-2">
+                  {Object.entries(item.floorArea).map(([wallName, wallData]) => (
+                    wallName !== '[[Prototype]]' && (
+                      <div key={wallName} className="inline-block mr-2 text-xs bg-gray-50 p-2 rounded border">
+                        <div className="flex justify-between items-start">
                           <div>
-                            <Link
-                              href={`/products/${item.id}`}
-                              className="font-medium hover:text-[#003f62] transition-colors"
-                            >
-                              {item.name}
-                            </Link>
-                            <p></p>
-                            {item.type === "Wallpaper" && (<p className="text-sm text-gray-500 mt-1">
-                              Texture: {item.texture}
-                            </p>)}
-                            {item.isSample && (
-                              <span className="inline-block h-6 mt-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-                                Sample
-                              </span>
-                            )}
-                            
-                            
-                              {item.type == "Wallpaper" && (
-                                <span className="inline-block mt-1 ml-1 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-                                  {" "}
-                                  color:&nbsp;
-                                  <input
-                                    type="color"
-                                    className="w-6 h-5 rounded-full border border-gray-300"
-                                    value={item.color}
-                                    disabled
-                                  />
-                                </span>
-                            )}
+                            <span className="font-medium">{wallName}:</span>
+                            <span className="ml-2">{wallData.width}m × {wallData.height}m</span>
                           </div>
+                          
                         </div>
-                      </td>
-                      <td className="text-center py-4">
-                        {item.quantity}
-                        {item.floorArea && (
-                          <span className="block text-xs text-gray-500 mt-1">
-                            {item.floorArea} sq.ft
-                          </span>
-                        )}
-                      </td>
-                      <td className="text-right py-4">
-                        ₹{item.price.toLocaleString("en-IN")}
-                      </td>
-                      <td className="text-right py-4 font-medium">
-                        ₹{item.total.toLocaleString("en-IN")}
-                      </td>
-                    </tr>
+                        <div className="flex justify-between mt-1">
+                          <span>Area: {wallData.area} sq.ft</span>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2">
+                          <span className="text-gray-500">Texture:</span>
+                          <span className="font-medium">{wallData.texture || item.texture}</span>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2">
+                          <span className="text-gray-500">Color:</span>
+                          <input
+                            type="color"
+                            className="w-5 h-5 rounded-full border border-gray-300"
+                            value={wallData.color || item.color}
+                            disabled
+                          />
+                        </div>
+                        <div className="flex justify-between mt-1">
+                        <span className="font-medium">Price: ₹{wallData.price.toLocaleString('en-IN')}</span>
+                        </div>
+                      </div>
+                    )
                   ))}
-                </tbody>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      </td>
+      <td className="text-center py-4">
+        {item.quantity || '-'}
+      </td>
+      <td className="text-right py-4">
+        {item.price > 0 ? `₹${item.price.toLocaleString("en-IN")}` : '-'}
+      </td>
+      <td className="text-right py-4 font-medium">
+        ₹{item.total.toLocaleString("en-IN")}
+      </td>
+    </tr>
+  ))}
+</tbody>
               </table>
             </div>
 
@@ -486,7 +516,7 @@ const OrderDetails = ({ params }) => {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <  div className="space-y-6">
           {/* Customer Information */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">

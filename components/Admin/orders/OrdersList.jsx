@@ -40,6 +40,26 @@ const OrdersList = () => {
     fetchOrders();
   }, []);
 
+  // Add this function at the component level
+  const getStatusColor = (status) => {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "processing":
+        return "bg-blue-100 text-blue-800";
+      case "shipped":
+        return "bg-purple-100 text-purple-800";
+      case "delivered":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+      case "canceled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   // Filter orders based on search term and status
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
@@ -108,6 +128,8 @@ const OrdersList = () => {
             >
               <option value="all">All Status</option>
               <option value="delivered">Delivered</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
               <option value="canceled">Canceled</option>
               <option value="pending">Pending</option>
             </select>
@@ -166,14 +188,11 @@ const OrdersList = () => {
                         <span className="text-gray-700">{order.customer}</span>
                       </div>
                     </td>
+                    
+                    
+                    
                     <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        order.status === 'Delivered' 
-                          ? 'bg-green-100 text-green-700' 
-                          : order.status === 'Canceled'
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-yellow-100 text-yellow-700'
-                      }`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                         {order.status}
                       </span>
                     </td>
