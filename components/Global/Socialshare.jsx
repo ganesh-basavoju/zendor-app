@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   FaWhatsapp,
@@ -13,7 +14,7 @@ const SocialShare = ({ title = "Check out this product!", link = "" }) => {
 
   const shareOnWhatsApp = () => {
     window.open(
-      `https://wa.me/?text=${encodedTitle}%20$Url={encodedUrl}`,
+      `https://wa.me/?text=${encodedTitle}%20$Url=${encodedUrl}`,
       "_blank"
     );
   };
