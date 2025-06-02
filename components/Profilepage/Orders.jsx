@@ -13,7 +13,7 @@ export default function Orders({ userData }) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Get orders from userData
-  const userOrders = userData?.orders || [];
+  const userOrders = userData?.orders?.reverse() || [];
 
   // Filter orders based on status and search query
   const filteredOrders = userOrders
