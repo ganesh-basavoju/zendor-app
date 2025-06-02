@@ -15,17 +15,18 @@ export default function CartPage() {
   const [totalPrice, setTotalPrice] = useState(0);
   const Guestcart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const [token, setToken] = useState("");
 
-  console.log("guest", Guestcart);
-
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    // Move localStorage access inside useEffect
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   const fetchGuestCartItems = async () => {
     const data = loadCartFromLocalStorage();
     const res = await axiosInstance.post("/cart/get-guest-cart", {
       items: data.items,
     });
-    console.log(res.data, "geuest");
     if (res.status == 200) {
       setCartItems(res.data.cart?.items);
       setTotalPrice(res.data.cart.totalAmount);
@@ -33,22 +34,19 @@ export default function CartPage() {
   };
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      const res = await axiosInstance.get("/cart/get-cart");
-      console.log(res.data, "res  cart");
-      if (res.status == 200) {
-        setCartItems(res.data.cart.items);
-        setTotalPrice(res.data.cart.totalAmount);
-      }
-    };
     if (!token) {
       fetchGuestCartItems();
     } else {
+      const fetchCartItems = async () => {
+        const res = await axiosInstance.get("/cart/get-cart");
+        if (res.status == 200) {
+          setCartItems(res.data.cart.items);
+          setTotalPrice(res.data.cart.totalAmount);
+        }
+      };
       fetchCartItems();
     }
-  }, []);
-
-  console.log("items", cartItems);
+  }, [token]); // Add token as dependency
 
   const handleupdateQuantity = async (flag, item) => {
     try {
