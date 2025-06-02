@@ -10,7 +10,7 @@ import ContactFormSection from "@/components/acoustics/ContactFormSection";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";  
 
 const AcousticsPage = () => {
   const router=useRouter();

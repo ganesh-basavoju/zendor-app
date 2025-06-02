@@ -378,7 +378,7 @@ const LoginPage = ({ onSuccess }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3.5 bg-[#003f62] text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl font-medium text-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#003f62]/90'}`}
+              className={`w-full py-3.5 cursor-pointer bg-[#003f62] text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl font-medium text-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#003f62]/90'}`}
             >
               {isLoading
                 ? isLogin
@@ -399,18 +399,6 @@ const LoginPage = ({ onSuccess }) => {
                 </span>
               </div>
             </div>
-
-            {/* <button
-              type="button"
-              onClick={() => {
-                // Implement Google login logic here
-                console.log("Google login clicked");
-              }}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-            >
-              <FcGoogle className="h-5 w-5" />
-              <span>Sign in with Google</span>
-            </button> */}
             <GoogleOAuthProvider
               clientId={
                 "919259008575-rqhcrai07q87bc2v6fh4jd2kf405gk8h.apps.googleusercontent.com"
