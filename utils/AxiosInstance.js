@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL:  "https://zendor-backend.onrender.com", //"https://zendor-backend.onrender.com/api" 
+  baseURL:  "https://zendor-backend.onrender.com/api", //"https://zendor-backend.onrender.com/api" 
   headers: {
     "Content-Type": "application/json",
   },
