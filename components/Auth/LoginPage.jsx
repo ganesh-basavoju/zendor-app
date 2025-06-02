@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
 
 const LoginPage = ({ onSuccess }) => {
+  
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -47,6 +48,8 @@ const LoginPage = ({ onSuccess }) => {
     }
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLogin && (!formData.email || !formData.password)) {
@@ -59,6 +62,7 @@ const LoginPage = ({ onSuccess }) => {
       toast.error("Email, Fullname and Password are required");
       return;
     }
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post(
         isLogin ? "/auth/login" : "/auth/signup",
@@ -102,12 +106,14 @@ const LoginPage = ({ onSuccess }) => {
         error.response?.data?.message ||
         "Error occurred while logging in or signing up";
       toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSuccess = async (credentialResponse) => {
+    setIsLoading(true);
     const token = credentialResponse.credential;
-
     try {
       const { data } = await axiosInstance.post("/auth/google-login", {
         token,
@@ -137,6 +143,8 @@ const LoginPage = ({ onSuccess }) => {
     } catch (error) {
       console.error("Login Error:", error.response?.data || error.message);
       toast.error("Login Error: " + error.response?.data || error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
   console.log("email", resetEmail);
@@ -369,9 +377,16 @@ const LoginPage = ({ onSuccess }) => {
             {/* Update the button type to "submit" */}
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#003f62] text-white rounded-lg hover:bg-[#003f62]/90 transition-all duration-300 shadow-lg hover:shadow-xl font-medium text-lg"
+              disabled={isLoading}
+              className={`w-full py-3.5 bg-[#003f62] text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl font-medium text-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#003f62]/90'}`}
             >
-              {isLogin ? "Sign In" : "Create Account"}
+              {isLoading
+                ? isLogin
+                  ? "Signing in..."
+                  : "Creating Account..."
+                : isLogin
+                ? "Sign In"
+                : "Create Account"}
             </button>
 
             <div className="relative my-6">
