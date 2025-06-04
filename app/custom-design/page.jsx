@@ -1,153 +1,276 @@
 "use client";
-import { motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Truck, Users, Wrench } from "lucide-react";
+
+
+// Update features data
+const features = [
+	{
+		Icon: Truck,
+		title: "Fast Delivery",
+		description:
+			"Quick and reliable delivery service for all your custom furniture needs",
+	},
+	{
+		Icon: Users,
+		title: "Expert Consultation",
+		description:
+			"Professional guidance from our experienced design consultants",
+	},
+	{
+		Icon: Wrench,
+		title: "Bespoke Craftsmanship",
+		description:
+			"Handcrafted furniture pieces tailored to your specific requirements",
+	},
+];
+
+// Update testimonials data
+const testimonials = [
+	{
+		name: "Contemporary Wall Design",
+		image: "https://cdn.pixabay.com/photo/2021/04/22/18/50/frames-6199828_960_720.jpg",
+		text: "The custom wall units and frames fit perfectly in my space.",
+	},
+	{
+		name: "Minimalist Interior",
+		image: "https://cdn.pixabay.com/photo/2014/08/11/21/39/wall-416060_960_720.jpg",
+		text: "Clean lines and perfect execution - exactly what I wanted.",
+	},
+	{
+		name: "Cozy Home Setup",
+		image: "https://cdn.pixabay.com/photo/2020/10/19/11/43/home-5667529_1280.jpg",
+		text: "The custom furniture pieces transformed my home completely.",
+	},
+];
 
 export default function CustomDesign() {
-  const images = [
-    "https://150751433.v2.pressablecdn.com/wp-content/uploads/2024/08/WP4008-1024x1536.jpg",
-    "https://150751433.v2.pressablecdn.com/wp-content/uploads/2024/08/WP4023-683x1024.jpg",
-    "https://150751433.v2.pressablecdn.com/wp-content/uploads/2024/08/WP4013-683x1024.jpg",
-    "https://150751433.v2.pressablecdn.com/wp-content/uploads/2024/08/WP4022-683x1024.jpg",
-  ];
+	return (
+		<div className="flex flex-col w-full px-10">
+			{/* Hero Section */}
+			<section className="relative w-full min-h-[600px]">
+				<div className="absolute inset-0 z-0">
+					<Image
+						src="https://www.lifecoreflooring.com/wp-content/uploads/2019/04/Kitchen-Hardwood-Flooring-Options.png"
+						alt="Modern Kitchen Interior"
+						fill
+						priority
+						className="object-cover"
+						quality={100}
+					/>
+					{/* Dark overlay */}
+					<div className="absolute inset-0 bg-black/50" />
+				</div>
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+				<div className="container mx-auto px-4 py-32 md:py-40 flex flex-col items-center justify-center min-h-[600px] relative z-10">
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6 }}
+						className="text-center max-w-4xl"
+					>
+						<motion.h1
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.2 }}
+							className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+						>
+							Craft Your Perfect Space
+						</motion.h1>
+						<motion.p
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.4 }}
+							className="text-white text-lg md:text-xl mb-10 max-w-2xl mx-auto"
+						>
+							Transform your home with custom-made furniture designed exclusively
+							for you. Experience craftsmanship that brings your vision to life.
+						</motion.p>
+						<motion.div
+							initial={{ opacity: 0, scale: 0.9 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ duration: 0.6, delay: 0.6 }}
+							className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+						>
+							<Link href="#contact">
+								<button className="bg-[#f5b142] hover:bg-[#e09e2c] text-white font-medium py-4 px-8 rounded-full transition-all duration-300 w-full sm:w-auto text-lg">
+									Start Your Design Journey
+								</button>
+							</Link>
+							<Link href="/portfolio">
+								<button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-medium py-4 px-8 rounded-full transition-all duration-300 w-full sm:w-auto text-lg">
+									View Our Portfolio
+								</button>
+							</Link>
+						</motion.div>
+					</motion.div>
+				</div>
+			</section>
 
-  const handleWhatsAppClick = () => {
-    const phoneNumber = "919876543210"; // Replace with your actual number
-    const message = encodeURIComponent("Hi! I'm interested in custom design services.");
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-  };
+			{/* Why Choose Us Section */}
+			<section className="py-24 bg-gradient-to-b from-white to-gray-50">
+				<div className="container mx-auto px-4">
+					<div className="text-center max-w-3xl mx-auto mb-16">
+						<motion.h2
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6 }}
+							viewport={{ once: true }}
+							className="text-4xl font-bold mb-4 text-gray-900"
+						>
+							Why Choose Us?
+						</motion.h2>
+						<motion.p
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.2 }}
+							viewport={{ once: true }}
+							className="text-lg text-gray-600"
+						>
+							Experience excellence in custom furniture design and craftsmanship
+						</motion.p>
+					</div>
 
-  // Auto-rotate images
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []); // Remove images.length from dependency array
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+						{features.map((feature, index) => (
+							<motion.div
+								key={feature.title}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.6, delay: index * 0.2 }}
+								viewport={{ once: true }}
+								className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
+							>
+								<div className="mb-6 inline-block bg-[#f5b142]/10 p-4 rounded-xl">
+									<feature.Icon
+									size={32}
+										className="text-[#f5b142]"
+									/>
+								</div>
+								<h3 className="text-xl font-semibold mb-3 text-gray-900">
+									{feature.title}
+								</h3>
+								<p className="text-gray-600">
+									{feature.description}
+								</p>
+							</motion.div>
+						))}
+					</div>
+				</div>
+			</section>
 
-  return (
-    <div className="min-h-screen bg-[#fafafa]">
-      {/* Hero Section */}
-      <div className="relative h-[80vh] overflow-hidden">
-        <motion.div
-          key={currentImageIndex}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0"
-        >
-          <Image
-            src={images[currentImageIndex]}
-            alt="Custom Design"
-            fill
-            className="object-cover"
-            priority
-          />
-        </motion.div>
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm">
-          <div className="h-full flex flex-col items-center justify-center max-w-4xl mx-auto px-4 text-center">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl text-white font-serif mb-6"
-            >
-              Let our design narrate your story
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-white/90 text-lg md:text-xl"
-            >
-              Creating unique and personalized designs that tell your story
-            </motion.p>
-          </div>
-        </div>
-      </div>
+			{/* Testimonials Section */}
+			<section className="py-16 bg-gray-50">
+				<div className="container mx-auto px-4">
+					<div className="text-center max-w-3xl mx-auto mb-16">
+						<motion.h2
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6 }}
+							viewport={{ once: true }}
+							className="text-4xl font-bold mb-4 text-gray-900"
+						>
+							Testimonials
+						</motion.h2>
+						<motion.p
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.2 }}
+							viewport={{ once: true }}
+							className="text-lg text-gray-600"
+						>
+							What our clients say about our custom furniture solutions
+						</motion.p>
+					</div>
 
-      {/* Image Gallery Section */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {images.map((image, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ scale: 1.05 }}
-              className="relative h-[400px] overflow-hidden rounded-lg shadow-lg"
-            >
-              <Image
-                src={image}
-                alt={`Design ${index + 1}`}
-                fill
-                className="object-cover transition-transform duration-300 hover:scale-110"
-              />
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+						{testimonials.map((testimonial, index) => (
+							<motion.div
+								key={testimonial.name}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.6, delay: index * 0.2 }}
+								viewport={{ once: true }}
+								className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white"
+							>
+								<div className="relative h-56 w-full">
+									<Image
+										src={testimonial.image}
+										alt={testimonial.name}
+										fill
+										className="object-cover"
+										sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
+									/>
+								</div>
+								<div className="p-6">
+									<h3 className="text-xl font-semibold mb-2">{testimonial.name}</h3>
+									<p className="text-gray-600">
+										{testimonial.text}
+									</p>
+								</div>
+							</motion.div>
+						))}
+					</div>
+				</div>
+			</section>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-16 space-y-24">
-        {/* Introduction with image background */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="relative p-12 rounded-2xl overflow-hidden"
-        >
-          <div className="absolute inset-0">
-            <Image
-              src={images[0]}
-              alt="Background"
-              fill
-              className="object-cover opacity-10"
-            />
-          </div>
-          <div className="relative z-10 text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl font-serif mb-6">Using design as a medium of collaborative story telling</h2>
-            <p className="text-gray-600 leading-relaxed">
-              We value design and creativity at its core. We have always believed that design should be for everyone. 
-              We love creating simple stories that connect with people. A large part of inspiration comes from nature, 
-              which is easily relatable to almost everyone.
-            </p>
-          </div>
-        </motion.div>
+			{/* Connect With Our Team Section */}
+			<section className="py-16 bg-white">
+				<div className="container mx-auto px-4 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6 }}
+						viewport={{ once: true }}
+						className="text-3xl font-bold mb-8"
+					>
+						Connect With Our Team
+					</motion.h2>
 
-        {/* Enhanced CTA Section */}
-        <motion.div 
-          whileInView={{ opacity: 1 }} 
-          initial={{ opacity: 0 }} 
-          className="relative text-center py-24 rounded-2xl overflow-hidden"
-        >
-          <div className="absolute inset-0">
-            <Image
-              src={images[2]}
-              alt="CTA Background"
-              fill
-              className="object-cover opacity-20"
-            />
-          </div>
-          <div className="relative z-10">
-            <h2 className="text-4xl font-serif mb-8">Ready to start your design journey?</h2>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleWhatsAppClick}
-              className="bg-[#0a2d44] text-white px-8 py-4 rounded-lg hover:bg-[#0a2d44]/90 transition-colors text-lg flex items-center gap-2 mx-auto"
-            >
-              <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-              Get in Touch
-            </motion.button>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
+					<motion.p
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6, delay: 0.2 }}
+						viewport={{ once: true }}
+						className="text-xl mb-8"
+					>
+						Ready to start your design journey?
+					</motion.p>
+
+					<motion.div
+						initial={{ opacity: 0, scale: 0.9 }}
+						whileInView={{ opacity: 1, scale: 1 }}
+						transition={{ duration: 0.6, delay: 0.4 }}
+						viewport={{ once: true }}
+						className="inline-block"
+					>
+						<a
+							href="https://wa.me/918433900692"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-medium py-3 px-8 rounded-full transition-all duration-300"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								className="lucide lucide-message-circle"
+							>
+								<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+							</svg>
+							Chat on WhatsApp
+						</a>
+					</motion.div>
+				</div>
+			</section>
+		</div>
+	);
 }
