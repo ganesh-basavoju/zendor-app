@@ -99,11 +99,11 @@ export default function CustomDesign() {
 									Start Your Design Journey
 								</button>
 							</Link>
-							<Link href="/portfolio">
+							{/* <Link href="/portfolio">
 								<button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-medium py-4 px-8 rounded-full transition-all duration-300 w-full sm:w-auto text-lg">
 									View Our Portfolio
 								</button>
-							</Link>
+							</Link> */}
 						</motion.div>
 					</motion.div>
 				</div>
@@ -162,7 +162,7 @@ export default function CustomDesign() {
 			</section>
 
 			{/* Testimonials Section */}
-			<section className="py-16 bg-gray-50">
+			<section className="py-16 bg-gray-50 relative">
 				<div className="container mx-auto px-4">
 					<div className="text-center max-w-3xl mx-auto mb-16">
 						<motion.h2
@@ -212,6 +212,13 @@ export default function CustomDesign() {
 								</div>
 							</motion.div>
 						))}
+					</div>
+
+					{/* Names at bottom right */}
+					<div className="absolute right-8 bottom-6 text-right text-gray-400 text-sm space-y-1">
+						<div>~ganesh</div>
+						<div>~lalith</div>
+						<div>~goutham</div>
 					</div>
 				</div>
 			</section>
