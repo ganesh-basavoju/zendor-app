@@ -33,16 +33,19 @@ const testimonials = [
 		name: "Contemporary Wall Design",
 		image: "https://cdn.pixabay.com/photo/2021/04/22/18/50/frames-6199828_960_720.jpg",
 		text: "The custom wall units and frames fit perfectly in my space.",
+		author: "~ganesh"
 	},
 	{
 		name: "Minimalist Interior",
 		image: "https://cdn.pixabay.com/photo/2014/08/11/21/39/wall-416060_960_720.jpg",
 		text: "Clean lines and perfect execution - exactly what I wanted.",
+		author: "~lalith"
 	},
 	{
 		name: "Cozy Home Setup",
 		image: "https://cdn.pixabay.com/photo/2020/10/19/11/43/home-5667529_1280.jpg",
 		text: "The custom furniture pieces transformed my home completely.",
+		author: "~goutham"
 	},
 ];
 
@@ -204,21 +207,17 @@ export default function CustomDesign() {
 										sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
 									/>
 								</div>
-								<div className="p-6">
+								<div className="p-6 relative">
 									<h3 className="text-xl font-semibold mb-2">{testimonial.name}</h3>
-									<p className="text-gray-600">
+									<p className="text-gray-600 mb-6">
 										{testimonial.text}
 									</p>
+									<div className="absolute bottom-4 right-6 text-gray-400 text-sm italic">
+										{testimonial.author}
+									</div>
 								</div>
 							</motion.div>
 						))}
-					</div>
-
-					{/* Names at bottom right */}
-					<div className="absolute right-8 bottom-6 text-right text-gray-400 text-sm space-y-1">
-						<div>~ganesh</div>
-						<div>~lalith</div>
-						<div>~goutham</div>
 					</div>
 				</div>
 			</section>
