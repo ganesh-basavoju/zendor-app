@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL:  "https://zendor-backend.onrender.com/api", //"https://zendor-backend.onrender.com/api" 
+  baseURL:  "http://localhost:5000/api", //"https://zendor-backend.onrender.com/api" 
   headers: {
     "Content-Type": "application/json",
   },
@@ -12,7 +12,7 @@ axiosInstance.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
+  
   return config;
 });
 

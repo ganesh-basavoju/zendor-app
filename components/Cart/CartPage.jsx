@@ -10,6 +10,7 @@ import { loadCartFromLocalStorage } from "@/utils/localStorage-util";
 import { removeFromCart, updateQuantity } from "@/store/cartSlice";
 
 export default function CartPage() {
+
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -307,7 +308,7 @@ export default function CartPage() {
                 </div>
 
                 <Link
-                  href="/checkout"
+                  href={localStorage.getItem("token")?"/checkout":"/login"}
                   className="block w-full text-center bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition-colors mt-8"
                 >
                   Proceed to Checkout

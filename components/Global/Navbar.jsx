@@ -19,7 +19,7 @@ import { login } from "@/store/userSlice";
 const Navbar = () => {
   // Hooks must be called unconditionally at the top level
   const pathname = usePathname();
-  
+
   // Don't render navbar if we're in an admin route (must be before any other hooks)
   if (pathname?.startsWith("/admin")) {
     return null;
@@ -33,12 +33,13 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [subcategoriesForWoodenFloorings, setSubcategoriesForWoodenFloorings] = useState([]);
+  const [subcategoriesForWoodenFloorings, setSubcategoriesForWoodenFloorings] =
+    useState([]);
   const [subcategoriesWallpaper, setSubcategoriesWallpaper] = useState([]);
   const [products, setProducts] = useState([]);
   const [mobileMenuDropdowns, setMobileMenuDropdowns] = useState({
     woodenFlooring: false,
-    wallpaper: false
+    wallpaper: false,
   });
 
   // Other hooks
@@ -76,7 +77,9 @@ const Navbar = () => {
   const fetchProducts = async () => {
     try {
       setShowSearchResults(false);
-      const res = await axiosInstance.get(`/user/search-products?search=${searchQuery}`);
+      const res = await axiosInstance.get(
+        `/user/search-products?search=${searchQuery}`
+      );
       if (res.status === 200) {
         setProducts(res.data);
       }
@@ -96,9 +99,9 @@ const Navbar = () => {
   };
 
   const toggleMobileDropdown = (menu) => {
-    setMobileMenuDropdowns(prev => ({
+    setMobileMenuDropdowns((prev) => ({
       ...prev,
-      [menu]: !prev[menu]
+      [menu]: !prev[menu],
     }));
   };
 
@@ -290,14 +293,49 @@ const Navbar = () => {
                   className="p-2.5 cursor-pointer hover:bg-white/10 rounded-full transition-colors text-white"
                 >
                   {item?.name === "moodboard" ? (
-                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                   <rect x="3" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="2"/>
-                   <rect x="14" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="2"/>
-                   <rect x="3" y="14" width="7" height="7" rx="1" stroke="white" stroke-width="2"/>
-                   <path d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z" fill="white"/>
-                   <path d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z" fill="white"/>
-                 </svg>
-                 
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        x="3"
+                        y="3"
+                        width="7"
+                        height="7"
+                        rx="1"
+                        stroke="white"
+                        stroke-width="2"
+                      />
+                      <rect
+                        x="14"
+                        y="3"
+                        width="7"
+                        height="7"
+                        rx="1"
+                        stroke="white"
+                        stroke-width="2"
+                      />
+                      <rect
+                        x="3"
+                        y="14"
+                        width="7"
+                        height="7"
+                        rx="1"
+                        stroke="white"
+                        stroke-width="2"
+                      />
+                      <path
+                        d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z"
+                        fill="white"
+                      />
+                      <path
+                        d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z"
+                        fill="white"
+                      />
+                    </svg>
                   ) : (
                     <item.icon className="text-xl" />
                   )}
@@ -316,7 +354,16 @@ const Navbar = () => {
         </div>
 
         {/* Categories Menu - Updated styles */}
-        <div className="hidden md:flex justify-center mt-1 border-t border-white/10 pt-2">
+        <div className="hidden md:flex justify-center mt-1  border-t border-white/10 pt-2">
+          <button
+          onClick={()=>{
+            router.push("/products/explore")
+          }}
+           className="text-white/80  relative group w-[100px]  text-centerflex items-center transition-colors py-2  mr-5 cursor-pointer ">
+            Explore All{" "}
+            <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform" />
+          </button>
+
           <div className="flex space-x-8 items-center">
             {menuItems.map((item) => {
               const path = `/category/${item.toLowerCase()}`;
@@ -456,8 +503,9 @@ const Navbar = () => {
             {menuItems.map((item) => {
               const path = `/category/${item.toLowerCase()}`;
               const isActive = pathname.startsWith(path);
-              const isDropdown = item === "Wooden Flooring" || item === "Wallpaper";
-              const dropdownKey = item.toLowerCase().replace(' ', '');
+              const isDropdown =
+                item === "Wooden Flooring" || item === "Wallpaper";
+              const dropdownKey = item.toLowerCase().replace(" ", "");
 
               return (
                 <div key={item} className="relative">
@@ -489,25 +537,26 @@ const Navbar = () => {
                   </button>
 
                   {/* Dropdown for Wooden Flooring */}
-                  {item === "Wooden Flooring" && mobileMenuDropdowns.woodenflooring && (
-                    <div className="ml-4 mt-1 space-y-1">
-                      {subcategoriesForWoodenFloorings.map((subcat) => (
-                        <button
-                          key={subcat._id}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(
-                              `/category/wooden flooring/${subcat.name}`
-                            );
-                            setIsMobileMenuOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#283593]/50 hover:text-white rounded-lg"
-                        >
-                          {subcat.name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  {item === "Wooden Flooring" &&
+                    mobileMenuDropdowns.woodenflooring && (
+                      <div className="ml-4 mt-1 space-y-1">
+                        {subcategoriesForWoodenFloorings.map((subcat) => (
+                          <button
+                            key={subcat._id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(
+                                `/category/wooden flooring/${subcat.name}`
+                              );
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#283593]/50 hover:text-white rounded-lg"
+                          >
+                            {subcat.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
 
                   {/* Dropdown for Wallpaper */}
                   {item === "Wallpaper" && mobileMenuDropdowns.wallpaper && (

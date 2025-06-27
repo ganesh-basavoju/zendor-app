@@ -34,6 +34,13 @@ export default function Checkout() {
   const userName = useSelector((state) => state.user.name);
   const userEmail = useSelector((state) => state.user.email);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    }
+  }, []);
+
   const fetchCartItems = async () => {
     const res = await axiosInstance.get("/cart/get-cart");
     console.log(res.data, "res  cart");
@@ -895,14 +902,14 @@ export default function Checkout() {
 
                   <button
                     onClick={handlePayment}
-                    disabled={!paymentMethod || isLoading||flag}
+                    disabled={!paymentMethod || isLoading || flag}
                     className={`w-full py-3 cursor-pointer px-4 text-white rounded-lg font-medium transition-all duration-200 ${
                       !paymentMethod || isLoading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"
                     }`}
                   >
-                    {isLoading||flag ? (
+                    {isLoading || flag ? (
                       <span className="flex items-center justify-center gap-2">
                         Processing... <span className="animate-spin">⌛</span>
                       </span>
