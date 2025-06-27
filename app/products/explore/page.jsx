@@ -60,7 +60,7 @@ export default function ExplorePage() {
       } else if (sortBy === "Newest First") {
         allProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       }
-
+      
       setProducts(allProducts);
       setTotalProducts(wallpaperRes.data.total + woodenFloorRes.data.total);
       setTotalPages(Math.ceil((wallpaperRes.data.total + woodenFloorRes.data.total) / 12));

@@ -747,7 +747,7 @@ export default function Checkout() {
                     </p>
                   </div>
                 </div>
-                <Locationcheck/>
+                <Locationcheck />
                 <div className="space-y-3 md:space-y-4">
                   {addresses.map((address, id) => (
                     <div
