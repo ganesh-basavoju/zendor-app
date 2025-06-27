@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { checkServiceability } from "@/utils/Api";
 
 const LocationModal = ({ onClose, onSelectLocation }) => {
+  
   const [pincode, setPincode] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);

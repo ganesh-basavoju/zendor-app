@@ -1,10 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL:
-    process.env.production === false
-      ? "http://localhost:5000/api"
-      : "https://zendor-backend.onrender.com/api",
+  baseURL: "https://zendor-backend.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },

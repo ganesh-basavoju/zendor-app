@@ -44,7 +44,6 @@ export default function CategoryPage({ params }) {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
   const [priceSort, setPriceSort] = useState("");
   const [availableColors, setAvailableColors] = useState([]);
-
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [collections, setCollections] = useState([]);
@@ -83,24 +82,25 @@ export default function CategoryPage({ params }) {
     try {
       setLoading(true);
       // Build query parameters
-      let queryParams = `page=1&limit=10&subCategory=${selectedSubcategory}&search=${searchQuery}`;
-
-      // Add color filter for wallpapers
-      if (slug === "wallpaper" && selectedColors.length > 0) {
-        queryParams += `&colors=${selectedColors.join(",")}`;
-      }
-
-      // Add price range filter
-      if (priceRange.min) queryParams += `&minPrice=${priceRange.min}`;
-      if (priceRange.max) queryParams += `&maxPrice=${priceRange.max}`;
-
-      // Add price sort
-      if (priceSort) queryParams += `&priceSort=${priceSort}`;
+      const params = new URLSearchParams();
+      params.append("page", 1);
+      params.append("limit", 10);
+      if (selectedSubcategory)
+        params.append("subCategory", selectedSubcategory);
+      if (searchQuery) params.append("search", searchQuery);
+      if (selectedColors.length > 0)
+        params.append("colors", selectedColors.join(","));
+      if (sortBy) params.append("sortBy", sortBy);
+      if (priceRange.min !== undefined)
+        params.append("minPrice", priceRange.min);
+      if (priceRange.max !== undefined)
+        params.append("maxPrice", priceRange.max);
+      if (priceSort) params.append("priceSort", priceSort);
 
       const url =
         slug === "wallpaper"
-          ? `/wallpapers/products?${queryParams}`
-          : `/wooden-floors/products?${queryParams}`;
+          ? `/wallpapers/products?${params.toString()}`
+          : `/wooden-floors/products?${params.toString()}`;
       const res = await axiosInstance.get(url);
       if (res.status === 200) {
         const { totalPages, currentPage, data } = res.data;
@@ -115,6 +115,7 @@ export default function CategoryPage({ params }) {
       setLoading(false);
     }
   };
+  console.log("products", products);
 
   const fetchMoodBoards = useCallback(async () => {
     try {
@@ -154,25 +155,28 @@ export default function CategoryPage({ params }) {
       setLoading(true);
       try {
         const nextPage = CurrentPage + 1;
-        // Build query parameters
-        let queryParams = `page=${nextPage}&limit=10&subCategory=${selectedSubcategory}&search=${searchQuery}&sortBy=${sortBy}`;
 
-        // Add color filter for wallpapers
+        const params = new URLSearchParams();
+        params.append("page", nextPage);
+        params.append("limit", 10);
+        if (selectedSubcategory)
+          params.append("subCategory", selectedSubcategory);
+        if (searchQuery) params.append("search", searchQuery);
+        if (sortBy) params.append("sortBy", sortBy);
         if (slug === "wallpaper" && selectedColors.length > 0) {
-          queryParams += `&colors=${selectedColors.join(",")}`;
+          params.append("colors", selectedColors.join(","));
         }
-
-        // Add price range filter
-        if (priceRange.min) queryParams += `&minPrice=${priceRange.min}`;
-        if (priceRange.max) queryParams += `&maxPrice=${priceRange.max}`;
-
-        // Add price sort
-        if (priceSort) queryParams += `&priceSort=${priceSort}`;
+        if (priceRange.min !== undefined)
+          params.append("minPrice", priceRange.min);
+        if (priceRange.max !== undefined)
+          params.append("maxPrice", priceRange.max);
+        if (priceSort) params.append("priceSort", priceSort);
 
         const url =
           slug === "wallpaper"
-            ? `/wallpapers/products?${queryParams}`
-            : `/wooden-floors/products?${queryParams}`;
+            ? `/wallpapers/products?${params.toString()}`
+            : `/wooden-floors/products?${params.toString()}`;
+
         const res = await axiosInstance.get(url);
         if (res.status === 200) {
           const { totalPages, currentPage, data } = res.data;
@@ -190,7 +194,14 @@ export default function CategoryPage({ params }) {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedSubcategory, searchQuery, selectedColors, priceRange, priceSort]);
+  }, [
+    selectedSubcategory,
+    searchQuery,
+    selectedColors,
+    priceRange,
+    priceSort,
+    sortBy,
+  ]);
 
   useEffect(() => {
     if (inView && !loading && CurrentPage < TotalPages) {
@@ -275,7 +286,7 @@ export default function CategoryPage({ params }) {
     setCurrentPage(0);
     setSelectedSubcategory("All");
     setSelectedColors([]);
-    setPriceRange({ min: "", max: "" });
+    setPriceRange({ min: 0, max: 10000 });
     setPriceSort("");
   };
 
@@ -400,6 +411,7 @@ export default function CategoryPage({ params }) {
                 <span className="text-xs text-gray-600">₹{priceRange.max}</span>
               </div>
             </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium py-2   text-gray-600">
                 Sort by Price
@@ -415,7 +427,13 @@ export default function CategoryPage({ params }) {
                       id={option.value}
                       name="priceSort"
                       checked={priceSort === option.value}
-                      onChange={() => handlePriceSortChange(option.value)}
+                      onChange={() => {
+                        if (priceSort === option.value) {
+                          handlePriceSortChange("");
+                          return;
+                        }
+                        handlePriceSortChange(option.value);
+                      }}
                       className="text-blue-600 focus:ring-blue-500"
                     />
                     <label
@@ -448,7 +466,8 @@ export default function CategoryPage({ params }) {
     return (
       <div className="min-h-screen bg-gray-50 mt-32 px-2">
         <h2 className="text-2xl px-2 mb-6 text-blue-900 font-semibold">
-          Explore Our {slug[0].toUpperCase()+slug.slice(1)}'s Collection</h2>
+          Explore Our {slug[0].toUpperCase() + slug.slice(1)}'s Collection
+        </h2>
         <Toaster position="top-center" />
 
         {/* Mobile Filter Overlay */}
@@ -463,6 +482,7 @@ export default function CategoryPage({ params }) {
             />
           </div>
         )}
+        
         <div className="flex">
           {/* Desktop Sidebar */}
           <div className="hidden md:block w-64 lg:w-72 xl:w-80 bg-white shadow-sm border-r border-gray-200">
@@ -646,9 +666,24 @@ export default function CategoryPage({ params }) {
                           </h3>
 
                           <div className="flex items-center gap-2">
-                            <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
-                              {product.subCategory}
-                            </span>
+                            <div>
+                              <span className="text-sm font-semibold">
+                                {" "}
+                                Sub category:
+                              </span>
+                              <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
+                                {product.subCategory}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-sm font-semibold">
+                                {" "}
+                                Brand:
+                              </span>
+                              <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
+                                {product.brand}
+                              </span>
+                            </div>
                           </div>
 
                           {slug === "wallpaper" && product.colors && (
