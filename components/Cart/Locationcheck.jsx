@@ -97,10 +97,11 @@ const Locationcheck = ({ onClose, onSelectLocation }) => {
         className="bg-white  w-full overflow-hidden p-1 my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-center flex-col items-start mb-2">
           <h2 className="text-sm font-semibold text-gray-800">
             Enter your Delivery Pincode
           </h2>
+          <p className="text-sm mt-1 text-red-400" >* Please check availability before proceed to checkout</p>
         </div>
 
         <div className="mb-2">

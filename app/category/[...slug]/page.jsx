@@ -482,7 +482,7 @@ export default function CategoryPage({ params }) {
             />
           </div>
         )}
-        
+
         <div className="flex">
           {/* Desktop Sidebar */}
           <div className="hidden md:block w-64 lg:w-72 xl:w-80 bg-white shadow-sm border-r border-gray-200">
@@ -611,7 +611,7 @@ export default function CategoryPage({ params }) {
                   <div
                     className={`${
                       viewMode === "grid"
-                        ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6"
+                        ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 md:gap-6"
                         : "space-y-6"
                     }`}
                   >
@@ -633,27 +633,85 @@ export default function CategoryPage({ params }) {
                           } overflow-hidden rounded-lg bg-gray-100`}
                         >
                           {slug === "wallpaper" ? (
-                            <Carousal
-                              images={product.colors?.map((item) => item.pic)}
-                            />
+                            <>
+                              <Carousal
+                                images={product.colors?.map((item) => item.pic)}
+                              />
+                              {/* Overlay with MoodBoard Button - moved outside Carousal but inside container */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 z-10">
+                                <button
+                                  className="bg-white/20 backdrop-blur-sm cursor-pointer p-3 rounded-full hover:scale-110 transition-all duration-200 shadow-lg"
+                                  onClick={(e) =>
+                                    handleHeartClick(e, product.id)
+                                  }
+                                >
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <rect
+                                      x="3"
+                                      y="3"
+                                      width="7"
+                                      height="7"
+                                      rx="1"
+                                      stroke="white"
+                                      strokeWidth="2"
+                                    />
+                                    <rect
+                                      x="14"
+                                      y="3"
+                                      width="7"
+                                      height="7"
+                                      rx="1"
+                                      stroke="white"
+                                      strokeWidth="2"
+                                    />
+                                    <rect
+                                      x="3"
+                                      y="14"
+                                      width="7"
+                                      height="7"
+                                      rx="1"
+                                      stroke="white"
+                                      strokeWidth="2"
+                                    />
+                                    <path
+                                      d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z"
+                                      fill="white"
+                                    />
+                                    <path
+                                      d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z"
+                                      fill="white"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </>
                           ) : (
-                            <Image
-                              src={product.image}
-                              alt={product.name}
-                              fill
-                              className="object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
+                            <>
+                              <Image
+                                src={product.image}
+                                alt={product.name}
+                                fill
+                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                              />
+                              {/* Overlay for non-wallpaper items */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 z-10">
+                                <button
+                                  className="bg-white/20 backdrop-blur-sm cursor-pointer p-3 rounded-full hover:scale-110 transition-all duration-200 shadow-lg"
+                                  onClick={(e) =>
+                                    handleHeartClick(e, product.id)
+                                  }
+                                >
+                                  {/* Same SVG as above */}
+                                </button>
+                              </div>
+                            </>
                           )}
-
-                          {/* Overlay with MoodBoard Button */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4">
-                            <button
-                              className="bg-white/90 backdrop-blur-sm cursor-pointer p-3 rounded-full hover:bg-white hover:scale-110 transition-all duration-200 shadow-lg"
-                              onClick={(e) => handleHeartClick(e, product.id)}
-                            >
-                              <Heart className="w-5 h-5 text-gray-800" />
-                            </button>
-                          </div>
                         </div>
 
                         <div
@@ -669,13 +727,13 @@ export default function CategoryPage({ params }) {
                             <div>
                               <span className="text-sm font-semibold">
                                 {" "}
-                                Sub category:
+                                Sub category:{" "}
                               </span>
                               <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
                                 {product.subCategory}
                               </span>
                             </div>
-                            <div>
+                            {/* <div>
                               <span className="text-sm font-semibold">
                                 {" "}
                                 Brand:
@@ -683,7 +741,7 @@ export default function CategoryPage({ params }) {
                               <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
                                 {product.brand}
                               </span>
-                            </div>
+                            </div> */}
                           </div>
 
                           {slug === "wallpaper" && product.colors && (
