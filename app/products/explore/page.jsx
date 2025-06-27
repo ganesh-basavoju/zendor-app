@@ -6,6 +6,7 @@ import { Search, Tag, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/utils/AxiosInstance";
+import Carousal from "@/components/Global/Carousal";
 
 export default function ExplorePage() {
   const router = useRouter();
@@ -13,48 +14,56 @@ export default function ExplorePage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]); // Initialize as empty array
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
   const [sortBy, setSortBy] = useState("Featured");
 
+  console.log(products);
   // Fetch all products from both wallpapers and wooden floors
+  // Modify fetchProducts function to handle unified sorting
   const fetchProducts = async (page = 1) => {
     try {
       setIsLoading(true);
-
+      
+      // Get both wallpapers and wooden floors
       const [wallpaperRes, woodenFloorRes] = await Promise.all([
         axiosInstance.get(
-          `/wallpapers/products?page=${page}&limit=6&search=${searchQuery}&sortBy=${sortBy}${
-            selectedCategory !== "All" ? `&subCategory=${selectedCategory}` : ""
-          }`
+          `/wallpapers/products?page=${page}&limit=6&search=${searchQuery}${selectedCategory !== "All" ? `&subCategory=${selectedCategory}` : ""}`
         ),
         axiosInstance.get(
-          `/wooden-floors/products?page=${page}&limit=6&search=${searchQuery}&sortBy=${sortBy}${
-            selectedCategory !== "All" ? `&subCategory=${selectedCategory}` : ""
-          }`
+          `/wooden-floors/products?page=${page}&limit=6&search=${searchQuery}${selectedCategory !== "All" ? `&subCategory=${selectedCategory}` : ""}`
         ),
       ]);
 
-      const wallpapers = wallpaperRes.data.data.map((product) => ({
+      let wallpapers = wallpaperRes.data.data.map((product) => ({
         ...product,
         category: "Wallpaper",
         type: "wallpaper",
       }));
 
-      const woodenFloors = woodenFloorRes.data.data.map((product) => ({
+      let woodenFloors = woodenFloorRes.data.data.map((product) => ({
         ...product,
         category: "Wooden Flooring",
         type: "wooden-flooring",
       }));
 
-      const allProducts = [...wallpapers, ...woodenFloors];
-      const total = wallpaperRes.data.total + woodenFloorRes.data.total;
+      // Combine and sort all products
+      let allProducts = [...wallpapers, ...woodenFloors];
+      
+      // Apply unified sorting
+      if (sortBy === "Price: Low to High") {
+        allProducts.sort((a, b) => a.price - b.price);
+      } else if (sortBy === "Price: High to Low") {
+        allProducts.sort((a, b) => b.price - a.price);
+      } else if (sortBy === "Newest First") {
+        allProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
 
       setProducts(allProducts);
-      setTotalProducts(total);
-      setTotalPages(Math.ceil(total / 12));
+      setTotalProducts(wallpaperRes.data.total + woodenFloorRes.data.total);
+      setTotalPages(Math.ceil((wallpaperRes.data.total + woodenFloorRes.data.total) / 12));
       setCurrentPage(page);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -64,26 +73,69 @@ export default function ExplorePage() {
     }
   };
 
-  // Fetch categories
+  // Add hierarchical category state
+  const [mainCategory, setMainCategory] = useState("All");
+  const [subCategories, setSubCategories] = useState([]);
+  const [availableColors, setAvailableColors] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+
+  // Modify fetchCategories to handle hierarchical structure
   const fetchCategories = async () => {
     try {
       const [wallpaperCats, woodenFloorCats] = await Promise.all([
         axiosInstance.get("/wallpapers/getCategories"),
-        axiosInstance.get("/wooden-floors/getCategories"),
+        axiosInstance.get("/wooden-floors/getCategories")
       ]);
-
-      const allCategories = [
-        ...wallpaperCats.data.data.map((cat) => cat.name),
-        ...woodenFloorCats.data.data.map((cat) => cat.name),
+  
+      // Convert to array format
+      const categories = [
+        ...wallpaperCats.data.data.map(cat => cat.name),
+        ...woodenFloorCats.data.data.map(cat => cat.name)
       ];
+  
+      setCategories(categories);
 
-      // Remove duplicates
-      const uniqueCategories = [...new Set(allCategories)];
-      setCategories(uniqueCategories);
+      // Fetch colors for wallpapers
+      if (mainCategory === "Wallpapers") {
+        const colorsRes = await axiosInstance.get("/wallpapers/getColors");
+        setAvailableColors(colorsRes.data.colors || []);
+      }
     } catch (error) {
       console.error("Error fetching categories:", error);
+      setCategories([]); // Reset to empty array on error
     }
   };
+
+  // Add color filter component
+  const ColorFilter = () => (
+    mainCategory === "Wallpapers" && (
+      <div className="border-t border-gray-200 pt-6">
+        <h3 className="text-sm font-medium text-gray-900 mb-3">Filter by Color</h3>
+        <div className="grid grid-cols-4 gap-3">
+          {availableColors.map((color) => (
+            <button
+              key={color}
+              onClick={() => handleColorToggle(color)}
+              className={`w-8 h-8 rounded-full border-2 transition-all ${
+                selectedColors.includes(color)
+                  ? "border-blue-500 ring-2 ring-blue-200"
+                  : "border-gray-300"
+              }`}
+              style={{ backgroundColor: color }}
+            />
+          ))}
+        </div>
+        {selectedColors.length > 0 && (
+          <button
+            onClick={() => setSelectedColors([])}
+            className="mt-2 text-xs text-blue-600 hover:text-blue-800"
+          >
+            Clear colors
+          </button>
+        )}
+      </div>
+    )
+  );
 
   useEffect(() => {
     fetchCategories();
@@ -269,15 +321,23 @@ export default function ExplorePage() {
                     className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
                   >
                     <div className="relative aspect-w-3 aspect-h-2 overflow-hidden rounded-t-xl">
-                      <img
-                        src={
-                          product.image ||
-                          (product.colors && product.colors[0]?.pic)
-                        }
-                        alt={product.name}
-                        className="w-full h-[300px] object-cover transform hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
+                      {product.category === "Wallpaper" ? (
+                        <div className="w-full h-[300px]">
+                        <Carousal
+                          images={product.colors?.map((item) => item.pic)}
+                        />
+                        </div>
+                      ) : (
+                        <img
+                          src={
+                            product.image ||
+                            (product.colors && product.colors[0]?.pic)
+                          }
+                          alt={product.name}
+                          className="w-full h-[300px] object-cover transform hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      )}
                     </div>
                     <div className="p-6">
                       <div className="flex justify-between items-start">
@@ -299,8 +359,8 @@ export default function ExplorePage() {
                       <p className="mt-2 text-sm text-gray-600 line-clamp-3">
                         {product.description}
                       </p>
-                      {product.category === "wallpaper" && product.colors && (
-                        <div className="flex gap-2 flex-wrap">
+                      {product.category === "Wallpaper" && product.colors && (
+                        <div className="flex gap-2 flex-wrap mt-2">
                           {product.colors
                             .slice(0, 5)
                             .map((color, colorIndex) => (
