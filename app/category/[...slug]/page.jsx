@@ -169,6 +169,14 @@ export default function CategoryPage({ params }) {
     currentPage,
   ]);
 
+  const handleProductClick = (id) => {
+    if (slug === "wallpaper") {
+      router.push(`/products/wallpapers/${id}`);
+      return;
+    }
+    router.push(`/products/wooden-flooring/${id}`);
+  };
+
   useEffect(() => {
     const fetchColors = async () => {
       try {
