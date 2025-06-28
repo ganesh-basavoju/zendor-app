@@ -4,10 +4,10 @@ import {
   Search,
   Grid,
   List,
-  SlidersHorizontal,
   X,
   Filter,
-  Heart,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
@@ -33,8 +33,8 @@ export default function CategoryPage({ params }) {
   const [sortBy, setSortBy] = useState("Featured");
   const { ref, inView } = useInView();
   const [subcategories, setSubcategories] = useState([]);
-  const [TotalPages, setTotalPages] = useState(0);
-  const [CurrentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Mobile filter sidebar state
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -78,12 +78,12 @@ export default function CategoryPage({ params }) {
     }
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = 1) => {
     try {
       setLoading(true);
       // Build query parameters
       const params = new URLSearchParams();
-      params.append("page", 1);
+      params.append("page", page);
       params.append("limit", 10);
       if (selectedSubcategory)
         params.append("subCategory", selectedSubcategory);
@@ -115,7 +115,6 @@ export default function CategoryPage({ params }) {
       setLoading(false);
     }
   };
-  console.log("products", products);
 
   const fetchMoodBoards = useCallback(async () => {
     try {
@@ -140,7 +139,7 @@ export default function CategoryPage({ params }) {
   }, []);
 
   const handleSearch = (e) => {
-    setCurrentPage(0);
+    setCurrentPage(1);
     setSearchQuery(e.target.value);
   };
 
@@ -150,50 +149,16 @@ export default function CategoryPage({ params }) {
     }
   }, [subCat]);
 
-  const loadMoreProducts = async () => {
-    if (CurrentPage < TotalPages) {
-      setLoading(true);
-      try {
-        const nextPage = CurrentPage + 1;
-
-        const params = new URLSearchParams();
-        params.append("page", nextPage);
-        params.append("limit", 10);
-        if (selectedSubcategory)
-          params.append("subCategory", selectedSubcategory);
-        if (searchQuery) params.append("search", searchQuery);
-        if (sortBy) params.append("sortBy", sortBy);
-        if (slug === "wallpaper" && selectedColors.length > 0) {
-          params.append("colors", selectedColors.join(","));
-        }
-        if (priceRange.min !== undefined)
-          params.append("minPrice", priceRange.min);
-        if (priceRange.max !== undefined)
-          params.append("maxPrice", priceRange.max);
-        if (priceSort) params.append("priceSort", priceSort);
-
-        const url =
-          slug === "wallpaper"
-            ? `/wallpapers/products?${params.toString()}`
-            : `/wooden-floors/products?${params.toString()}`;
-
-        const res = await axiosInstance.get(url);
-        if (res.status === 200) {
-          const { totalPages, currentPage, data } = res.data;
-          setTotalPages(totalPages);
-          setCurrentPage(currentPage);
-          setProducts((prevProducts) => [...prevProducts, ...data]);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      fetchProducts(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(currentPage);
   }, [
     selectedSubcategory,
     searchQuery,
@@ -201,21 +166,8 @@ export default function CategoryPage({ params }) {
     priceRange,
     priceSort,
     sortBy,
+    currentPage,
   ]);
-
-  useEffect(() => {
-    if (inView && !loading && CurrentPage < TotalPages) {
-      loadMoreProducts();
-    }
-  }, [inView, loading, CurrentPage, TotalPages]);
-
-  const handleProductClick = (productId) => {
-    if (slug === "wallpaper") {
-      router.push(`/products/wallpapers/${productId}`);
-    } else if (slug === "wooden flooring") {
-      router.push(`/products/wooden-flooring/${productId}`);
-    }
-  };
 
   useEffect(() => {
     const fetchColors = async () => {
@@ -258,7 +210,7 @@ export default function CategoryPage({ params }) {
   }, []);
 
   const handleSubcategoryChange = (subcatName) => {
-    setCurrentPage(0);
+    setCurrentPage(1);
     setSelectedSubcategory(
       selectedSubcategory === subcatName ? "All" : subcatName
     );
@@ -266,24 +218,24 @@ export default function CategoryPage({ params }) {
   };
 
   const handleColorToggle = (color) => {
-    setCurrentPage(0);
+    setCurrentPage(1);
     setSelectedColors((prev) =>
       prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
     );
   };
 
   const handlePriceRangeChange = (field, value) => {
-    setCurrentPage(0);
+    setCurrentPage(1);
     setPriceRange((prev) => ({ ...prev, [field]: value }));
   };
 
   const handlePriceSortChange = (sort) => {
-    setCurrentPage(0);
+    setCurrentPage(1);
     setPriceSort(sort);
   };
 
   const clearAllFilters = () => {
-    setCurrentPage(0);
+    setCurrentPage(1);
     setSelectedSubcategory("All");
     setSelectedColors([]);
     setPriceRange({ min: 0, max: 10000 });
@@ -587,6 +539,52 @@ export default function CategoryPage({ params }) {
                         ` in ${selectedSubcategory}`}
                     </span>
                   )}
+                  {products.length > 0 && totalPages > 1 && (
+                    <div className="flex items-center justify-start mt-4">
+                      <nav className="flex items-center gap-1">
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className={`p-0 cursor-pointer rounded-full ${
+                            currentPage === 1
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
+                          <ChevronLeft size={20} />
+                        </button>
+
+                        {Array.from(
+                          { length: totalPages },
+                          (_, i) => i + 1
+                        ).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`w-10 h-10 cursor-pointer rounded-full flex items-center justify-center ${
+                              currentPage === page
+                                ? "bg-blue-500 text-white"
+                                : "text-gray-700 hover:bg-gray-100"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className={`p-0 cursor-pointer rounded-full ${
+                            currentPage === totalPages
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
+                          <ChevronRight size={20} />
+                        </button>
+                      </nav>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -608,198 +606,266 @@ export default function CategoryPage({ params }) {
                     </p>
                   </div>
                 ) : (
-                  <div
-                    className={`${
-                      viewMode === "grid"
-                        ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 md:gap-6"
-                        : "space-y-6"
-                    }`}
-                  >
-                    {products.map((product, index) => (
-                      <div
-                        onClick={() => handleProductClick(product.id)}
-                        key={`${product.id}-${index}`}
-                        className={`group cursor-pointer ${
-                          viewMode === "list"
-                            ? "flex flex-col sm:flex-row gap-4 sm:gap-6 bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100"
-                            : "bg-white rounded-xl shadow-sm hover:shadow-lg border border-gray-100"
-                        } transition-all duration-300 hover:-translate-y-1`}
-                      >
+                  <>
+                    <div
+                      className={`${
+                        viewMode === "grid"
+                          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 md:gap-6"
+                          : "space-y-6"
+                      }`}
+                    >
+                      {products.map((product, index) => (
                         <div
-                          className={`relative ${
+                          onClick={() => handleProductClick(product.id)}
+                          key={`${product.id}-${index}`}
+                          className={`group cursor-pointer ${
                             viewMode === "list"
-                              ? "w-full sm:w-48 aspect-[4/3] sm:aspect-[3/4] flex-shrink-0"
-                              : "aspect-[4/3] md:aspect-[3/4]"
-                          } overflow-hidden rounded-lg bg-gray-100`}
+                              ? "flex flex-col sm:flex-row gap-4 sm:gap-6 bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-md border border-gray-100"
+                              : "bg-white rounded-xl shadow-sm hover:shadow-lg border border-gray-100"
+                          } transition-all duration-300 hover:-translate-y-1`}
                         >
-                          {slug === "wallpaper" ? (
-                            <>
-                              <Carousal
-                                images={product.colors?.map((item) => item.pic)}
-                              />
-                              {/* Overlay with MoodBoard Button - moved outside Carousal but inside container */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 z-10">
-                                <button
-                                  className="bg-white/20 backdrop-blur-sm cursor-pointer p-3 rounded-full hover:scale-110 transition-all duration-200 shadow-lg"
-                                  onClick={(e) =>
-                                    handleHeartClick(e, product.id)
-                                  }
-                                >
-                                  <svg
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
+                          <div
+                            className={`relative ${
+                              viewMode === "list"
+                                ? "w-full sm:w-48 aspect-[4/3] sm:aspect-[3/4] flex-shrink-0"
+                                : "aspect-[4/3] md:aspect-[3/4]"
+                            } overflow-hidden rounded-lg bg-gray-100`}
+                          >
+                            {slug === "wallpaper" ? (
+                              <>
+                                <Carousal
+                                  images={product.colors?.map(
+                                    (item) => item.pic
+                                  )}
+                                />
+                                {/* Overlay with MoodBoard Button - moved outside Carousal but inside container */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 z-10">
+                                  <button
+                                    className="bg-white/20 backdrop-blur-sm cursor-pointer p-3 rounded-full hover:scale-110 transition-all duration-200 shadow-lg"
+                                    onClick={(e) =>
+                                      handleHeartClick(e, product.id)
+                                    }
                                   >
-                                    <rect
-                                      x="3"
-                                      y="3"
-                                      width="7"
-                                      height="7"
-                                      rx="1"
-                                      stroke="white"
-                                      strokeWidth="2"
-                                    />
-                                    <rect
-                                      x="14"
-                                      y="3"
-                                      width="7"
-                                      height="7"
-                                      rx="1"
-                                      stroke="white"
-                                      strokeWidth="2"
-                                    />
-                                    <rect
-                                      x="3"
-                                      y="14"
-                                      width="7"
-                                      height="7"
-                                      rx="1"
-                                      stroke="white"
-                                      strokeWidth="2"
-                                    />
-                                    <path
-                                      d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z"
-                                      fill="white"
-                                    />
-                                    <path
-                                      d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z"
-                                      fill="white"
-                                    />
-                                  </svg>
-                                </button>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <Image
-                                src={product.image}
-                                alt={product.name}
-                                fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-110"
-                              />
-                              {/* Overlay for non-wallpaper items */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 z-10">
-                                <button
-                                  className="bg-white/20 backdrop-blur-sm cursor-pointer p-3 rounded-full hover:scale-110 transition-all duration-200 shadow-lg"
-                                  onClick={(e) =>
-                                    handleHeartClick(e, product.id)
-                                  }
-                                >
-                                  {/* Same SVG as above */}
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-
-                        <div
-                          className={`${
-                            viewMode === "list" ? "flex-1 min-w-0" : "p-4"
-                          } space-y-3`}
-                        >
-                          <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                            {product.name}
-                          </h3>
-
-                          <div className="flex items-center gap-2">
-                            <div>
-                              <span className="text-sm font-semibold">
-                                {" "}
-                                Sub category:{" "}
-                              </span>
-                              <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
-                                {product.subCategory}
-                              </span>
-                            </div>
-                            {/* <div>
-                              <span className="text-sm font-semibold">
-                                {" "}
-                                Brand:
-                              </span>
-                              <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
-                                {product.brand}
-                              </span>
-                            </div> */}
-                          </div>
-
-                          {slug === "wallpaper" && product.colors && (
-                            <div className="flex gap-2 flex-wrap">
-                              {product.colors
-                                .slice(0, 5)
-                                .map((color, colorIndex) => (
-                                  <div
-                                    key={colorIndex}
-                                    className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-                                    style={{ backgroundColor: color.color }}
-                                  />
-                                ))}
-                              {product.colors.length > 5 && (
-                                <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white shadow-sm flex items-center justify-center">
-                                  <span className="text-xs text-gray-600 font-medium">
-                                    +{product.colors.length - 5}
-                                  </span>
+                                    <svg
+                                      width="24"
+                                      height="24"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <rect
+                                        x="3"
+                                        y="3"
+                                        width="7"
+                                        height="7"
+                                        rx="1"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                      />
+                                      <rect
+                                        x="14"
+                                        y="3"
+                                        width="7"
+                                        height="7"
+                                        rx="1"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                      />
+                                      <rect
+                                        x="3"
+                                        y="14"
+                                        width="7"
+                                        height="7"
+                                        rx="1"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                      />
+                                      <path
+                                        d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z"
+                                        fill="white"
+                                      />
+                                      <path
+                                        d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z"
+                                        fill="white"
+                                      />
+                                    </svg>
+                                  </button>
                                 </div>
-                              )}
-                            </div>
-                          )}
-
-                          <div className="flex items-center justify-between">
-                            <p className="text-xl font-bold text-gray-900">
-                              ₹{product.price}
-                              <span className="text-sm font-normal text-gray-500 ml-1">
-                                /Sq.ft
-                              </span>
-                            </p>
+                              </>
+                            ) : (
+                              <>
+                                <Image
+                                  src={product.image}
+                                  alt={product.name}
+                                  fill
+                                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                                {/* Overlay for non-wallpaper items */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 z-10">
+                                  <button
+                                    className="bg-white/20 backdrop-blur-sm cursor-pointer p-3 rounded-full hover:scale-110 transition-all duration-200 shadow-lg"
+                                    onClick={(e) =>
+                                      handleHeartClick(e, product.id)
+                                    }
+                                  >
+                                    <svg
+                                      width="24"
+                                      height="24"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <rect
+                                        x="3"
+                                        y="3"
+                                        width="7"
+                                        height="7"
+                                        rx="1"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                      />
+                                      <rect
+                                        x="14"
+                                        y="3"
+                                        width="7"
+                                        height="7"
+                                        rx="1"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                      />
+                                      <rect
+                                        x="3"
+                                        y="14"
+                                        width="7"
+                                        height="7"
+                                        rx="1"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                      />
+                                      <path
+                                        d="M15 14.5C15 13.6716 15.6716 13 16.5 13C17.3284 13 18 13.6716 18 14.5C18 15.3284 17.3284 16 16.5 16C15.6716 16 15 15.3284 15 14.5Z"
+                                        fill="white"
+                                      />
+                                      <path
+                                        d="M13.5 18C13.5 16.6193 14.6193 15.5 16 15.5C17.3807 15.5 18.5 16.6193 18.5 18V19H13.5V18Z"
+                                        fill="white"
+                                      />
+                                    </svg>
+                                  </button>
+                                </div>
+                              </>
+                            )}
                           </div>
 
-                          {product.description && (
-                            <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
-                              {product.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                          <div
+                            className={`${
+                              viewMode === "list" ? "flex-1 min-w-0" : "p-4"
+                            } space-y-3`}
+                          >
+                            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                              {product.name}
+                            </h3>
 
-                {/* Loading Indicator */}
-                {products.length > 0 && (
-                  <div
-                    ref={ref}
-                    className="flex items-center justify-center py-8 mt-8"
-                  >
-                    {loading && (
-                      <div className="flex items-center gap-3">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                        <span className="text-gray-600">
-                          Loading more products...
-                        </span>
+                            <div className="flex items-center gap-2">
+                              <div>
+                                <span className="text-sm font-semibold">
+                                  {" "}
+                                  Sub category:{" "}
+                                </span>
+                                <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
+                                  {product.subCategory}
+                                </span>
+                              </div>
+                            </div>
+
+                            {slug === "wallpaper" && product.colors && (
+                              <div className="flex gap-2 flex-wrap">
+                                {product.colors
+                                  .slice(0, 5)
+                                  .map((color, colorIndex) => (
+                                    <div
+                                      key={colorIndex}
+                                      className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                                      style={{ backgroundColor: color.color }}
+                                    />
+                                  ))}
+                                {product.colors.length > 5 && (
+                                  <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white shadow-sm flex items-center justify-center">
+                                    <span className="text-xs text-gray-600 font-medium">
+                                      +{product.colors.length - 5}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            <div className="flex items-center justify-between">
+                              <p className="text-xl font-bold text-gray-900">
+                                ₹{product.price}
+                                <span className="text-sm font-normal text-gray-500 ml-1">
+                                  /Sq.ft
+                                </span>
+                              </p>
+                            </div>
+
+                            {product.description && (
+                              <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
+                                {product.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {products.length > 0 && totalPages > 1 && (
+                      <div className="flex items-center justify-center mt-8">
+                        <nav className="flex items-center gap-1">
+                          <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={`p-2 rounded-full ${
+                              currentPage === 1
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-gray-700 hover:bg-gray-100"
+                            }`}
+                          >
+                            <ChevronLeft size={20} />
+                          </button>
+
+                          {Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1
+                          ).map((page) => (
+                            <button
+                              key={page}
+                              onClick={() => handlePageChange(page)}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                currentPage === page
+                                  ? "bg-blue-500 text-white"
+                                  : "text-gray-700 hover:bg-gray-100"
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          ))}
+
+                          <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className={`p-2 rounded-full ${
+                              currentPage === totalPages
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-gray-700 hover:bg-gray-100"
+                            }`}
+                          >
+                            <ChevronRight size={20} />
+                          </button>
+                        </nav>
                       </div>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             </div>
