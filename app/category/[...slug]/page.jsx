@@ -16,9 +16,12 @@ import axiosInstance from "@/utils/AxiosInstance";
 import { use } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Carousal from "@/components/Global/Carousal";
+import { useDispatch } from "react-redux";
+import { addToMoodboard } from "@/store/moodboardSlice"; // adjust path if needed
 
 export default function CategoryPage({ params }) {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   // Unwrap params using React.use()
   const unwrappedParams = use(params);
@@ -52,8 +55,9 @@ export default function CategoryPage({ params }) {
     e.stopPropagation();
     const token = localStorage.getItem("token");
     if (!token) {
-      toast.error("Please login to add to MoodBoard");
-      router.push("/login");
+      // Guest moodboard logic
+      dispatch(addToMoodboard(product));
+      toast.success("Added to MoodBoard (guest)");
       return;
     }
     setSelectedProduct(product);

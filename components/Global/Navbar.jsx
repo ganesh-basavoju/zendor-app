@@ -673,7 +673,7 @@
 
 // export default Navbar;
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   FaMapMarkerAlt,
@@ -690,6 +690,8 @@ import LocationModal from "./LocationModal";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/utils/AxiosInstance";
 import { login } from "@/store/userSlice";
+import { X } from "lucide-react";
+import { removeFromMoodboard } from "@/store/moodboardSlice";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -710,6 +712,10 @@ const Navbar = () => {
     woodenFlooring: false,
     wallpaper: false,
   });
+  const [showGuestMoodboard, setShowGuestMoodboard] = useState(false);
+  const guestMoodboard = useSelector((state) => state.moodboard);
+  const [token, setToken] = useState("");
+  const modalRef = useRef();
 
   // Other hooks
   const router = useRouter();
@@ -848,7 +854,24 @@ const Navbar = () => {
     }
   }, []);
 
-  // All existing state and functions remain exactly the same...
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
+
+  // Close modal on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        showGuestMoodboard &&
+        modalRef.current &&
+        !modalRef.current.contains(event.target)
+      ) {
+        setShowGuestMoodboard(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showGuestMoodboard]);
 
   return (
     <nav
@@ -956,7 +979,13 @@ const Navbar = () => {
                 { icon: FaUser, onClick: handleSignIn, name: "Account" },
                 {
                   icon: FaHeart,
-                  onClick: () => router.push("/profile?to=3"),
+                  onClick: () => {
+                    if (!localStorage.getItem("token")) {
+                      setShowGuestMoodboard(true);
+                    } else {
+                      router.push("/profile?to=3");
+                    }
+                  },
                   customIcon: (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                       <rect
@@ -1232,6 +1261,75 @@ const Navbar = () => {
           }}
         />
       )}
+
+      {/* Guest Moodboard Modal */}
+      {showGuestMoodboard && (
+        <div className="fixed inset-0 z-[999] flex justify-end bg-black/30">
+          <div
+            ref={modalRef}
+            className="w-full max-w-md h-full bg-white shadow-2xl p-6 flex flex-col relative animate-slide-in-right"
+          >
+            <button
+              onClick={() => setShowGuestMoodboard(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl font-bold mb-4">
+              Moodboard:{" "}
+              <span className="text-[#f5b142]">guest</span>
+            </h2>
+            {guestMoodboard.items && guestMoodboard.items.length > 0 ? (
+              <div className="flex-1 overflow-y-auto space-y-4">
+                {guestMoodboard.items.map((item) => (
+                  <div
+                    key={item.id || item._id || Math.random()}
+                    className="flex items-center gap-4 border-b pb-4"
+                  >
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      width={64}
+                      height={64}
+                      className="rounded object-cover"
+                    />
+                    <div className="flex-1">
+                      <div className="font-semibold">{item.name}</div>
+                      <button
+                        onClick={() => dispatch(removeFromMoodboard(item.id))}
+                        className="text-xs text-red-500 hover:underline mt-1"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-gray-500 mt-8">Your Moodboard is empty.</div>
+            )}
+          </div>
+          {/* Clickable overlay to close */}
+          <div
+            className="flex-1"
+            onClick={() => setShowGuestMoodboard(false)}
+          />
+        </div>
+      )}
+
+      <style jsx global>{`
+        @keyframes slide-in-right {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+        .animate-slide-in-right {
+          animation: slide-in-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      `}</style>
     </nav>
   );
 };

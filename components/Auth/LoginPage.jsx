@@ -11,6 +11,7 @@ import localStorage from "redux-persist/lib/storage";
 import { login } from "@/store/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@mui/material";
+import { clearMoodboard } from "@/store/moodboardSlice";
 
 const LoginPage = ({ onSuccess }) => {
   
@@ -27,6 +28,7 @@ const LoginPage = ({ onSuccess }) => {
   const navigate = useRouter();
   const dispatch = useDispatch();
   const guestCartItems = useSelector((state) => state.cart?.items || []);
+  const guestMoodboardItems = useSelector((state) => state.moodboard?.items || []);
   // Handle form submission and login/signup proces
 
   const handleForgotPassword = async (e) => {
@@ -93,6 +95,29 @@ const LoginPage = ({ onSuccess }) => {
             console.error("Error merging cart:", error);
             toast.error("Failed to merge guest cart items");
           }
+        } else if (guestMoodboardItems && guestMoodboardItems.length > 0) {
+          try {
+            // 1. Create the "guest" moodboard if not exists
+            await axiosInstance.post("/user/create-moodBoard", {
+              name: "guest"
+            });
+
+            // 2. Add each item to the "guest" moodboard
+            for (const item of guestMoodboardItems) {
+              await axiosInstance.post("/user/add-to-moodBoard", {
+                name: "guest",
+                productId: item.id || item._id,
+                productType: item.productType || "product"
+              });
+            }
+
+            localStorage.removeItem("moodboard");
+            dispatch(clearMoodboard());
+            toast.success("Guest moodboard items merged successfully!");
+          } catch (error) {
+            console.error("Error merging moodboard:", error);
+            toast.error("Failed to merge guest moodboard items");
+          }
         } else if (role == "admin") {
           navigate.push("/admin");
           return;
@@ -136,6 +161,31 @@ const LoginPage = ({ onSuccess }) => {
         } catch (error) {
           console.error("Error merging cart:", error);
           toast.error("Failed to merge guest cart items");
+        }
+      }
+      if (guestMoodboardItems.length > 0) {
+        try {
+          // 1. Create the "guest" moodboard if not exists
+          await axiosInstance.post("/user/create-moodBoard", {
+            name: "guest"
+          });
+
+          // 2. Add each item to the "guest" moodboard
+          for (const item of guestMoodboardItems) {
+            await axiosInstance.post("/user/add-to-moodBoard", {
+              name: "guest",
+              productId: item.id || item._id,
+              productType: item.productType || "product"
+            });
+          }
+
+          // Clear guest moodboard after successful merge
+          localStorage.removeItem("moodboard");
+          dispatch(clearMoodboard());
+          toast.success("Guest moodboard items merged successfully!");
+        } catch (error) {
+          console.error("Error merging moodboard:", error);
+          toast.error("Failed to merge guest moodboard items");
         }
       }
       toast.success("Login successful!");

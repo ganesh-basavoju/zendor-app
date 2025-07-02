@@ -21,3 +21,14 @@ export function loadCartFromLocalStorage() {
     return { items: [], totalAmount: 0, isGuest: false };
   }
 }
+
+
+export function loadMoodboardFromLocalStorage() {
+  if (typeof window === "undefined") return { items: [] };
+  try {
+    const data = localStorage.getItem("moodboard");
+    return data ? JSON.parse(data) : { items: [] };
+  } catch {
+    return { items: [] };
+  }
+}
