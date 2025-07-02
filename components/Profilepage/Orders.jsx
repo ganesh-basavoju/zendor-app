@@ -1,6 +1,13 @@
 import Image from "next/image";
 import { PackageCheck, Truck, Clock, Search, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import Accordion from "@mui/material/Accordion";
+import AccordionActions from "@mui/material/AccordionActions";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Table, TableBody, TableCell, TableRow } from "@mui/material";
 
 const orderStatuses = {
   pending: { icon: Clock, color: "text-amber-600 bg-amber-50" },
@@ -13,7 +20,10 @@ export default function Orders({ userData }) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Get orders from userData
-  const userOrders = userData?.orders?.reverse() || [];
+  const userOrders =
+    userData?.orders.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    ) || [];
 
   // Filter orders based on status and search query
   const filteredOrders = userOrders
@@ -48,6 +58,7 @@ export default function Orders({ userData }) {
             className="px-3 sm:px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200 text-sm"
           >
             <option value="All">All Orders</option>
+
             {Object.keys(orderStatuses).map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -92,7 +103,10 @@ export default function Orders({ userData }) {
                       {totalItems > 0 && ` (${totalItems} items)`}
                     </h3>
                     <span className="text-gray-900 font-medium">
-                      ₹{order.totalPrice?.toFixed(2)}
+                      ₹{" "}
+                      {order.isCouponApplied
+                        ? order.totalAfterCoupon.toLocaleString()
+                        : order.totalPrice.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-0">
@@ -112,113 +126,238 @@ export default function Orders({ userData }) {
                       })}
                     </span>
                   </div>
+                  {/* //coupons */}
+                  {order?.isCouponApplied && (
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                      >
+                        <Typography component="span">Coupon Details</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Table size="small" sx={{ my: 2, width: "100%" }}>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell
+                                sx={{ fontWeight: "bold", color: "green" }}
+                              >
+                                Coupon Applied:
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontWeight: "600", color: "black" }}
+                              >
+                                {order.coupon}
+                              </TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                              <TableCell
+                                sx={{ fontWeight: "bold", color: "green" }}
+                              >
+                                Total Amount:
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontWeight: "600", color: "black" }}
+                              >
+                                ₹ {order.totalPrice.toLocaleString()}
+                              </TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                              <TableCell
+                                sx={{ fontWeight: "bold", color: "green" }}
+                              >
+                                Discount:
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontWeight: "600", color: "black" }}
+                              >
+                                ₹ {order.discount}
+                              </TableCell>
+                            </TableRow>
+
+                            <TableRow>
+                              <TableCell
+                                sx={{ fontWeight: "bold", color: "green" }}
+                              >
+                                Final Amount:
+                              </TableCell>
+                              <TableCell
+                                sx={{ fontWeight: "600", color: "black" }}
+                              >
+                                ₹ {order.totalAfterCoupon.toLocaleString()}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </AccordionDetails>
+                    </Accordion>
+                  )}
 
                   <div className="flex flex-col pt-2 gap-2">
                     <h3 className="font-medium text-gray-900">
                       Items: ({order.items?.length})
                     </h3>
-                    {/* <span className="w-full h-0.5 bg-black" /> */}
-                    {order.items.map((item, ind) => (
-                      <>
-                        <div
-                          key={ind}
-                          className="flex items-center place-items-center"
+                    <div>
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1-content"
+                          id="panel1-header"
                         >
-                          <div className="flex  gap-2 items-center place-items-cente">
-                            {item.productThumbnail && (
-                              <Image
-                                src={item?.productThumbnail}
-                                alt={item.productName}
-                                width={32}
-                                height={32}
-                                className="rounded-sm"
-                              />
-                            )}
-                            <p className="text-blue-950 font-bold">
-                              {" "}
-                              {item.productName} -{" "}
-                            </p>
-                            {item.productType == "Wallpaper" &&
-                              item.isSample && (
-                                <>
-                                  Color:
-                                  <input
-                                    type="color"
-                                    disabled
-                                    value={item.color}
-                                  ></input>
-                                </>
-                              )}
-
+                          <Typography component="span">See items</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails className="flex flex-col gap-3">
+                          {order.items.map((item, ind) => (
                             <>
-                              <p>Type:-{item?.productType}</p>
-                              {item?.texture &&
-                                item.productType == "Wallpaper" &&
-                                item.isSample && (
-                                  <p> Texture:-{item?.texture}</p>
-                                )}
-                            </>
-                          </div>
-                        </div>
-                        {!item.isSample && (
-                          <div className="flex flex-col p-3">
-                            <h3>Information:</h3>
-                            {Object.keys(item?.floorArea).map((floor, ind) => (
-                              <>
-                                <div key={ind} className="flex flex-wrap gap-2">
-                                  <p className="text-black font-bold flex">
-                                    {item.productType == "Wallpaper"
-                                      ? "Wall"
-                                      : "Floor"}
-                                    {` `}
-                                    <p className="uppercase">
-                                      {` `}
-                                      {String.fromCharCode(97 + ind)}
-                                    </p>
+                              <div
+                                key={ind}
+                                className="flex items-center place-items-center"
+                              >
+                                <div className="flex  gap-2 items-center place-items-cente">
+                                  {item.productThumbnail && (
+                                    <Image
+                                      src={item?.productThumbnail}
+                                      alt={item.productName}
+                                      width={32}
+                                      height={32}
+                                      className="rounded-sm"
+                                    />
+                                  )}
+                                  <p className="text-blue-950 font-bold">
+                                    {" "}
+                                    {item.productName} -{" "}
                                   </p>
-                                  <p>
-                                    Dimensions:{` `}
-                                    {item.floorArea[floor].width} X{" "}
-                                    {item.floorArea[floor].height}{" "}
-                                  </p>
-                                  <p>
-                                    Area:{` `}
-                                    {item.floorArea[
-                                      floor
-                                    ].area.toLocaleString()}{" "}
-                                    sq/feet
-                                  </p>
+                                  {item.productType == "Wallpaper" &&
+                                    item.isSample && (
+                                      <>
+                                        Color:
+                                        <input
+                                          type="color"
+                                          disabled
+                                          value={item.color}
+                                        ></input>
+                                      </>
+                                    )}
 
-                                  {item.productType == "Wallpaper" && (
-                                    <p className="flex">
-                                      Color:{` `}
-                                      <input
-                                        type="color"
-                                        disabled
-                                        value={item.floorArea[floor].color}
-                                      />
-                                    </p>
-                                  )}
-                                  {item.productType == "Wallpaper" && (
+                                  <>
+                                    <p>Type:-{item?.productType}</p>
+                                    {item?.texture &&
+                                      item.productType == "Wallpaper" &&
+                                      item.isSample && (
+                                        <p> Texture:-{item?.texture}</p>
+                                      )}
+                                  </>
+                                  <>
                                     <p>
-                                      Texture:{` `}
-                                      {item.floorArea[floor].texture}
+                                      {item?.isSample ? (
+                                        <span className="text-white bg-blue-600 p-1 rounded-md">
+                                          Sample
+                                        </span>
+                                      ) : (
+                                        <span className="text-white bg-blue-600 p-1 rounded-md">
+                                          Ordered Size
+                                        </span>
+                                      )}
                                     </p>
-                                  )}
-                                  <p>
-                                    Price:{` `}₹
-                                    {item.floorArea[
-                                      floor
-                                    ].price.toLocaleString()}
-                                  </p>
+                                  </>
                                 </div>
-                                <span className="w-full h-[1px] bg-gray-900 mt-1" />
-                              </>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    ))}
+                              </div>
+                              {!item.isSample && (
+                                <Accordion className="ml-3">
+                                  <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1-content"
+                                    id="panel1-header"
+                                  >
+                                    <Typography component="span">
+                                      see information
+                                    </Typography>
+                                  </AccordionSummary>
+                                  <AccordionDetails>
+                                    <div className="flex flex-col p-1 mt-0">
+                                      <h3>Information:</h3>
+                                      {Object.keys(item?.floorArea).map(
+                                        (floor, ind) => (
+                                          <>
+                                            <div
+                                              key={ind}
+                                              className="flex flex-wrap gap-2"
+                                            >
+                                              <p className="text-black font-bold flex">
+                                                {item.productType == "Wallpaper"
+                                                  ? "Wall"
+                                                  : "Floor"}
+                                                {` `}
+                                                <p className="uppercase">
+                                                  {` `}
+                                                  {String.fromCharCode(
+                                                    97 + ind
+                                                  )}
+                                                </p>
+                                              </p>
+                                              <p>
+                                                Dimensions:{` `}
+                                                {
+                                                  item.floorArea[floor].width
+                                                } X{" "}
+                                                {item.floorArea[floor].height}{" "}
+                                              </p>
+                                              <p>
+                                                Area:{` `}
+                                                {item.floorArea[
+                                                  floor
+                                                ].area.toLocaleString()}{" "}
+                                                sq/feet
+                                              </p>
+
+                                              {item.productType ==
+                                                "Wallpaper" && (
+                                                <p className="flex">
+                                                  Color:{` `}
+                                                  <input
+                                                    type="color"
+                                                    disabled
+                                                    value={
+                                                      item.floorArea[floor]
+                                                        .color
+                                                    }
+                                                  />
+                                                </p>
+                                              )}
+                                              {item.productType ==
+                                                "Wallpaper" && (
+                                                <p>
+                                                  Texture:{` `}
+                                                  {
+                                                    item.floorArea[floor]
+                                                      .texture
+                                                  }
+                                                </p>
+                                              )}
+                                              <p>
+                                                Price:{` `}₹
+                                                {item.floorArea[
+                                                  floor
+                                                ].price.toLocaleString()}
+                                              </p>
+                                            </div>
+                                            <span className="w-full h-[1px] bg-gray-900 mt-1" />
+                                          </>
+                                        )
+                                      )}
+                                    </div>
+                                  </AccordionDetails>
+                                </Accordion>
+                              )}
+                            </>
+                          ))}
+                        </AccordionDetails>
+                      </Accordion>
+                    </div>
+                    {/* <span className="w-full h-0.5 bg-black" /> */}
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 pt-2">
@@ -258,27 +397,42 @@ export default function Orders({ userData }) {
                   </div>
 
                   {/* Shipping Address */}
-                  <div className="text-sm text-gray-500 pt-2 border-t">
-                    <p className="text-gray-900 ">Shipping to: </p>
-                    <p>
-                      {order.shippingAddress?.firstName}{" "}
-                      {order.shippingAddress?.lastName}
-                    </p>
-                    <p>
-                      {" "}
-                      {order.shippingAddress?.Street},{" "}
-                      {order.shippingAddress?.City},{" "}
-                      {order.shippingAddress?.State},
-                      {order.shippingAddress?.country}-
-                      {order.shippingAddress?.PinCode}
-                    </p>
-                    <p>
-                      Email: {order.shippingAddress?.email || "Not provided"}
-                    </p>
-                    <p>
-                      Phone: {order.shippingAddress?.phone || "Not provided"}
-                    </p>
-                  </div>
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel2-content"
+                      id="panel2-header"
+                    >
+                      <Typography component="span">
+                        See Shipping Details
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <div className="text-sm text-gray-500 pt-2 border-t">
+                        <p className="text-gray-900 ">Shipping to: </p>
+                        <p>
+                          {order.shippingAddress?.firstName}{" "}
+                          {order.shippingAddress?.lastName}
+                        </p>
+                        <p>
+                          {" "}
+                          {order.shippingAddress?.Street},{" "}
+                          {order.shippingAddress?.City},{" "}
+                          {order.shippingAddress?.State},
+                          {order.shippingAddress?.country}-
+                          {order.shippingAddress?.PinCode}
+                        </p>
+                        <p>
+                          Email:{" "}
+                          {order.shippingAddress?.email || "Not provided"}
+                        </p>
+                        <p>
+                          Phone:{" "}
+                          {order.shippingAddress?.phone || "Not provided"}
+                        </p>
+                      </div>
+                    </AccordionDetails>
+                  </Accordion>
                 </div>
               </div>
             </div>

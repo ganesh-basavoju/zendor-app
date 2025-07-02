@@ -43,7 +43,11 @@ export default function Checkout() {
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   });
   const userName = useSelector((state) => state.user.name);
-  const [couponCode, setCouponCode] = useState(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [isCouponApplied, setIsCouponApplied] = useState(false);
+  const [discount, setDiscount] = useState(0);
+  const [totalAfterCoupon, setTotalAfterCoupon] = useState(0);
+  const [couponId, setCouponId] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -51,6 +55,29 @@ export default function Checkout() {
       router.push("/login");
     }
   }, []);
+
+  const handleCouponApply = async () => {
+    try {
+      const res = await axiosInstance.post("/coupons/apply", {
+        code: couponCode,
+        cartTotal: totalPrice,
+      });
+
+      console.log(res, "res");
+      if (res.status == 200) {
+        // toast.success(res.data.message);
+        setIsCouponApplied(true);
+        setDiscount(res.data.discount);
+        setTotalAfterCoupon(res.data.finalAmount);
+        setCouponId(res.data.couponId);
+        toast.success("Coupon applied successfully");
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   const fetchCartItems = async () => {
     const res = await axiosInstance.get("/cart/get-cart");
@@ -199,7 +226,10 @@ export default function Checkout() {
 
       // Create order first
       const orderResponse = await axiosInstance.post("/payments/create-order", {
-        amount: Math.ceil(totalPrice + tax) * 100, // Convert to paise
+        amount:
+          (isCouponApplied
+            ? Math.ceil(totalAfterCoupon)
+            : Math.ceil(totalPrice + tax)) * 100, // Convert to paise
         currency: "INR",
       });
 
@@ -210,7 +240,9 @@ export default function Checkout() {
 
       const options = {
         key: "rzp_test_qtfHIjOyxlQnr5",
-        amount: Math.ceil(totalPrice + tax) * 100,
+        amount: isCouponApplied
+          ? Math.ceil(totalAfterCoupon)
+          : Math.ceil(totalPrice + tax),
         currency: "INR",
         name: "Zendor",
         description: "Order Payment",
@@ -264,6 +296,11 @@ export default function Checkout() {
                   pricePerUnit: item.price,
                   totalPrice: item.totalPrice,
                 })),
+                coupon: couponCode,
+                isCouponApplied: isCouponApplied,
+                discount: discount,
+                totalAfterCoupon: totalAfterCoupon,
+                couponId: couponId,
               };
 
               const orderRes = await axiosInstance.post(
@@ -395,6 +432,11 @@ export default function Checkout() {
           pricePerUnit: item.price,
           totalPrice: item.totalPrice,
         })),
+        coupon: couponCode,
+        isCouponApplied: isCouponApplied,
+        discount: discount,
+        totalAfterCoupon: totalAfterCoupon,
+        couponId: couponId,
       };
       console.log(orderData, "orderData");
 
@@ -447,6 +489,7 @@ export default function Checkout() {
   }, []);
 
   const [flag, setFlag] = useState("");
+
   const handlePayment = () => {
     setFlag(true);
     if (!paymentMethod) {
@@ -896,34 +939,63 @@ export default function Checkout() {
                     </div>
                     <div className="border-t border-gray-200 pt-2 mt-2">
                       <div className="flex justify-between text-sm md:text-base font-semibold">
-                        <span>Total Amount</span>
+                        <span className="text-sm font-medium">
+                          Total Amount
+                        </span>
                         <span className="text-[#012B5B]">
                           ₹{Math.ceil(totalPrice + tax).toLocaleString("en-IN")}
                         </span>
                       </div>
                     </div>
-                    <div className="border-t border-gray-200 pt-2 mt-2">
-                      <span className="text-[#012B5B]">Coupon:</span>
-                      <Input
-                        type="text"
-                        placeholder="Enter Coupon Code"
-                        className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
-                      />
-                      <button
-                        // onClick={applyCoupon}
-                        className={`
+                    {isCouponApplied && (
+                      <div className="border-t border-gray-200 pt-2 mt-2">
+                        <span className="text-sm my-1 text-green-500">
+                          Coupon Apllied Successfully: {couponCode}
+                        </span>
+
+                        <div className="flex justify-between text-sm md:text-base font-semibold">
+                          <span>Discount:</span>
+                          <span className="text-[#012B5B]">
+                            ₹{Math.ceil(discount).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm md:text-base font-semibold">
+                          <span>Final Amount To Be Paid</span>
+                          <span className="text-[#012B5B]">
+                            ₹
+                            {Math.ceil(totalAfterCoupon).toLocaleString(
+                              "en-IN"
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {!isCouponApplied && (
+                      <div className="border-t border-gray-200 pt-2 mt-2">
+                        <span className="text-[#012B5B]">Coupon:</span>
+                        <Input
+                          type="text"
+                          placeholder="Enter Coupon Code"
+                          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value)}
+                        />
+                        <button
+                          onClick={handleCouponApply}
+                          // onClick={applyCoupon}
+                          className={`
                         mt-2  bg-[#012B5B] text-white py-2 px-4 rounded-md  transition-colors duration-200
                         ${
                           couponCode === null
                             ? "bg-gray-400 cursor-not-allowed"
                             : "cursor-pointer"
                         }`}
-                      >
-                        Apply Coupon
-                      </button>
-                    </div>
+                        >
+                          Apply Coupon
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1016,9 +1088,10 @@ export default function Checkout() {
                         </svg>
                       </span>
                     ) : paymentMethod === "razorpay" ? (
-                      `Pay ₹${Math.ceil(totalPrice + tax).toLocaleString(
-                        "en-IN"
-                      )}`
+                      `Pay ₹${(isCouponApplied
+                        ? Math.ceil(totalAfterCoupon)
+                        : Math.ceil(totalPrice + tax)
+                      ).toLocaleString("en-IN")}`
                     ) : (
                       "Place Order (Cash on Delivery)"
                     )}

@@ -26,6 +26,8 @@ import {
   Box,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
+import axiosInstance from "@/utils/AxiosInstance";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function AdminCouponsPage() {
   const [coupons, setCoupons] = useState([]);
@@ -42,7 +44,7 @@ export default function AdminCouponsPage() {
   });
 
   const fetchCoupons = async () => {
-    const res = await axios.get("/api/admin/coupons/all");
+    const res = await axiosInstance.get("/coupons/all");
     setCoupons(res.data.coupons);
   };
 
@@ -52,9 +54,21 @@ export default function AdminCouponsPage() {
 
   const handleSave = async () => {
     if (editId) {
-      await axios.put(`/api/admin/coupons/${editId}`, form);
+     const res= await axiosInstance.put(`/coupons/${editId}`, form);
+     if(res.status===200||res.status==201){
+        toast.success("Coupon updated successfully");
+     }else{
+        toast.error(res.data.message||"something went wrong");
+     }
+
     } else {
-      await axios.post("/api/admin/coupons/create", form);
+     const res= await axiosInstance.post("/coupons/create", form);
+     if(res.status===200||res.status===201){
+        toast.success("Coupon created successfully");
+     }else{
+        toast.error(res.data.message||"something went wrong");
+     }
+
     }
     fetchCoupons();
     setOpen(false);
@@ -62,7 +76,7 @@ export default function AdminCouponsPage() {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`/api/admin/coupons/${id}`);
+    await axiosInstance.delete(`/coupons/${id}`);
     fetchCoupons();
   };
 
@@ -91,6 +105,7 @@ export default function AdminCouponsPage() {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Toaster/>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h5" color="navy">Manage Coupons</Typography>
         <Button variant="contained" onClick={() => openForm()} sx={{ backgroundColor: "navy" }}>
@@ -131,8 +146,8 @@ export default function AdminCouponsPage() {
 
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ backgroundColor: "#001f3f", color: "white" }}>{editId ? "Edit Coupon" : "Add Coupon"}</DialogTitle>
-        <DialogContent sx={{ p: 3 }}>
-          <Stack spacing={2}>
+        <DialogContent sx={{ p: 3,mt:"40px" }}>
+          <Stack spacing={3}>
             <TextField fullWidth label="Coupon Code" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
 
             <FormControl fullWidth>
@@ -149,7 +164,7 @@ export default function AdminCouponsPage() {
 
             <TextField fullWidth type="number" label="Discount Value" value={form.discountValue} onChange={(e) => setForm({ ...form, discountValue: Number(e.target.value) })} />
             <TextField fullWidth type="number" label="Minimum Purchase" value={form.minPurchase} onChange={(e) => setForm({ ...form, minPurchase: Number(e.target.value) })} />
-            <TextField fullWidth type="number" label="Maximum Discount" value={form.maxDiscount} onChange={(e) => setForm({ ...form, maxDiscount: Number(e.target.value) })} />
+            <TextField fullWidth type="number" label="Maximum Discount applied only for percentages" value={form.maxDiscount} onChange={(e) => setForm({ ...form, maxDiscount: Number(e.target.value) })} />
             <TextField fullWidth type="date" label="Expiry Date" InputLabelProps={{ shrink: true }} value={form.expiresAt} onChange={(e) => setForm({ ...form, expiresAt: e.target.value })} />
           </Stack>
         </DialogContent>
