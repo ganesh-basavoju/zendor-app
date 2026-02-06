@@ -18,9 +18,7 @@ const AcousticsPage = () => {
     router.replace("/acoustics")
   },[]);
 
-  if(true){
-    router.replace("/acoustics");
-  }
+
   return (
     <div className="-mt-12 bg-white overflow-x-hidden">
       {/* <HeroSection /> */}

@@ -1,0 +1,59 @@
+﻿
+> zendor-frontend@0.1.0 build
+> next build
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 10.6s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/27) ...
+email 
+  Generating static pages using 15 workers (6/27) 
+[]
+  Generating static pages using 15 workers (13/27) 
+  Generating static pages using 15 workers (20/27) 
+Ô£ô Generating static pages using 15 workers (27/27) in 433.2ms
+  Finalizing page optimization ...
+
+Route (app)
+Ôöî Ôùï /
+Ôö£ Ôùï /_not-found
+Ôö£ Ôùï /about
+Ôö£ Ôùï /acoustics
+Ôö£ Ôùï /admin
+Ôö£ Ôùï /admin/acoustics
+Ôö£ Ôùï /admin/categories
+Ôö£ ãÆ /admin/categories/[...slug]
+Ôö£ Ôùï /admin/coupons
+Ôö£ Ôùï /admin/orders
+Ôö£ ãÆ /admin/orders/[id]
+Ôö£ Ôùï /admin/products
+Ôö£ ãÆ /admin/products/wallpapers/[id]
+Ôö£ Ôùï /admin/products/wallpapers/add
+Ôö£ ãÆ /admin/products/wooden-floorings/[id]
+Ôö£ Ôùï /admin/products/wooden-floorings/add
+Ôö£ Ôùï /admin/users
+Ôö£ Ôùï /cart
+Ôö£ ãÆ /category/[...slug]
+Ôö£ Ôùï /category/acoustics
+Ôö£ Ôùï /checkout
+Ôö£ Ôùï /cookies
+Ôö£ Ôùï /custom-design
+Ôö£ Ôùï /login
+Ôö£ Ôùï /order-tracking
+Ôö£ Ôùï /privacy
+Ôö£ ãÆ /products/[id]
+Ôö£ Ôùï /products/explore
+Ôö£ ãÆ /products/wallpapers/[id]
+Ôö£ ãÆ /products/wooden-flooring/[id]
+Ôö£ Ôùï /profile
+Ôö£ Ôùï /terms
+Ôö£ ãÆ /tracking/[awb]
+Ôöö Ôùï /visit-store
+
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+
